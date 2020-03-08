@@ -1,0 +1,7 @@
+1) Wybraliśmy technologię .NET Core 3.1
+2) Wybraliśmy metodologię Scrum
+- spotkania co 3 dni
+- sprinty 7 dniowe
+- podział na role - wybrany Scrum Master, Product Owner
+3) Stworzyliśmy projekt i skonfigurowaliśmy automatyczny build na bitbucket
+4) Tworzymy 3 epiki dla każdego modułu, tworzymy pierwszy sprint do którego przyporządkowujemy user stories oraz taski.
