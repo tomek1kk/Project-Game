@@ -4,7 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    class PutPieceRequest
+    public class PutPieceRequest : IMessage
     {
+        public bool ValidateMessage()
+        {
+            return true;
+        }
     }
 }

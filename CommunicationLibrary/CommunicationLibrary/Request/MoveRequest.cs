@@ -4,7 +4,15 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    class MoveRequest
+    public class MoveRequest : IMessage
     {
+        public string Direction { get; set; }
+
+        public bool ValidateMessage()
+        {
+            if (Direction == "N" || Direction == "S" || Direction == "W" || Direction == "E")
+                return true;
+            return false;
+        }
     }
 }

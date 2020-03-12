@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2048
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunicationLibrary", "CommunicationLibrary\CommunicationLibrary.csproj", "{7704D193-228E-4F81-9AC9-C2EADF2073E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommunicationLibrary", "CommunicationLibrary\CommunicationLibrary.csproj", "{7704D193-228E-4F81-9AC9-C2EADF2073E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{7BB9C523-6FCD-473E-B716-FBD5D8F3166D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{7704D193-228E-4F81-9AC9-C2EADF2073E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7704D193-228E-4F81-9AC9-C2EADF2073E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7704D193-228E-4F81-9AC9-C2EADF2073E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BB9C523-6FCD-473E-B716-FBD5D8F3166D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BB9C523-6FCD-473E-B716-FBD5D8F3166D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BB9C523-6FCD-473E-B716-FBD5D8F3166D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BB9C523-6FCD-473E-B716-FBD5D8F3166D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

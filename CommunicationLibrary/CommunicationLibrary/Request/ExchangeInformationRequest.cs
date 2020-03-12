@@ -4,7 +4,15 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    class ExchangeInformationRequest
+    public class ExchangeInformationRequest : IMessage
     {
+        public bool ValidateMessage()
+        {
+            if (AskedAgentId == null)
+                return false;
+            return true;
+        }
+
+        public int? AskedAgentId { get; set; }
     }
 }

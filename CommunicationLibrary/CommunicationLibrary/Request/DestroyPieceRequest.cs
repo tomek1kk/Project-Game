@@ -4,7 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    class DestroyPieceRequest
+    public class DestroyPieceRequest : IMessage
     {
+        public bool ValidateMessage()
+        {
+            return true;
+        }
     }
 }
