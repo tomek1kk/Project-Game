@@ -4,7 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    class PickPieceResponse
+    public class PickPieceResponse : IMessage
     {
+        public bool ValidateMessage()
+        {
+            return true;
+        }
     }
 }

@@ -4,7 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Model
 {
-    class Point
+    public class Point
     {
+        public int? X { get; set; }
+        public int? Y { get; set; }
     }
 }
