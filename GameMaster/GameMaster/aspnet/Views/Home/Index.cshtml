@@ -24,7 +24,6 @@
                 var row = $('<tr>');
                 for (var j = 0; j < columns; j++) {
                     var column = $('<td>');
-                    column.text("(" + i + ", " + j + ")");
                     row.append(column);
                     boardFields[i][j].handle = column;
                 }
@@ -52,10 +51,12 @@
                 rows = boardModel.height;
                 goalAreaHeight = boardModel.goalAreaHeight;
                 boardFields = [];
-                for (var i = 0; i < rows; i++) {
-                    boardFields[i] = [];
-                    for (var j = 0; j < columns; j++) {
-                        boardFields[i][j] =
+                //here board needs to be transposed as api uses column major order
+                //and this code uses row major order
+                for (var j = 0; j < rows; j++) {
+                    boardFields[j] = [];
+                    for (var i = 0; i < columns; i++) {
+                        boardFields[j][i] =
                             { type: FieldTypesIndexed[boardModel.fields[i][j]], handle: null };
                     }
                 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace GameMaster.AspNet.Models
+namespace GameMaster.GUI
 {
     public class BoardModel
     {

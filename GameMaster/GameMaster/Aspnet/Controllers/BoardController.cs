@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameMaster.AspNet.Models;
 using Microsoft.AspNetCore.Mvc;
+using GameMaster.GUI;
 
 
 namespace GameMaster.Aspnet.Controllers
@@ -11,20 +12,17 @@ namespace GameMaster.Aspnet.Controllers
     [Route("api/[controller]")]
     public class BoardController : Controller
     {
+        private IGUIDataProvider _GUIDataProvider;
+        public BoardController(IGUIDataProvider GUIDataProvider)
+        {
+            _GUIDataProvider = GUIDataProvider;
+        }
         // GET: api/<controller>
         [HttpGet]
         public BoardModel GetBoardModel()
         {
-            BoardModel res = new BoardModel
-            {
-                Width = 10,
-                Height = 10,
-                GoalAreaHeight = 3
-            };
-            var fields = new FieldType[res.Width, res.Height];
-            fields[3, 3] = FieldType.Piece;
-            res.Fields = fields;
-            return res;
+            
+            return _GUIDataProvider.GetCurrentBoardModel();
         }
 
         // GET api/<controller>/5
