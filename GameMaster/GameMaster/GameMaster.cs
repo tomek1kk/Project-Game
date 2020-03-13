@@ -8,25 +8,25 @@ namespace GameMaster
 {
     public class GameMaster
     {
-        GUIMantainer _GUIMantainer;
-        ManualGUIDataProvider _GUIDataProvider;
+        GuiMantainer _guiMantainer;
+        ManualGuiDataProvider _guiDataProvider;
         public void Start()
         {
             InitGui();
             //TODO: rest of starting game master
         }
-        public void GenerateGUI()
+        public void GenerateGui()
         {
             //TODO: use manual gui data provider to set apropriate fields
             //called every time game board is updated
         }
         private void InitGui()
         {
-            //Manual GUI Data Provider can be replaced with another implementation of IGUIDataProvider
+            //Manual Gui Data Provider can be replaced with another implementation of IGuiDataProvider
             //once code related to game board is complete
-            _GUIDataProvider = new ManualGUIDataProvider(10, 10, 3);
-            _GUIMantainer = new GUIMantainer(_GUIDataProvider);
-            _GUIMantainer.StartGUI();
+            _guiDataProvider = new ManualGuiDataProvider(10, 10, 3);
+            _guiMantainer = new GuiMantainer(_guiDataProvider);
+            _guiMantainer.StartGui();
             Thread.Sleep(10000);
         }
     }

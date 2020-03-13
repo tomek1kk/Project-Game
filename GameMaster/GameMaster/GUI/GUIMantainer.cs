@@ -10,27 +10,27 @@ using System.Threading;
 
 namespace GameMaster.GUI
 {
-    public class GUIMantainer
+    public class GuiMantainer
     {
         readonly Thread _guiThread;
         readonly IWebHost _webHost;
-        public GUIMantainer(IGUIDataProvider GUIDataProvider)
+        public GuiMantainer(IGuiDataProvider guiDataProvider)
         {
-            _webHost = CreateWebHostBuilder(GUIDataProvider).Build();
+            _webHost = CreateWebHostBuilder(guiDataProvider).Build();
             _guiThread = new Thread(
                 new ThreadStart(()=> _webHost.Run())
                 );
         }
-        public void StartGUI()
+        public void StartGui()
         {
             _guiThread.Start();
         }
 
-        static IWebHostBuilder CreateWebHostBuilder(IGUIDataProvider GUIDataProvider) =>
+        static IWebHostBuilder CreateWebHostBuilder(IGuiDataProvider guiDataProvider) =>
             WebHost.CreateDefaultBuilder()
                 .ConfigureServices(servicesCollection =>
                 {
-                    servicesCollection.AddSingleton(GUIDataProvider);
+                    servicesCollection.AddSingleton(guiDataProvider);
                     
                 })
                 .UseStartup<Startup>();

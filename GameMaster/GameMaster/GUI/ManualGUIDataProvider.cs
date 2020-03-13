@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 
 namespace GameMaster.GUI
 {
-    public class ManualGUIDataProvider : IGUIDataProvider
+    public class ManualGuiDataProvider : IGuiDataProvider
     {
         readonly BoardModel _currentBoardModel;
         public BoardModel GetCurrentBoardModel()
         {
             return _currentBoardModel;
         }
-        public ManualGUIDataProvider(int width, int height, int goalAreaHeight)
+        public ManualGuiDataProvider(int width, int height, int goalAreaHeight)
         {
             _currentBoardModel = new BoardModel
             {

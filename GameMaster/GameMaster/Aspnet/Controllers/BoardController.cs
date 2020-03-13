@@ -12,8 +12,8 @@ namespace GameMaster.Aspnet.Controllers
     [Route("api/[controller]")]
     public class BoardController : Controller
     {
-        private IGUIDataProvider _GUIDataProvider;
-        public BoardController(IGUIDataProvider GUIDataProvider)
+        private IGuiDataProvider _GUIDataProvider;
+        public BoardController(IGuiDataProvider GUIDataProvider)
         {
             _GUIDataProvider = GUIDataProvider;
         }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GameMaster.GUI
 {
-    public interface IGUIDataProvider
+    public interface IGuiDataProvider
     {
         BoardModel GetCurrentBoardModel();
     }
