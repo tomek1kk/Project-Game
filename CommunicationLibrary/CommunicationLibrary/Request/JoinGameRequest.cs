@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class JoinGameRequest : IMessage
+    public class JoinGameRequest : Message
     {
         public string TeamId { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (TeamId != "red" || TeamId != "blue")
                 return false;

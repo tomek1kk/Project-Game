@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class PickPieceResponse : IMessage
+    public class PickPieceResponse : Message
     {
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             return true;
         }

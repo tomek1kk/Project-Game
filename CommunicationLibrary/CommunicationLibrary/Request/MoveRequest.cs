@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class MoveRequest : IMessage
+    public class MoveRequest : Message
     {
         public string Direction { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (Direction == "N" || Direction == "S" || Direction == "W" || Direction == "E")
                 return true;

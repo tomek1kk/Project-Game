@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class CheckHoldedPieceRequest : IMessage
+    public class CheckHoldedPieceRequest : Message
     {
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             return true;
         }

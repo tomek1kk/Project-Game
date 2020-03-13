@@ -4,11 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class CheckHoldedPieceResponse : IMessage
+    public class CheckHoldedPieceResponse : Message
     {
         public bool? Sham { get; set; } 
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (Sham == null)
                 return false;

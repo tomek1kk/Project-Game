@@ -5,13 +5,13 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class MoveResponse : IMessage
+    public class MoveResponse : Message
     {
         public bool? MadeMove { get; set; }
         public Point CurrentPosition { get; set; }
         public int? ClosestPiece { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (MadeMove == null)
                 return false;

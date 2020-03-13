@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class ExchangeInformationRequest : IMessage
+    public class ExchangeInformationRequest : Message
     {
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (AskedAgentId == null)
                 return false;

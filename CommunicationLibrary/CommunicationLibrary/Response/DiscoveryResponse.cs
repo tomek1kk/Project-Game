@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class DiscoveryResponse : IMessage
+    public class DiscoveryResponse : Message
     {
         public int? DistanceFromCurrent { get; set; }
         public int? DistanceN { get; set; }
@@ -16,7 +16,7 @@ namespace CommunicationLibrary.Response
         public int? DistanceW { get; set; }
         public int? DistanceNW { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (DistanceFromCurrent == null || DistanceN == null || DistanceNE == null ||
                 DistanceE == null || DistanceSE == null || DistanceS == null ||

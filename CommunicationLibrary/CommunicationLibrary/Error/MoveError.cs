@@ -5,11 +5,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class MoveError : IMessage
+    public class MoveError : Message
     {
         public Point Position { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (Position == null || Position.X == null || Position.Y == null)
                 return false;

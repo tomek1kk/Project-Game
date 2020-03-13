@@ -5,14 +5,14 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    class ExchangeInformationResponse : IMessage
+    class ExchangeInformationResponse : Message
     {
         public int? RespondToID { get; set; }
         public List<int> Distances { get; set; }
         public List<string> RedTeamGoalAreaInformations { get; set; }
         public List<string> BlueTeamGoalAreaInformations { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (RespondToID == null)
                 return false;

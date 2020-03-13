@@ -4,13 +4,13 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class PickPieceError : IMessage
+    public class PickPieceError : Message
     {
         public string ErrorSubtype { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
-            if (ErrorSubtype == null || (ErrorSubtype != "NothingThere" && ErrorSubtype != "Other")
+            if (ErrorSubtype == null || (ErrorSubtype != "NothingThere" && ErrorSubtype != "Other"))
                 return false;
             return true;
         }

@@ -4,13 +4,13 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class PutPieceError : IMessage
+    public class PutPieceError : Message
     {
         public string ErrorSubtype { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
-            if (ErrorSubtype == null || (ErrorSubtype != "AgentNotHolding" && ErrorSubtype != "Other" && ErrorSubtype != "CannotPutThere")
+            if (ErrorSubtype == null || (ErrorSubtype != "AgentNotHolding" && ErrorSubtype != "Other" && ErrorSubtype != "CannotPutThere"))
                 return false;
             return true;
         }

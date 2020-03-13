@@ -5,12 +5,12 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class NotDefinedError : IMessage
+    public class NotDefinedError : Message
     {
         public Point Position { get; set; }
         public bool? HoldingPiece { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             return true;
         }

@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class DestroyPieceResponse : IMessage
+    public class DestroyPieceResponse : Message
     {
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             return true;
         }

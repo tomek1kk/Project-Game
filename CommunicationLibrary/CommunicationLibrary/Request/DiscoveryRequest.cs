@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class DiscoveryRequest : IMessage
+    public class DiscoveryRequest : Message
     {
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             return true;
         }

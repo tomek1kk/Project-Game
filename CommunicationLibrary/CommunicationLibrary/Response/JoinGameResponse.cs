@@ -4,12 +4,12 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class JoinGameResponse : IMessage
+    public class JoinGameResponse : Message
     {
         public bool? Accepted { get; set; }
         public int? AgentID { get; set; }
 
-        public bool ValidateMessage()
+        public override bool ValidateMessage()
         {
             if (Accepted == null)
                 return false;
