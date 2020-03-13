@@ -1,6 +1,6 @@
 using System;
 
-namespace GameMaster.Models
+namespace GameMaster.AspNet.Models
 {
     public class ErrorViewModel
     {
