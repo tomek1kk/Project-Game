@@ -13,7 +13,7 @@ namespace GameMaster.GUI
     public class GUIMantainer
     {
         readonly Thread _guiThread;
-        IWebHost _webHost;
+        readonly IWebHost _webHost;
         public GUIMantainer(IGUIDataProvider GUIDataProvider)
         {
             _webHost = CreateWebHostBuilder(GUIDataProvider).Build();
