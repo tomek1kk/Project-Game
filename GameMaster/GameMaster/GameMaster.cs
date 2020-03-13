@@ -14,6 +14,8 @@ namespace GameMaster
         {
             InitGui();
             //TODO: rest of starting game master
+            Thread.Sleep(10000);
+            _guiMantainer.StopGui();
         }
         public void GenerateGui()
         {
@@ -27,7 +29,6 @@ namespace GameMaster
             _guiDataProvider = new ManualGuiDataProvider(10, 10, 3);
             _guiMantainer = new GuiMantainer(_guiDataProvider);
             _guiMantainer.StartGui();
-            Thread.Sleep(10000);
         }
     }
 }

@@ -25,6 +25,10 @@ namespace GameMaster.GUI
         {
             _guiThread.Start();
         }
+        public void StopGui()
+        {
+            _webHost.StopAsync().Wait();
+        }
 
         static IWebHostBuilder CreateWebHostBuilder(IGuiDataProvider guiDataProvider) =>
             WebHost.CreateDefaultBuilder()
