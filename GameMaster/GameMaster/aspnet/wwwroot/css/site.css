@@ -30,10 +30,40 @@ body {
 
 #gameBoard td, #gameBoard tr {
     border: 2px solid black;
+    color: white
 }
-#gameBoard {
 
+#gameBoard .empty {
+    background-color: white;
 }
+#gameBoard .redPlayer {
+    background-color: red;
+}
+#gameBoard .bluePlayer {
+    background-color: blue;
+}
+#gameBoard .redPlayerWithPiece {
+    background-color: red;
+}
+#gameBoard .bluePlayerWithPiece {
+    background-color: blue;
+}
+#gameBoard .piece {
+    background-color: seagreen;
+}
+#gameBoard .goal {
+    background-color: bisque;
+    color: black;
+}
+#gameBoard .discoveredNonGoal {
+    background-color: white;
+    color: black;
+}
+#gameBoard .discoveredGoal {
+    background-color: bisque;
+    color: black;
+}
+
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */

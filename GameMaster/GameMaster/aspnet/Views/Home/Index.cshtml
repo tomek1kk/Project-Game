@@ -11,24 +11,55 @@
         </div>
     </div>
 
-        @section scripts {
-            <script type="text/javascript">
-                var columns = 10;
-                var rows = 10;
-                function ShowBoard() {
-                    var table = $("#gameBoard");
-                    //table.remove();
-                    for (var i = 0; i < rows; i++) {
-                        var row = $('<tr>');
-                        for (var j = 0; j < columns; j++) {
-                            var column = $('<td>');
-                            column.text("(" + i + ", " + j + ")");
-                            row.append(column);
-                            //TODO fill columns and rows and give them borders
-                        }
-                        table.append(row);
+    @section scripts {
+        <script type="text/javascript">
+            var columns = 10;
+            var rows = 10;
+            var boardFields;
+            function ConstructBoard() {
+                var table = $("#gameBoard");
+                boardFields = [];
+                //table.remove();
+                for (var i = 0; i < rows; i++) {
+                    var row = $('<tr>');
+                    boardFields[i] = [];
+                    for (var j = 0; j < columns; j++) {
+                        var column = $('<td>');
+                        column.text("(" + i + ", " + j + ")");
+                        row.append(column);
+                        boardFields[i][j] = { type: FieldTypesIndexed[3], handle: column };
+                    }
+                    table.append(row);
+                }
+            } 
+            function ColorBoard() {
+                for (var i = 0; i < rows; i++)
+                {
+                    for (var j = 0; j < rows; j++)
+                    {
+                        boardFields[i][j].handle.text(boardFields[i][j].type.text);
+                        boardFields[i][j].handle.addClass(boardFields[i][j].type.class);
                     }
                 }
-                ShowBoard();
-            </script>
-        }
+            }
+            const FieldTypes = {
+                EMPTY: { class: "empty", text:"" },
+                RED_PLAYER: { class: "redPlayer", text:"R" },
+                BLUE_PLAYER: { class: "bluePlayer", text:"B" },
+                RED_PLAYER_WITH_PIECE: { class: "redPlayerWithPiece", text:"RP" },
+                BLUE_PLAYER_WITH_PIECE: { class: "bluePlayerWithPiece", text:"BP" },
+                PIECE: { class: "piece", text:"P" },
+                GOAL: { class: "goal", text:"G" },
+                DISCOVERED_NON_GOAL: { class: "discoveredNonGoal", text:"N" },
+                DISCOVERED_GOAL: { class: "discoveredGoal", text:"YG" },
+            }
+            const FieldTypesIndexed = [
+                FieldTypes.EMPTY, FieldTypes.RED_PLAYER, FieldTypes.BLUE_PLAYER,
+                FieldTypes.RED_PLAYER_WITH_PIECE, FieldTypes.BLUE_PLAYER_WITH_PIECE,
+                FieldTypes.PIECE, FieldTypes.GOAL,
+                FieldTypes.DISCOVERED_NON_GOAL, FieldTypes.DISCOVERED_GOAL
+            ]
+            ConstructBoard();
+            ColorBoard();
+        </script>
+    }
