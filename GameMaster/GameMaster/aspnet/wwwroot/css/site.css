@@ -28,6 +28,12 @@ body {
     margin: 15px;
 }
 
+#gameBoard td, #gameBoard tr {
+    border: 2px solid black;
+}
+#gameBoard {
+
+}
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
     /* Hide captions */

@@ -2,29 +2,33 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <table><tbody id="gameBoard"></tbody></table>
-</div>
+    <div class="text-center">
+        <h1 class="display-4">Welcome</h1>
+        <div class="row d-flex">
+            <div class="col-sm-3"></div>
+            <table class="col-sm-6"><tbody id="gameBoard"></tbody></table>
+            <div class="col-sm-3"></div>
+        </div>
+    </div>
 
-@section scripts {
-    <script type="text/javascript">
-        var columns = 10;
-        var rows = 10;
-        function ShowBoard() {
-            var table = $("#gameBoard");
-            //table.remove();
-            for (var i = 0; i < rows; i++) {
-                var row = $('<tr>');
-                for (var j = 0; j < columns; j++) {
-                    var column = $('<td>');
-                    column.text("(" + i + ", " + j + ")");
-                    row.append(column);
-                    //TODO fill columns and rows and give them borders
+        @section scripts {
+            <script type="text/javascript">
+                var columns = 10;
+                var rows = 10;
+                function ShowBoard() {
+                    var table = $("#gameBoard");
+                    //table.remove();
+                    for (var i = 0; i < rows; i++) {
+                        var row = $('<tr>');
+                        for (var j = 0; j < columns; j++) {
+                            var column = $('<td>');
+                            column.text("(" + i + ", " + j + ")");
+                            row.append(column);
+                            //TODO fill columns and rows and give them borders
+                        }
+                        table.append(row);
+                    }
                 }
-                table.append(row);
-            }
+                ShowBoard();
+            </script>
         }
-        ShowBoard();
-    </script>
-}
