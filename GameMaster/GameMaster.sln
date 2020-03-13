@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaster", "GameMaster\GameMaster.csproj", "{C2264454-4D21-438D-824B-7CB5959A444C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GameMaster", "GameMaster\GameMaster.csproj", "{EBC22EA5-65B5-405E-83AF-E850775C63BD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C2264454-4D21-438D-824B-7CB5959A444C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C2264454-4D21-438D-824B-7CB5959A444C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C2264454-4D21-438D-824B-7CB5959A444C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2264454-4D21-438D-824B-7CB5959A444C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBC22EA5-65B5-405E-83AF-E850775C63BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBC22EA5-65B5-405E-83AF-E850775C63BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBC22EA5-65B5-405E-83AF-E850775C63BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBC22EA5-65B5-405E-83AF-E850775C63BD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

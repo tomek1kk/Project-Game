@@ -4,5 +4,27 @@
 
 <div class="text-center">
     <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <table><tbody id="gameBoard"></tbody></table>
 </div>
+
+@section scripts {
+    <script type="text/javascript">
+        var columns = 10;
+        var rows = 10;
+        function ShowBoard() {
+            var table = $("#gameBoard");
+            //table.remove();
+            for (var i = 0; i < rows; i++) {
+                var row = $('<tr>');
+                for (var j = 0; j < columns; j++) {
+                    var column = $('<td>');
+                    column.text("(" + i + ", " + j + ")");
+                    row.append(column);
+                    //TODO fill columns and rows and give them borders
+                }
+                table.append(row);
+            }
+        }
+        ShowBoard();
+    </script>
+}
