@@ -17,9 +17,10 @@
         var rows;
         var goalAreaHeight;
         var boardFields;
+        var timeout = 200; //timeout in ms between refreshes
         function ConstructBoard() {
+            $("#gameBoard tr").remove();
             var table = $("#gameBoard");
-            //table.remove();
             for (var i = 0; i < rows; i++) {
                 var row = $('<tr>');
                 for (var j = 0; j < columns; j++) {
@@ -62,6 +63,7 @@
                 }
                 ConstructBoard();
                 ColorBoard();
+                setTimeout(FetchBoard, timeout);
             });
         }
         const FieldTypes = {

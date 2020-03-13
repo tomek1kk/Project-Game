@@ -12,16 +12,4 @@ namespace GameMaster.GUI
         public int GoalAreaHeight { get; set; }
         public FieldType[,] Fields { get; set; }
     }
-    public enum FieldType
-    {
-        Empty,
-        RedPlayer,
-        BluePlayer,
-        RedPlayerWithPiece,
-        BluePlayerWithPiece,
-        Piece,
-        Goal,
-        DiscoveredNonGoal,
-        DiscoveredGoal,
-    }
 }

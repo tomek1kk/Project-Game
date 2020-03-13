@@ -21,8 +21,16 @@ namespace GameMaster.Aspnet.Controllers
         [HttpGet]
         public BoardModel GetBoardModel()
         {
-            
-            return _GUIDataProvider.GetCurrentBoardModel();
+            Random r = new Random();
+            var baseModel = _GUIDataProvider.GetCurrentBoardModel();
+            for(int i = 0; i < baseModel.Fields.GetLength(0); i++)
+            {
+                for(int j = 0; j < baseModel.Fields.GetLength(1); j++)
+                {
+                    baseModel.Fields[i, j] = (FieldType)(r.Next()%Enum.GetValues(typeof(FieldType)).Length);
+                }
+            }
+            return baseModel;
         }
 
         // GET api/<controller>/5

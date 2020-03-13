@@ -17,16 +17,16 @@ namespace GameMaster
     {
         public static void Main(string[] args)
         {
-            ManualGUIDataProvider gUIDataProvider = new ManualGUIDataProvider(15, 10, 3);
-            gUIDataProvider.SetField(3, 0, GUI.FieldType.BluePlayer);
-            CreateWebHostBuilder(args, gUIDataProvider).Build().Run();
+            ManualGUIDataProvider GUIDataProvider = new ManualGUIDataProvider(15, 10, 3);
+            GUIDataProvider.SetField(3, 0, GUI.FieldType.BluePlayer);
+            CreateWebHostBuilder(args, GUIDataProvider).Build().Run();
         }
 
-        static IWebHostBuilder CreateWebHostBuilder(string[] args, IGUIDataProvider gUIDataProvider) =>
+        static IWebHostBuilder CreateWebHostBuilder(string[] args, IGUIDataProvider GUIDataProvider) =>
             WebHost.CreateDefaultBuilder(args)
                 .ConfigureServices(servicesCollection =>
                 {
-                    servicesCollection.AddSingleton(gUIDataProvider);
+                    servicesCollection.AddSingleton(GUIDataProvider);
                 })
                 .UseStartup<Startup>();
     }
