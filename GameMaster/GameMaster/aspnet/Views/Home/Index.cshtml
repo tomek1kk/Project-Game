@@ -13,8 +13,9 @@
 
 @section scripts {
     <script type="text/javascript">
-        var columns = 10;
-        var rows = 10;
+        var columns;
+        var rows;
+        var goalAreaHeight;
         var boardFields;
         function ConstructBoard() {
             var table = $("#gameBoard");
@@ -35,6 +36,10 @@
                 for (var j = 0; j < columns; j++) {
                     boardFields[i][j].handle.text(boardFields[i][j].type.text);
                     boardFields[i][j].handle.addClass(boardFields[i][j].type.class);
+                    if (i < goalAreaHeight)
+                        boardFields[i][j].handle.addClass("redGoalArea");
+                    else if(i >= rows - goalAreaHeight)
+                        boardFields[i][j].handle.addClass("blueGoalArea");
                 }
             }
         }
@@ -45,6 +50,7 @@
             }).done(function (boardModel) {
                 columns = boardModel.width;
                 rows = boardModel.height;
+                goalAreaHeight = boardModel.goalAreaHeight;
                 boardFields = [];
                 for (var i = 0; i < rows; i++) {
                     boardFields[i] = [];
