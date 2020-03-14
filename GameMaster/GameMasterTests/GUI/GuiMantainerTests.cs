@@ -23,29 +23,5 @@ namespace GameMaster.GUI.Tests
             //then
             //InvalidOperationException caught
         }
-        [TestMethod()]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void TestGuiCantBeStartedTwoTimes()
-        {
-            //given
-            GuiMantainer guiMantainer = new GuiMantainer();
-            var mock = new Mock<IGuiDataProvider>();
-            mock.Setup(guiDataProvider => guiDataProvider.GetCurrentBoardModel())
-                .Returns(new BoardModel
-                {
-                    Width = 5,
-                    Height = 5,
-                    GoalAreaHeight = 1,
-                    Fields = new FieldType[5,5]
-                });
-
-
-            //when
-            guiMantainer.StartGui(mock.Object);
-            guiMantainer.StartGui(mock.Object);
-
-            //then
-            //InvalidOperationException caught
-        }
     }
 }
