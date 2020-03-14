@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: mcr.microsoft.com/dotnet/core/sdk:3.1
+image: microsoft/dotnet:sdk
 
 pipelines:
   default:
@@ -15,15 +15,26 @@ pipelines:
           - export PROJECT_NAME=CommunicationLibrary
           - dotnet restore
           - dotnet build $PROJECT_NAME
+
           - cd ..
+
           - cd Agent
           - export PROJECT_NAME=Agent
           - dotnet restore
           - dotnet build $PROJECT_NAME
-          #- dotnet test $TEST_NAME
+
           - cd ..
+
           - cd CommunicationServer
           - export PROJECT_NAME=CommunicationServer
           - dotnet restore
           - dotnet build $PROJECT_NAME
-          
+
+          - cd ..
+
+          - cd GameMaster
+          - export PROJECT_NAME=GameMaster
+          - export TEST_NAME=GameMasterTests
+          - dotnet restore
+          - dotnet build $PROJECT_NAME
+          - dotnet test $TEST_NAME

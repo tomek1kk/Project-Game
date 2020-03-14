@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <div class="row d-flex">
+        <div class="col-sm-3"></div>
+        <table class="col-sm-6"><tbody id="gameBoard"></tbody></table>
+        <div class="col-sm-3"></div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var columns;
+        var rows;
+        var goalAreaHeight;
+        var boardFields;
+        var timeout = 200; //timeout in ms between refreshes
+        function ConstructBoard() {
+            $("#gameBoard tr").remove();
+            var table = $("#gameBoard");
+            for (var i = 0; i < rows; i++) {
+                var row = $('<tr>');
+                for (var j = 0; j < columns; j++) {
+                    var column = $('<td>');
+                    row.append(column);
+                    boardFields[i][j].handle = column;
+                }
+                table.append(row);
+            }
+        }
+        function ColorBoard() {
+            for (var i = 0; i < rows; i++) {
+                for (var j = 0; j < columns; j++) {
+                    boardFields[i][j].handle.text(boardFields[i][j].type.text);
+                    boardFields[i][j].handle.addClass(boardFields[i][j].type.class);
+                    if (i < goalAreaHeight)
+                        boardFields[i][j].handle.addClass("redGoalArea");
+                    else if(i >= rows - goalAreaHeight)
+                        boardFields[i][j].handle.addClass("blueGoalArea");
+                }
+            }
+        }
+        function FetchBoard() {
+            var uri = "/api/Board";
+            $.ajax({
+                url: uri
+            }).done(function (boardModel) {
+                columns = boardModel.width;
+                rows = boardModel.height;
+                goalAreaHeight = boardModel.goalAreaHeight;
+                boardFields = [];
+                //here board needs to be transposed as api uses column major order
+                //and this code uses row major order
+                for (var j = 0; j < rows; j++) {
+                    boardFields[j] = [];
+                    for (var i = 0; i < columns; i++) {
+                        boardFields[j][i] =
+                            { type: FieldTypesIndexed[boardModel.fields[i][j]], handle: null };
+                    }
+                }
+                ConstructBoard();
+                ColorBoard();
+                setTimeout(FetchBoard, timeout);
+            });
+        }
+        const FieldTypes = {
+            EMPTY: { class: "empty", text: "" },
+            RED_PLAYER: { class: "redPlayer", text: "R" },
+            BLUE_PLAYER: { class: "bluePlayer", text: "B" },
+            RED_PLAYER_WITH_PIECE: { class: "redPlayerWithPiece", text: "RP" },
+            BLUE_PLAYER_WITH_PIECE: { class: "bluePlayerWithPiece", text: "BP" },
+            PIECE: { class: "piece", text: "P" },
+            GOAL: { class: "goal", text: "G" },
+            DISCOVERED_NON_GOAL: { class: "discoveredNonGoal", text: "N" },
+            DISCOVERED_GOAL: { class: "discoveredGoal", text: "YG" },
+        };
+        const FieldTypesIndexed = [
+            FieldTypes.EMPTY, FieldTypes.RED_PLAYER, FieldTypes.BLUE_PLAYER,
+            FieldTypes.RED_PLAYER_WITH_PIECE, FieldTypes.BLUE_PLAYER_WITH_PIECE,
+            FieldTypes.PIECE, FieldTypes.GOAL,
+            FieldTypes.DISCOVERED_NON_GOAL, FieldTypes.DISCOVERED_GOAL
+        ];
+        FetchBoard();
+    </script>
+}
