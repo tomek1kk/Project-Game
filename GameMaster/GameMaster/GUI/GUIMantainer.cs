@@ -10,19 +10,16 @@ using System.Threading;
 
 namespace GameMaster.GUI
 {
-    public class GuiMantainer
+    public class GuiMantainer : IGuiMantainer
     {
-        readonly Thread _guiThread;
-        readonly IWebHost _webHost;
-        public GuiMantainer(IGuiDataProvider guiDataProvider)
+        Thread _guiThread;
+        IWebHost _webHost;
+        public void StartGui(IGuiDataProvider guiDataProvider)
         {
             _webHost = CreateWebHostBuilder(guiDataProvider).Build();
             _guiThread = new Thread(
-                new ThreadStart(()=> _webHost.Run())
+                new ThreadStart(() => _webHost.Run())
                 );
-        }
-        public void StartGui()
-        {
             _guiThread.Start();
         }
         public void StopGui()

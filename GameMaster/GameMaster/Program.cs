@@ -18,7 +18,7 @@ namespace GameMaster
     {
         public static void Main(string[] args)
         {
-            GameMaster gameMaster = new GameMaster();
+            GameMaster gameMaster = new GameMaster(new GuiMantainer());
             gameMaster.Start();
         }
 

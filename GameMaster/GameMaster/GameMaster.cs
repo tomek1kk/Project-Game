@@ -8,8 +8,12 @@ namespace GameMaster
 {
     public class GameMaster
     {
-        GuiMantainer _guiMantainer;
+        readonly IGuiMantainer _guiMantainer;
         ManualGuiDataProvider _guiDataProvider;
+        public GameMaster(IGuiMantainer guiMantainer)
+        {
+            _guiMantainer = guiMantainer;
+        }
         public void Start()
         {
             InitGui();
@@ -27,8 +31,7 @@ namespace GameMaster
             //Manual Gui Data Provider can be replaced with another implementation of IGuiDataProvider
             //once code related to game board is complete
             _guiDataProvider = new ManualGuiDataProvider(10, 10, 3);
-            _guiMantainer = new GuiMantainer(_guiDataProvider);
-            _guiMantainer.StartGui();
+            _guiMantainer.StartGui(_guiDataProvider);
         }
     }
 }
