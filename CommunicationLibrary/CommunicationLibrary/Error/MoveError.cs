@@ -1,5 +1,4 @@
-﻿using CommunicationLibrary.Model;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -7,11 +6,11 @@ namespace CommunicationLibrary.Error
 {
     public class MoveError : Message
     {
-        public Point Position { get; set; }
+        public (int? x, int? y) Position { get; set; }
 
         public override bool ValidateMessage()
         {
-            if (Position == null || Position.X == null || Position.Y == null)
+            if (Position.x == null || Position.y == null)
                 return false;
             return true;
         }
