@@ -12,16 +12,16 @@ namespace GameMaster.Aspnet.Controllers
     [Route("api/[controller]")]
     public class BoardController : Controller
     {
-        private IGuiDataProvider _GUIDataProvider;
-        public BoardController(IGuiDataProvider GUIDataProvider)
+        private IGuiDataProvider _guiDataProvider;
+        public BoardController(IGuiDataProvider guiDataProvider)
         {
-            _GUIDataProvider = GUIDataProvider;
+            _guiDataProvider = guiDataProvider;
         }
         // GET: api/<controller>
         [HttpGet]
         public BoardModel GetBoardModel()
         {
-            return _GUIDataProvider.GetCurrentBoardModel();
+            return _guiDataProvider.GetCurrentBoardModel();
         }
 
 
