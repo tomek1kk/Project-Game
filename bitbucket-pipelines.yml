@@ -23,14 +23,14 @@ pipelines:
           - dotnet restore
           - dotnet build $PROJECT_NAME
 
-		  - cd ..
+          - cd ..
 
           - cd CommunicationServer
           - export PROJECT_NAME=CommunicationServer
           - dotnet restore
           - dotnet build $PROJECT_NAME
 
-		  - cd ..
+          - cd ..
 
           - cd GameMaster
           - export PROJECT_NAME=GameMaster
