@@ -43,5 +43,21 @@ namespace GameMaster.GUI.Tests
             Assert.AreEqual(width, result.Fields.GetLength(0));
             Assert.AreEqual(height, result.Fields.GetLength(1));
         }
+        [TestMethod()]
+        public void TestFieldChangesVisibleInBoardModel()
+        {
+            //given
+            int width = 15;
+            int height = 20;
+            int goalAreaHeight = 10;
+            var manualGuiDataProvider = new ManualGuiDataProvider(width, height, goalAreaHeight);
+            manualGuiDataProvider.SetField(1, 5, FieldType.BluePlayer);
+
+            //when
+            var result = manualGuiDataProvider.GetCurrentBoardModel();
+
+            //then
+            Assert.AreEqual(FieldType.BluePlayer, result.Fields[1, 5]);
+        }
     }
 }

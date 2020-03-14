@@ -20,7 +20,7 @@ pipelines:
           - cd ..
           - cd GameMaster
           - export PROJECT_NAME=GameMaster
-          #- export TEST_NAME=yourTestName
+          - export TEST_NAME=GameMasterTests
           - dotnet restore
           - dotnet build $PROJECT_NAME
-          #- dotnet test $TEST_NAME
+          - dotnet test $TEST_NAME
