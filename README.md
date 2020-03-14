@@ -14,7 +14,7 @@ Podział na role:
 
 1. Product owner : Krzysztof Kicun 
 2. Scrum Master: Palina Hrynko
-3. Zespół deweloperski: Polina Hrynko, Krzysztof Kicun, Karol Klimaszewski, Piotr Kowalik, Tomasz Kostowski
+3. Zespół deweloperski: Palina Hrynko, Krzysztof Kicun, Karol Klimaszewski, Piotr Kowalik, Tomasz Kostowski
 
 Początkowe założenia:
 
