@@ -3,7 +3,7 @@
 
 ## Technologia
 
-Projekt został utworzony w technologi .NET Core 3.1. Wartwa graficzna zostanie zaprezentowana w postaci aplikacji webowej.
+Projekt został utworzony w technologi .NET Core 2.1. Wartwa graficzna zostanie zaprezentowana w postaci aplikacji webowej.
 
 ---
 
