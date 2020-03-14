@@ -11,9 +11,19 @@ pipelines:
         caches:
           - dotnetcore
         script: # Modify the commands below to build your repository.
+          - cd CommunicationLibrary
+          - export PROJECT_NAME=CommunicationLibrary
+          - dotnet restore
+          - dotnet build $PROJECT_NAME
+          - cd ..
           - cd Agent
           - export PROJECT_NAME=Agent
-          #- export TEST_NAME=yourTestName
           - dotnet restore
           - dotnet build $PROJECT_NAME
           #- dotnet test $TEST_NAME
+          - cd ..
+          - cd CommunicationServer
+          - export PROJECT_NAME=CommunicationServer
+          - dotnet restore
+          - dotnet build $PROJECT_NAME
+          
