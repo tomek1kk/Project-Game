@@ -9,13 +9,14 @@ using CommunicationLibrary;
 
 namespace CommunicationServer
 {
-    public class CommunicationServerMessageService : IMessageService
+    public class CommunicationServerMessageService : IMessageSenderReceiver
     {
         private TcpListener server;
         private int gameMasterPort;
         private int agentPort;
         private int port;
         private string ip;
+
 
         public void InitService()
         {
@@ -24,22 +25,6 @@ namespace CommunicationServer
 
             server = new TcpListener(ipAddress, port);
             server.Start();
-        }
-
-        public void ListenForMessages()
-        {
-            TcpListener listener = null;
-            listener = new TcpListener(IPAddress.Any, 8080);
-            listener.Start();
-            Console.WriteLine("Server started");
-            while (true)
-            {
-                Console.WriteLine("Waiting for connections");
-                TcpClient client = listener.AcceptTcpClient();
-                Console.WriteLine("Accepted new client connection...");
-                Thread t = new Thread(ProcessRequests);
-                t.Start(client);
-            }
         }
 
         private void ProcessRequests(object argument)
@@ -62,7 +47,28 @@ namespace CommunicationServer
             Console.WriteLine("Agent connection closed!");
         }
 
-        public bool Send<T>(T message, int port) where T : Message
+        public void Send(Message m)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void StartReceiving(Action<Message> receiveCallback)
+        {
+            TcpListener listener = null;
+            listener = new TcpListener(IPAddress.Any, 8080);
+            listener.Start();
+            Console.WriteLine("Server started");
+            while (true)
+            {
+                Console.WriteLine("Waiting for connections");
+                TcpClient client = listener.AcceptTcpClient();
+                Console.WriteLine("Accepted new client connection...");
+                Thread t = new Thread(ProcessRequests);
+                t.Start(client);
+            }
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

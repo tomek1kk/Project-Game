@@ -8,13 +8,13 @@ namespace CommunicationServer
     {
         private Dictionary<int, Descriptor> correlation;
         private Descriptor GMDescriptor;
-        private static IMessageService messageService = new CommunicationServerMessageService();
+        private static IMessageSenderReceiver messageService = new CommunicationServerMessageService();
 
         
         static void Main(string[] args)
         {
-            // Get config
-            messageService.ListenForMessages();
+            // TODO: Get config
+            messageService.StartReceiving(null);
         }
 
         public void GetConfig()
