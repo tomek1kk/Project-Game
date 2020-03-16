@@ -13,8 +13,10 @@ pipelines:
         script: # Modify the commands below to build your repository.
           - cd CommunicationLibrary
           - export PROJECT_NAME=CommunicationLibrary
+          - export TEST_NAME=CommunicationLibraryTests
           - dotnet restore
           - dotnet build $PROJECT_NAME
+          - dotnet test $TEST_NAME
 
           - cd ..
 
