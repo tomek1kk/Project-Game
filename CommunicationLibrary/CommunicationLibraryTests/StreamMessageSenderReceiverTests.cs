@@ -9,11 +9,12 @@ using System.Threading.Tasks;
 using System.IO;
 using Moq;
 using System.Collections.Concurrent;
+using CommunicationLibraryTests.HelperClasses;
 
 namespace CommunicationLibrary.Tests
 {
     [TestClass()]
-    public class TCPDescriptorTests
+    public class StreamMessageSenderReceiverTests
     {
         class TestMessage : Message
         {
@@ -27,7 +28,7 @@ namespace CommunicationLibrary.Tests
         {
             public string AsString(Message message)
             {
-                throw new NotImplementedException();
+                return ((TestMessage)message).Text;
             }
             public Message Parse(string messageString)
             {
@@ -52,13 +53,33 @@ namespace CommunicationLibrary.Tests
             StreamMessageSenderReceiver streamMessageSenderReceiver
                 = new StreamMessageSenderReceiver(stream, new TestParser());
             BlockingCollection<Message> messages = new BlockingCollection<Message>();
-
-            //when
             streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
 
-            //then
+            //when
             Message received = messages.Take();
+
+            //then
             Assert.AreEqual(expected, ((TestMessage)received).Text);
+        }
+
+        [TestMethod()]
+        public void TestStreamMessageSenderReceiverCanTransferMessage()
+        {
+            TestMessage expected = new TestMessage { Text = "Hello world" };
+            Stream stream = new EchoStream();
+            BinaryReader reader = new BinaryReader(stream);
+
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(stream, new TestParser());
+            BlockingCollection<Message> messages = new BlockingCollection<Message>();
+            streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
+
+            //when
+            streamMessageSenderReceiver.Send(expected);
+            Message received = messages.Take();
+
+            //then
+            Assert.AreEqual(expected.Text, ((TestMessage)received).Text);
         }
     }
 }

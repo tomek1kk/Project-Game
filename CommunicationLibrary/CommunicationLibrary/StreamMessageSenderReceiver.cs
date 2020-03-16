@@ -61,7 +61,10 @@ namespace CommunicationLibrary
 
         public void Send(Message m)
         {
-            throw new NotImplementedException();
+            RawMessageSender rawMessageSender = new RawMessageSender(
+                (bytes, count) => _tcpStream.Write(bytes, 0, count));
+            string messageString = _parser.AsString(m);
+            rawMessageSender.SendMessage(messageString);
         }
 
         public void StartReceiving(Action<Message> receiveCallback)
