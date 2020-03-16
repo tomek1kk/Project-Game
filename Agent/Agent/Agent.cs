@@ -15,6 +15,7 @@ namespace Agent
     {
         public static Queue<string> messageQueue = new Queue<string>();
         private AgentConfiguration configuration;
+        private IParser parser = new Parser();
 
         public Agent()
         {
@@ -40,7 +41,7 @@ namespace Agent
             {
                 TeamId = configuration.TeamId
             };
-            messageQueue.Enqueue(JsonParser.ToJSON<JoinGameRequest>(joinGameRequest));
+            messageQueue.Enqueue(parser.AsString<JoinGameRequest>(joinGameRequest));
         }
 
         private void Communicate()

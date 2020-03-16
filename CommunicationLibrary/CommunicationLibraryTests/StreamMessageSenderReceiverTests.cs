@@ -19,6 +19,15 @@ namespace CommunicationLibrary.Tests
         class TestMessage : Message
         {
             public string Text { get; set; }
+
+            public override int MessageId
+            {
+                get
+                {
+                    return 123;
+                }
+            }
+
             public override bool ValidateMessage()
             {
                 return true;
@@ -26,10 +35,11 @@ namespace CommunicationLibrary.Tests
         }
         class TestParser : IParser
         {
-            public string AsString(Message message)
+            public string AsString<T>(T message) where T : Message
             {
-                return ((TestMessage)message).Text;
+                return message.MessageId.ToString();
             }
+
             public Message Parse(string messageString)
             {
                 return new TestMessage { Text = messageString };
@@ -65,7 +75,7 @@ namespace CommunicationLibrary.Tests
         [TestMethod()]
         public void TestStreamMessageSenderReceiverCanTransferMessage()
         {
-            TestMessage expected = new TestMessage { Text = "Hello world" };
+            TestMessage expected = new TestMessage();
             Stream stream = new EchoStream();
             BinaryReader reader = new BinaryReader(stream);
 
@@ -79,7 +89,7 @@ namespace CommunicationLibrary.Tests
             Message received = messages.Take();
 
             //then
-            Assert.AreEqual(expected.Text, ((TestMessage)received).Text);
+            Assert.AreEqual(expected.MessageId, ((TestMessage)received).MessageId);
         }
     }
 }

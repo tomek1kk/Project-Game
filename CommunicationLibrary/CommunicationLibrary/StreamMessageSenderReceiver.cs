@@ -19,8 +19,8 @@ namespace CommunicationLibrary
         {
             _tcpStream = tcpStream;
             _parser = parser;
-            _receivingThread = 
-                new Thread(()=>ReceivingThreadFunction(_cancellationTokenSource.Token));
+            _receivingThread =
+                new Thread(() => ReceivingThreadFunction(_cancellationTokenSource.Token));
         }
 
         private void ReceivingThreadFunction(CancellationToken cancellationToken)
@@ -37,14 +37,14 @@ namespace CommunicationLibrary
                 );
 
             //message reading loop
-            while(!cancellationToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
                 string nextMessageString;
                 try
                 {
                     nextMessageString = reader.GetNextMessageAsString();
                 }
-                catch(Exception)
+                catch (Exception)
                 //either input stream has closed or thread was cancelled, in both cases we end the thread
                 {
                     break;

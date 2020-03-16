@@ -6,7 +6,15 @@ namespace CommunicationLibrary.Response
 {
     public class CheckHoldedPieceResponse : Message
     {
-        public bool? Sham { get; set; } 
+        public bool? Sham { get; set; }
+
+        public override int MessageId
+        {
+            get
+            {
+                return 101;
+            }
+        }
 
         public override bool ValidateMessage()
         {

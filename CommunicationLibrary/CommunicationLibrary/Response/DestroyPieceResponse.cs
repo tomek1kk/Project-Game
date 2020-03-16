@@ -10,5 +10,12 @@ namespace CommunicationLibrary.Response
         {
             return true;
         }
+        public override int MessageId
+        {
+            get
+            {
+                return 102;
+            }
+        }
     }
 }

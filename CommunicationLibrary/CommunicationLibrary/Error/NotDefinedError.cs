@@ -13,5 +13,12 @@ namespace CommunicationLibrary.Error
         {
             return true;
         }
+        public override int MessageId
+        {
+            get
+            {
+                return 905;
+            }
+        }
     }
 }

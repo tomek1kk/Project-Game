@@ -12,6 +12,13 @@ namespace CommunicationLibrary.Request
                 return false;
             return true;
         }
+        public override int MessageId
+        {
+            get
+            {
+                return 5;
+            }
+        }
 
         public int? AskedAgentId { get; set; }
     }

@@ -8,13 +8,8 @@ namespace CommunicationLibrary
     public abstract class Message
     {
         public abstract bool ValidateMessage();
+        public abstract int MessageId { get; }
+        public int? AgentId { get; }
 
-        public string Name
-        {
-            get
-            {
-                return this.GetType().Name;
-            }
-        }
     }
 }
