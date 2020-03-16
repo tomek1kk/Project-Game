@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary
 {
-    interface IDescriptor : IDisposable
+    interface IMessageSenderReceiver : IDisposable
     {
         void Send(Message m);
-        void SetReceiveCallback(Action<Message> receiveCallback);
+        void StartReceiving(Action<Message> receiveCallback);
     }
 }

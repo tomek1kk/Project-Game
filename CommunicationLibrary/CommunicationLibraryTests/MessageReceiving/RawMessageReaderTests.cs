@@ -1,11 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CommunicationLibrary.MessageReceiving;
+using CommunicationLibrary.RawMessageProcessing;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-namespace CommunicationLibrary.MessageReceiving.Tests
+namespace CommunicationLibrary.RawMessageProcessing.Tests
 {
     [TestClass()]
     public class RawMessageReaderTests

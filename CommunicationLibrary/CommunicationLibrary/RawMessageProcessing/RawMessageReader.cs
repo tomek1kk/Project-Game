@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommunicationLibrary.MessageReceiving
+namespace CommunicationLibrary.RawMessageProcessing
 {
     public class RawMessageReader
     {
