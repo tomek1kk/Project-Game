@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMaster", "GameMaster\GameMaster.csproj", "{EBC22EA5-65B5-405E-83AF-E850775C63BD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F94AAF28-BB15-4948-A391-2344CFB3E9CE} = {F94AAF28-BB15-4948-A391-2344CFB3E9CE}
+	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMasterTests", "GameMasterTests\GameMasterTests.csproj", "{FB5F97E3-046A-4B8F-8667-6CCC0922F8F7}"
 EndProject
