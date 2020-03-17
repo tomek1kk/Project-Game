@@ -17,7 +17,7 @@ namespace CommunicationLibrary
         //for json parser
         public Message() { }
         public T MessagePayload { get; set; }
-        public override MessageType MessageId { get => messageDictionary[typeof(T)]; set { } }
+        public override MessageType MessageId => messageDictionary[typeof(T)];
 
         private static Dictionary<Type, MessageType> messageDictionary = new Dictionary<Type, MessageType>()
         {

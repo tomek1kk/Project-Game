@@ -12,7 +12,6 @@ namespace CommunicationLibrary
         public abstract MessageType MessageId
         {
             get;
-            set;
         }
         public int? AgentId { get; }
         
