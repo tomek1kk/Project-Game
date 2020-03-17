@@ -12,6 +12,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMasterTests", "GameMast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommunicationLibrary", "..\CommunicationLibrary\CommunicationLibrary\CommunicationLibrary.csproj", "{F94AAF28-BB15-4948-A391-2344CFB3E9CE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommunicationServer", "..\CommunicationServer\CommunicationServer\CommunicationServer.csproj", "{FF04339E-AA2A-41EF-8AE1-808CE5A0F208}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agent", "..\Agent\Agent\Agent.csproj", "{B60275E2-EAF4-44BC-AF14-EAB98FB44D60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,6 +34,14 @@ Global
 		{F94AAF28-BB15-4948-A391-2344CFB3E9CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F94AAF28-BB15-4948-A391-2344CFB3E9CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F94AAF28-BB15-4948-A391-2344CFB3E9CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF04339E-AA2A-41EF-8AE1-808CE5A0F208}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF04339E-AA2A-41EF-8AE1-808CE5A0F208}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF04339E-AA2A-41EF-8AE1-808CE5A0F208}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF04339E-AA2A-41EF-8AE1-808CE5A0F208}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B60275E2-EAF4-44BC-AF14-EAB98FB44D60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B60275E2-EAF4-44BC-AF14-EAB98FB44D60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B60275E2-EAF4-44BC-AF14-EAB98FB44D60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B60275E2-EAF4-44BC-AF14-EAB98FB44D60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using GameMaster.Game;
 
 namespace GameMaster
 {
@@ -12,6 +13,7 @@ namespace GameMaster
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
         ManualGuiDataProvider _guiDataProvider;
+        Map map;
 
         public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
         {
@@ -20,10 +22,11 @@ namespace GameMaster
         }
         public void Start()
         {
+            map = new Map(_gmConfiguration);
             InitGui();
             //TODO: rest of starting game master
 
-            Thread.Sleep(10000);
+            Thread.Sleep(1000000);
             _guiMantainer.StopGui();
         }
         public void GenerateGui()
@@ -35,8 +38,11 @@ namespace GameMaster
         {
             //Manual Gui Data Provider can be replaced with another implementation of IGuiDataProvider
             //once code related to game board is complete
-            _guiDataProvider = new ManualGuiDataProvider(_gmConfiguration.BoardX, _gmConfiguration.BoardY, _gmConfiguration.GoalAreaHight);
-            _guiMantainer.StartGui(_guiDataProvider);
+            //_guiDataProvider = new ManualGuiDataProvider(_gmConfiguration.BoardX, _gmConfiguration.BoardY, _gmConfiguration.GoalAreaHight);
+            //_guiMantainer.StartGui(_guiDataProvider);
+
+            //prototype of GameMaster Map
+            _guiMantainer.StartGui(map);
         }
     }
 }
