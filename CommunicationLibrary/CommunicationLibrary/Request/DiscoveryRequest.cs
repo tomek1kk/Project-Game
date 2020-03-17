@@ -4,18 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class DiscoveryRequest : Message
+    public class DiscoveryRequest : MessagePayload
     {
         public override bool ValidateMessage()
         {
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 3;
-            }
         }
     }
 }

@@ -4,18 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class PickPieceResponse : Message
+    public class PickPieceResponse : MessagePayload
     {
         public override bool ValidateMessage()
         {
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 109;
-            }
         }
     }
 }

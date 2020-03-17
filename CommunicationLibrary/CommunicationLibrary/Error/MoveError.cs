@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class MoveError : Message
+    public class MoveError : MessagePayload
     {
         public (int? x, int? y) Position { get; set; }
 
@@ -13,13 +13,6 @@ namespace CommunicationLibrary.Error
             if (Position.x == null || Position.y == null)
                 return false;
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 901;
-            }
         }
     }
 }

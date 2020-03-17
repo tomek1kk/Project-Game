@@ -4,18 +4,11 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class DestroyPieceResponse : Message
+    public class DestroyPieceResponse : MessagePayload
     {
         public override bool ValidateMessage()
         {
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 102;
-            }
         }
     }
 }

@@ -4,18 +4,18 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class CheckHoldedPieceRequest : Message
+    public class CheckHoldedPieceRequest : MessagePayload
     {
         public override bool ValidateMessage()
         {
             return true;
         }
-        public override int MessageId
-        {
-            get
-            {
-                return 1;
-            }
-        }
+        //public override int MessageId
+        //{
+        //    get
+        //    {
+        //        return 1;
+        //    }
+        //}
     }
 }

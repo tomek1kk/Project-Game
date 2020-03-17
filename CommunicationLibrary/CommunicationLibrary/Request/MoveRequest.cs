@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class MoveRequest : Message
+    public class MoveRequest : MessagePayload
     {
         public string Direction { get; set; }
 
@@ -13,13 +13,6 @@ namespace CommunicationLibrary.Request
             if (Direction == "N" || Direction == "S" || Direction == "W" || Direction == "E")
                 return true;
             return false;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 7;
-            }
         }
     }
 }

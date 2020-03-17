@@ -2,6 +2,7 @@
 using CommunicationLibrary.Request;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -25,9 +26,15 @@ namespace Agent
                 CsPort = 8080,
                 TeamId = Enum.GetName(typeof(Team), Team.Blue)
             };
-            Thread thread = new Thread(Communicate);
-            thread.Start();
-            JoinTheGame();
+
+            Stream stream = new MemoryStream();
+            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
+
+            streamMessageSenderReceiver.Send(new JoinGameRequest() { TeamId = configuration.TeamId });
+
+            //Thread thread = new Thread(Communicate);
+            //thread.Start();
+            //JoinTheGame();
         }
 
         static void Main(string[] args)

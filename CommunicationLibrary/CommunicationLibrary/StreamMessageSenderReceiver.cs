@@ -59,11 +59,11 @@ namespace CommunicationLibrary
             _receivingThread.Join();
         }
 
-        public void Send(Message m)
+        public void Send<T>(Message<T> m) where T : MessagePayload
         {
             RawMessageSender rawMessageSender = new RawMessageSender(
                 (bytes, count) => _tcpStream.Write(bytes, 0, count));
-            string messageString = _parser.AsString(m);
+            string messageString = _parser.AsString<T>(m);
             rawMessageSender.SendMessage(messageString);
         }
 

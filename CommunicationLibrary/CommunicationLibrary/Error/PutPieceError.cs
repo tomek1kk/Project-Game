@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class PutPieceError : Message
+    public class PutPieceError : MessagePayload
     {
         public string ErrorSubtype { get; set; }
 
@@ -13,13 +13,6 @@ namespace CommunicationLibrary.Error
             if (ErrorSubtype == null || (ErrorSubtype != "AgentNotHolding" && ErrorSubtype != "Other" && ErrorSubtype != "CannotPutThere"))
                 return false;
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 903;
-            }
         }
     }
 }
