@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Text.Json;
 using CommunicationLibrary.Error;
+using CommunicationLibrary.Request;
 
 namespace CommunicationServer
 {
@@ -31,13 +32,13 @@ namespace CommunicationServer
                 Parser parser = new Parser();
                 TcpClient client = tcpListener.AcceptTcpClient();
                 Console.WriteLine("Connected!");
-                Thread t = new Thread(HandleThread);
+                Thread t = new Thread(HandleClient);
                 t.Start(client);
 
             }
         }
 
-        private static void HandleThread(object client)
+        private static void HandleClient(object client)
         {
             Console.WriteLine("In new thread");
 
@@ -49,9 +50,24 @@ namespace CommunicationServer
             streamMessageSenderReceiver.StartReceiving(message =>
             {
                 Console.WriteLine("Received message: " + message.MessageId);
-                streamMessageSenderReceiver.Send<NotDefinedError>(new Message<NotDefinedError>() { MessagePayload = new NotDefinedError() { HoldingPiece = true } });
+                messages.Add(message);
+                SendResponse(message, streamMessageSenderReceiver);
             });
 
+        }
+
+        private static void SendResponse(Message message, IMessageSenderReceiver messageSender)
+        {
+            switch (message.MessageId)
+            {
+                case MessageType.JoinGameRequest:
+                    messageSender.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest() { TeamId = "bbb" } });
+                    break;
+                default:
+                    messageSender.Send(new Message<NotDefinedError>() { MessagePayload = new NotDefinedError() { HoldingPiece = true } });
+                    break;
+
+            }
         }
 
     }

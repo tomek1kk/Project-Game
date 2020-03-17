@@ -34,11 +34,18 @@ namespace Agent
             NetworkStream stream = client.GetStream();
             StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
             streamMessageSenderReceiver.StartReceiving(message => Console.WriteLine("Got message: " + message.MessageId));
-            int i = 0;
-            while (i++ < 100)
+            streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+            
+            Random r = new Random();
+            while (true)
             {
-                streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+
                 Console.ReadKey();
+                var p = r.Next() % 2;
+                if (p == 0)
+                    streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+                else
+                    streamMessageSenderReceiver.Send(new Message<PickPieceRequest>() { MessagePayload = new PickPieceRequest() });
             }
             streamMessageSenderReceiver.Dispose();
 
