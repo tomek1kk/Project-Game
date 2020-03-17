@@ -20,13 +20,13 @@ namespace CommunicationLibrary.Tests
         {
             public string Text { get; set; }
 
-            public override int MessageId
-            {
-                get
-                {
-                    return 123;
-                }
-            }
+            //public override int MessageId
+            //{
+            //    get
+            //    {
+            //        return 123;
+            //    }
+            //}
 
             public override bool ValidateMessage()
             {
