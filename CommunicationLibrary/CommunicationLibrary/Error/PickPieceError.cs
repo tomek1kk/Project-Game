@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class PickPieceError : Message
+    public class PickPieceError : MessagePayload
     {
         public string ErrorSubtype { get; set; }
 

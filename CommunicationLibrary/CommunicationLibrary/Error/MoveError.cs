@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class MoveError : Message
+    public class MoveError : MessagePayload
     {
         public (int? x, int? y) Position { get; set; }
 

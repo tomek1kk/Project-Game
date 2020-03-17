@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class JoinGameRequest : Message
+    public class JoinGameRequest : MessagePayload
     {
         public string TeamId { get; set; }
 

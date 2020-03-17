@@ -4,9 +4,9 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class CheckHoldedPieceResponse : Message
+    public class CheckHoldedPieceResponse : MessagePayload
     {
-        public bool? Sham { get; set; } 
+        public bool? Sham { get; set; }
 
         public override bool ValidateMessage()
         {

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class NotDefinedError : Message
+    public class NotDefinedError : MessagePayload
     {
         public (int? x, int? y) Position { get; set; }
         public bool? HoldingPiece { get; set; }

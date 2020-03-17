@@ -2,6 +2,7 @@
 using CommunicationLibrary.Request;
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
@@ -15,6 +16,7 @@ namespace Agent
     {
         public static Queue<string> messageQueue = new Queue<string>();
         private AgentConfiguration configuration;
+        private IParser parser = new Parser();
 
         public Agent()
         {
@@ -24,9 +26,19 @@ namespace Agent
                 CsPort = 8080,
                 TeamId = Enum.GetName(typeof(Team), Team.Blue)
             };
-            Thread thread = new Thread(Communicate);
-            thread.Start();
-            JoinTheGame();
+
+            TcpClient client = new TcpClient(configuration.CsIp, configuration.CsPort);
+            NetworkStream stream = client.GetStream();
+            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
+
+            int i = 0;
+            while (i++ < 100)
+            {
+                streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+                streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "red" } });
+                Console.ReadKey();
+            }
+            streamMessageSenderReceiver.Dispose();
         }
 
         static void Main(string[] args)
@@ -36,42 +48,6 @@ namespace Agent
 
         public void JoinTheGame()
         {
-            JoinGameRequest joinGameRequest = new JoinGameRequest()
-            {
-                TeamId = configuration.TeamId
-            };
-            messageQueue.Enqueue(JsonParser.ToJSON<JoinGameRequest>(joinGameRequest));
-        }
-
-        private void Communicate()
-        {
-            IPAddress ipAddress = IPAddress.Parse(configuration.CsIp);
-
-            TcpClient client = new TcpClient(ipAddress.ToString(), configuration.CsPort);
-
-            Console.WriteLine("Agent connected");
-            StreamReader reader = new StreamReader(client.GetStream());
-            StreamWriter writer = new StreamWriter(client.GetStream());
-
-            while (true) // while game has not ended
-            {
-                if (messageQueue.Count > 0)
-                {
-                    string m = messageQueue.Dequeue();
-                    writer.WriteLine(m);
-                    writer.Flush();
-                    if (m != "dc")
-                    {
-                        String server_string = reader.ReadLine();
-                        Console.WriteLine(server_string);
-                    }
-                    else
-                        break;
-                }
-            }
-            reader.Close();
-            writer.Close();
-            client.Close();
 
         }
     }

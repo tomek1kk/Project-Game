@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class PutPieceResponse : Message
+    public class PutPieceResponse : MessagePayload
     {
         public override bool ValidateMessage()
         {

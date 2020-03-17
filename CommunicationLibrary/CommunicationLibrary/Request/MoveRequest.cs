@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class MoveRequest : Message
+    public class MoveRequest : MessagePayload
     {
         public string Direction { get; set; }
 
