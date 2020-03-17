@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Text.Json;
+using CommunicationLibrary.Error;
 
 namespace CommunicationServer
 {
@@ -48,6 +49,7 @@ namespace CommunicationServer
             streamMessageSenderReceiver.StartReceiving(message =>
             {
                 Console.WriteLine("Received message: " + message.MessageId);
+                streamMessageSenderReceiver.Send<NotDefinedError>(new Message<NotDefinedError>() { MessagePayload = new NotDefinedError() { HoldingPiece = true } });
             });
 
         }
