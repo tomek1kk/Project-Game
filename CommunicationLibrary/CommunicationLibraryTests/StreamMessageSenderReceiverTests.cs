@@ -10,85 +10,96 @@ using System.IO;
 using Moq;
 using System.Collections.Concurrent;
 using CommunicationLibraryTests.HelperClasses;
+using CommunicationLibrary.Request;
 
 namespace CommunicationLibrary.Tests
 {
     [TestClass()]
     public class StreamMessageSenderReceiverTests
     {
-        //class TestMessagePayload : MessagePayload
-        //{
-        //    public string Text { get; set; }
+        class TestParser : IParser
+        {
 
-        //    //public override int MessageId
-        //    //{
-        //    //    get
-        //    //    {
-        //    //        return 123;
-        //    //    }
-        //    //}
+            public string AsString<T>(Message<T> message) where T : MessagePayload
+            {
+                return ((Message<JoinGameRequest>)(Message)message).MessagePayload.TeamId.ToString();
+            }
 
-        //    public override bool ValidateMessage()
-        //    {
-        //        return true;
-        //    }
-        //}
-        //class TestParser : IParser
-        //{
-        //    public string AsString<T>(T message) where T : Message
-        //    {
-        //        return message.MessageId.ToString();
-        //    }
+            public Message Parse(string messageString)
+            {
+                return new Message<JoinGameRequest>(
+                    new JoinGameRequest { TeamId = messageString });
+            }
+        }
+        [TestMethod()]
+        public void TestStreamMessageSenderReceiverCanReceiveMessage()
+        {
+            //given
+            String expected = "Hello world";
 
-        //    public Message Parse(string messageString)
-        //    {
-        //        return new TestMessage { Text = messageString };
-        //    }
-        //}
-        //[TestMethod()]
-        //public void TestStreamMessageSenderReceiverCanReceiveMessage()
-        //{
-        //    //given
-        //    String expected = "Hello world";
+            byte[] inputBuffer = new byte[20];
 
-        //    byte[] inputBuffer = new byte[20];
+            byte[] textBytes = Encoding.UTF8.GetBytes(expected);
+            byte[] lengthBytes = BitConverter.GetBytes((ushort)textBytes.Length);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(lengthBytes);
+            Array.Copy(lengthBytes, 0, inputBuffer, 0, 2);
+            Array.Copy(textBytes, 0, inputBuffer, 2, textBytes.Length);
+            Stream stream = new MemoryStream(inputBuffer);
 
-        //    byte[] textBytes = Encoding.UTF8.GetBytes(expected);
-        //    byte[] lengthBytes = BitConverter.GetBytes((ushort)textBytes.Length);
-        //    if (!BitConverter.IsLittleEndian) Array.Reverse(lengthBytes);
-        //    Array.Copy(lengthBytes, 0, inputBuffer, 0, 2);
-        //    Array.Copy(textBytes, 0, inputBuffer, 2, textBytes.Length);
-        //    Stream stream = new MemoryStream(inputBuffer);
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(stream, new TestParser());
+            BlockingCollection<Message> messages = new BlockingCollection<Message>();
+            streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
 
-        //    StreamMessageSenderReceiver streamMessageSenderReceiver
-        //        = new StreamMessageSenderReceiver(stream, new TestParser());
-        //    BlockingCollection<Message> messages = new BlockingCollection<Message>();
-        //    streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
+            //when
+            Message received = messages.Take();
 
-        //    //when
-        //    Message received = messages.Take();
+            //then
+            Assert.AreEqual(expected, ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
+        }
 
-        //    //then
-        //    Assert.AreEqual(expected, ((TestMessage)received).Text);
-        //}
+        [TestMethod()]
+        public void TestStreamMessageSenderReceiverCanTransferMessage()
+        {
+            Stream stream = new EchoStream();
 
-        //[TestMethod()]
-        //public void TestStreamMessageSenderReceiverCanTransferMessage()
-        //{
-        //    Stream stream = new EchoStream();
-        //    BinaryReader reader = new BinaryReader(stream);
+            Message<JoinGameRequest> expected = new Message<JoinGameRequest>
+                (new JoinGameRequest { TeamId = "Hello" });
 
-        //    StreamMessageSenderReceiver streamMessageSenderReceiver
-        //        = new StreamMessageSenderReceiver(stream, new TestParser());
-        //    BlockingCollection<Message> messages = new BlockingCollection<Message>();
-        //    streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(stream, new TestParser());
+            BlockingCollection<Message> messages = new BlockingCollection<Message>();
+            streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
 
-        //    //when
-        //    streamMessageSenderReceiver.Send(expected);
-        //    Message received = messages.Take();
+            //when
+            streamMessageSenderReceiver.Send(expected);
+            Message received = messages.Take();
 
-        //    //then
-        //    Assert.AreEqual(expected.MessageId, ((TestMessage)received).MessageId);
-        //}
+            //then
+            Assert.AreEqual(expected.MessagePayload.TeamId,
+                ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
+        }
+
+        [TestMethod()]
+        public void TestStreamMessageSenderReceiverCanUseParser()
+        {
+            Stream stream = new EchoStream();
+
+            Message<JoinGameRequest> expected = new Message<JoinGameRequest>
+                (new JoinGameRequest { TeamId = "Hello" });
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(stream, new Parser());
+
+            BlockingCollection<Message> messages = new BlockingCollection<Message>();
+            streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
+
+            //when
+            streamMessageSenderReceiver.Send(expected);
+            Message received = messages.Take();
+
+            //then
+            Assert.AreEqual(expected.MessagePayload.TeamId,
+                ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
+        }
     }
 }

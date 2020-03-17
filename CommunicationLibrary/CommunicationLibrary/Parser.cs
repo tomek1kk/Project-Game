@@ -23,7 +23,8 @@ namespace CommunicationLibrary
         public Message Parse(string messageString)
         {
             EmptyMessage message = (EmptyMessage)JsonSerializer.Deserialize(messageString, typeof(EmptyMessage));
-            return (Message)JsonSerializer.Deserialize(messageString, message.MessageId.GetType());
+            return (Message)JsonSerializer.Deserialize(messageString,
+                typeof(Message<>).MakeGenericType(message.MessageId.GetObjectType()));
             
             
         }

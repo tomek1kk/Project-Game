@@ -9,9 +9,10 @@ namespace CommunicationLibrary
 {
     public abstract class Message
     {
-        public abstract int MessageId
+        public abstract MessageType MessageId
         {
             get;
+            set;
         }
         public int? AgentId { get; }
         

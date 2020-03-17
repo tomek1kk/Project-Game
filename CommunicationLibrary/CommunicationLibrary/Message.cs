@@ -8,32 +8,39 @@ using System.Text.Json;
 
 namespace CommunicationLibrary
 {
-    public abstract class Message<T> : Message where T : MessagePayload
+    public class Message<T> : Message where T : MessagePayload
     {
-        public T MessagePayload { get; }
-        public override int MessageId => messageDictionary[typeof(T)];
-        private static Dictionary<Type, int> messageDictionary = new Dictionary<Type, int>()
+        public Message(T payload)
         {
-            { typeof(CheckHoldedPieceRequest), (int)MessageType.CheckHoldedPieceRequest },
-            { typeof(DestroyPieceRequest), (int)MessageType.DestroyPieceRequest },
-            { typeof(DiscoveryRequest), (int)MessageType.DiscoveryRequest },
-            { typeof(ExchangeInformationRequest), (int)MessageType.ExchangeInformationRequest },
-            { typeof(JoinGameRequest), (int)MessageType.JoinGameRequest },
-            { typeof(MoveRequest), (int)MessageType.MoveRequest },
-            { typeof(PickPieceRequest), (int)MessageType.PickPieceRequest },
-            { typeof(PutPieceRequest), (int)MessageType.PutPieceRequest },
-            { typeof(CheckHoldedPieceResponse), (int)MessageType.CheckHoldedPieceResponse },
-            { typeof(DestroyPieceResponse), (int)MessageType.DestroyPieceResponse },
-            { typeof(DiscoveryResponse), (int)MessageType.DiscoveryResponse },
-            { typeof(ExchangeInformationResponse), (int)MessageType.ExchangeInformationResponse },
-            { typeof(JoinGameResponse), (int)MessageType.JoinGameResponse },
-            { typeof(MoveResponse), (int)MessageType.MoveResponse },
-            { typeof(PickPieceResponse), (int)MessageType.PickPieceResponse },
-            { typeof(PutPieceResponse), (int)MessageType.PutPieceResponse },
-            { typeof(MoveError), (int)MessageType.MoveError },
-            { typeof(NotDefinedError), (int)MessageType.NotDefinedError },
-            { typeof(PickPieceError), (int)MessageType.PickPieceError },
-            { typeof(PutPieceError), (int)MessageType.PutPieceError },
+            MessagePayload = payload;
+        }
+        //for json parser
+        public Message() { }
+        public T MessagePayload { get; set; }
+        public override MessageType MessageId { get => messageDictionary[typeof(T)]; set { } }
+
+        private static Dictionary<Type, MessageType> messageDictionary = new Dictionary<Type, MessageType>()
+        {
+            { typeof(CheckHoldedPieceRequest), MessageType.CheckHoldedPieceRequest },
+            { typeof(DestroyPieceRequest), MessageType.DestroyPieceRequest },
+            { typeof(DiscoveryRequest), MessageType.DiscoveryRequest },
+            { typeof(ExchangeInformationRequest), MessageType.ExchangeInformationRequest },
+            { typeof(JoinGameRequest), MessageType.JoinGameRequest },
+            { typeof(MoveRequest), MessageType.MoveRequest },
+            { typeof(PickPieceRequest), MessageType.PickPieceRequest },
+            { typeof(PutPieceRequest), MessageType.PutPieceRequest },
+            { typeof(CheckHoldedPieceResponse), MessageType.CheckHoldedPieceResponse },
+            { typeof(DestroyPieceResponse), MessageType.DestroyPieceResponse },
+            { typeof(DiscoveryResponse), MessageType.DiscoveryResponse },
+            { typeof(ExchangeInformationResponse), MessageType.ExchangeInformationResponse },
+            { typeof(JoinGameResponse), MessageType.JoinGameResponse },
+            { typeof(MoveResponse), MessageType.MoveResponse },
+            { typeof(PickPieceResponse), MessageType.PickPieceResponse },
+            { typeof(PutPieceResponse), MessageType.PutPieceResponse },
+            { typeof(MoveError), MessageType.MoveError },
+            { typeof(NotDefinedError), MessageType.NotDefinedError },
+            { typeof(PickPieceError), MessageType.PickPieceError },
+            { typeof(PutPieceError), MessageType.PutPieceError },
         };
 
     }

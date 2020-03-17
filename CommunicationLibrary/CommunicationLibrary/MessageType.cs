@@ -28,13 +28,14 @@ namespace CommunicationLibrary
         MoveError = 901,
         NotDefinedError = 905,
         PickPieceError = 902,
-        PutPieceError = 903
+        PutPieceError = 903,
+
     }
     public static class MessageTypeExtensions
     {
-        public static Type GetType(this MessageType type) => messageTypeDictionary[type];
+        public static Type GetObjectType(this MessageType type) => messageTypeDictionary[type];
 
-    private static Dictionary<MessageType, Type> messageTypeDictionary = new Dictionary<MessageType, Type>()
+        private static Dictionary<MessageType, Type> messageTypeDictionary = new Dictionary<MessageType, Type>()
         {
             { MessageType.CheckHoldedPieceRequest, typeof(CheckHoldedPieceRequest) },
             { MessageType.DestroyPieceRequest, typeof(DestroyPieceRequest) },
