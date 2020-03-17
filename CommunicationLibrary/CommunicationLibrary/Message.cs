@@ -8,6 +8,17 @@ using System.Text.Json;
 
 namespace CommunicationLibrary
 {
+    public abstract class Message
+    {
+        public abstract MessageType MessageId
+        {
+            get;
+        }
+        public abstract MessagePayload GetPayload();
+        public int? AgentId { get; }
+
+    }
+
     public class Message<T> : Message where T : MessagePayload
     {
         public Message(T payload)
@@ -18,6 +29,11 @@ namespace CommunicationLibrary
         public Message() { }
         public T MessagePayload { get; set; }
         public override MessageType MessageId => messageDictionary[typeof(T)];
+
+        public override MessagePayload GetPayload()
+        {
+            return MessagePayload;
+        }
 
         private static Dictionary<Type, MessageType> messageDictionary = new Dictionary<Type, MessageType>()
         {
