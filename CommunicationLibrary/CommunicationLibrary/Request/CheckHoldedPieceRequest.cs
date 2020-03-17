@@ -10,12 +10,5 @@ namespace CommunicationLibrary.Request
         {
             return true;
         }
-        //public override int MessageId
-        //{
-        //    get
-        //    {
-        //        return 1;
-        //    }
-        //}
     }
 }
