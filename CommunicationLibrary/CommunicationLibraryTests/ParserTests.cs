@@ -35,297 +35,316 @@ namespace CommunicationLibrary.Tests
         public void TestParseDestroyPieceRequest()
         {
             // Arrange
-            string jsonString = "{\"MessageId\":2,\"AgentId\":null}";
-
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":2,\"AgentId\":null}";
+            var expected = new Message<DestroyPieceRequest>()
+            {
+                MessagePayload = new DestroyPieceRequest()
+            };
             // Act
             var result = parser.Parse(jsonString);
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(DestroyPieceRequest));
+            result.Should().BeEquivalentTo(expected);
         }
         [TestMethod]
         public void TestParseDiscoveryRequest()
         {
             // Arrange
-            string jsonString = "{\"MessageId\":3,\"AgentId\":null}";
-
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":3,\"AgentId\":null}";
+            var expected = new Message<DiscoveryRequest>()
+            {
+                MessagePayload = new DiscoveryRequest()
+            };
             // Act
             var result = parser.Parse(jsonString);
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(DiscoveryRequest));
+            result.Should().BeEquivalentTo(expected);
         }
         [TestMethod]
         public void TestParseExachangeInformationRequest()
         {
             // Arrange
-            string jsonString = "{\"MessageId\":5,\"AgentId\":null}";
-
+            string jsonString = "{\"MessagePayload\":{\"AskedAgentId\":1},\"MessageId\":5,\"AgentId\":null}";
+            var expected = new Message<ExchangeInformationRequest>()
+            {
+                MessagePayload = new ExchangeInformationRequest()
+                {
+                    AskedAgentId = 1
+                }
+            };
             // Act
             var result = parser.Parse(jsonString);
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(ExchangeInformationRequest));
+            result.Should().BeEquivalentTo(expected);
         }
         [TestMethod]
         public void TestParseJoinGameRequest()
         {
             // Arrange
-            string jsonString = "{\"MessageId\":6,\"AgentId\":null}";
-
+            string jsonString = "{\"MessagePayload\":{\"TeamId\":\"blue\"},\"MessageId\":6,\"AgentId\":null}";
+            var expected = new Message<JoinGameRequest>()
+            {
+                MessagePayload = new JoinGameRequest()
+                {
+                    TeamId = "blue"
+                }
+            };
             // Act
             var result = parser.Parse(jsonString);
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(JoinGameRequest));
+            result.Should().BeEquivalentTo(expected);
         }
         [TestMethod]
         public void TestParseMoveRequest()
         {
             // Arrange
-            string jsonString = "{\"MessageId\":7,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(MoveRequest));
-        }
-
-        [TestMethod]
-        public void TestParsePickPieceRequest()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":8,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(PickPieceRequest));
-        }
-
-        [TestMethod]
-        public void TestParsePutPieceRequest()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":9,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(PutPieceRequest));
-        }
-
-        [TestMethod]
-        public void TestParseCheckHoldedPieceResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":101,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(CheckHoldedPieceResponse));
-        }
-
-        [TestMethod]
-        public void TestParseDestroyPieceResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":102,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(DestroyPieceResponse));
-        }
-
-        [TestMethod]
-        public void TestParseDiscoveryResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":103,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(DiscoveryResponse));
-        }
-
-        [TestMethod]
-        public void TestParseExchangeInformationResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":4,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ExchangeInformationResponse));
-        }
-
-        [TestMethod]
-        public void TestParseJoinGameResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":107,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(JoinGameResponse));
-        }
-
-        [TestMethod]
-        public void TestParseMoveResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":108,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(MoveResponse));
-        }
-
-        [TestMethod]
-        public void TestParsePickPieceResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":109,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(PickPieceResponse));
-        }
-
-        [TestMethod]
-        public void TestParsePutPieceResponse()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":110,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(PutPieceResponse));
-        }
-
-        [TestMethod]
-        public void TestParseMoveError()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":901,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(MoveError));
-        }
-
-        [TestMethod]
-        public void TestParsePickPieceError()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":902,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(PickPieceError));
-        }
-
-        [TestMethod]
-        public void TestParsePutPieceError()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":903,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(PutPieceError));
-        }
-
-        [TestMethod]
-        public void TestParseNotDefinedError()
-        {
-            // Arrange
-            string jsonString = "{\"MessageId\":905,\"AgentId\":null}";
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(NotDefinedError));
-        }
-
-        [TestMethod]
-        public void TestParseMessageNotFound()
-        {
-            // Arrange
-            string jsonString = "\"MessagePayload\":{\"Direction\":\"N\"},\"MessageId\":7,\"AgentId\":null}";
-            //var expected = new Message<>
-
-            // Act
-            var result = parser.Parse(jsonString);
-
-            // Assert
-            //Assert.IsInstanceOfType(result.MessageId, typeof(NotDefinedError));
-        }
-
-        [TestMethod]
-        public void TestParseMoveRequestConcrete()
-        {
-            // Arrange
-            //string json = JsonSerializer.Serialize(expected);
-
-            //// Act
-            //var result = parser.Parse(json);
-
-            //// Assert
-            //Assert.AreEqual(expected, result);
-        }
-
-        [TestMethod]
-        public void TestTest()
-        {
-            Message<MoveRequest> m = new Message<MoveRequest>()
+            string jsonString = "{\"MessagePayload\":{\"Direction\":\"N\"},\"MessageId\":7,\"AgentId\":null}";
+            var expected = new Message<MoveRequest>()
             {
                 MessagePayload = new MoveRequest()
                 {
                     Direction = "N"
                 }
             };
-            var x = parser.AsString<MoveRequest>(m);
-            Message<CheckHoldedPieceRequest> m2 = new Message<CheckHoldedPieceRequest>()
-            {
-                MessagePayload = new CheckHoldedPieceRequest()
-            };
-            var x2 = parser.AsString<CheckHoldedPieceRequest>(m2);
+            // Act
+            var result = parser.Parse(jsonString);
 
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
-        
-        [TestMethod]
-        public void TestTest2()
-        {
-            string x = "{\"MessagePayload\":{\"Direction\":\"N\"},\"MessageId\":7,\"AgentId\":null}";
-            var y = parser.Parse(x);
 
+        [TestMethod]
+        public void TestParsePickPieceRequest()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":8,\"AgentId\":null}";
+            var expected = new Message<PickPieceRequest>()
+            {
+                MessagePayload = new PickPieceRequest()
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParsePutPieceRequest()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":9,\"AgentId\":null}";
+            var expected = new Message<PutPieceRequest>()
+            {
+                MessagePayload = new PutPieceRequest()
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseCheckHoldedPieceResponse()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"Sham\":true},\"MessageId\":101,\"AgentId\":null}";
+            var expected = new Message<CheckHoldedPieceResponse>()
+            {
+                MessagePayload = new CheckHoldedPieceResponse()
+                {
+                    Sham = true
+                }
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseDestroyPieceResponse()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":102,\"AgentId\":null}";
+            var expected = new Message<DestroyPieceResponse>()
+            {
+                MessagePayload = new DestroyPieceResponse()
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseDiscoveryResponse()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"DistanceFromCurrent\":3,\"DistanceN\":1,\"DistanceNE\":2,\"DistanceE\":3,\"DistanceSE\":4,\"DistanceS\":5,\"DistanceSW\":6,\"DistanceW\":7,\"DistanceNW\":8},\"MessageId\":103,\"AgentId\":null}";
+            var expected = new Message<DiscoveryResponse>()
+            {
+                MessagePayload = new DiscoveryResponse()
+                {
+                    DistanceFromCurrent = 3,
+                    DistanceN = 1,
+                    DistanceNE = 2,
+                    DistanceE = 3,
+                    DistanceSE = 4,
+                    DistanceS = 5,
+                    DistanceSW = 6,
+                    DistanceW = 7,
+                    DistanceNW = 8
+                }
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseExchangeInformationResponse()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":4,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(ExchangeInformationResponse));
+        }
+
+        [TestMethod]
+        public void TestParseJoinGameResponse()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":107,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(JoinGameResponse));
+        }
+
+        [TestMethod]
+        public void TestParseMoveResponse()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":108,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(MoveResponse));
+        }
+
+        [TestMethod]
+        public void TestParsePickPieceResponse()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":109,\"AgentId\":null}";
+            var expected = new Message<PickPieceResponse>()
+            {
+                MessagePayload = new PickPieceResponse()
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParsePutPieceResponse()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":110,\"AgentId\":null}";
+            var expected = new Message<PutPieceResponse>()
+            {
+                MessagePayload = new PutPieceResponse()
+            };
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseMoveError()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":901,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(MoveError));
+        }
+
+        [TestMethod]
+        public void TestParsePickPieceError()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":902,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(PickPieceError));
+        }
+
+        [TestMethod]
+        public void TestParsePutPieceError()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":903,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(PutPieceError));
+        }
+
+        [TestMethod]
+        public void TestParseNotDefinedError()
+        {
+            //// Arrange
+            //string jsonString = "{\"MessageId\":905,\"AgentId\":null}";
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            //Assert.IsInstanceOfType(result, typeof(NotDefinedError));
+        }
+
+        [TestMethod]
+        public void TestParseMessageNotFound()
+        {
+            //// Arrange
+            //string jsonString = "\"MessagePayload\":{\"Direction\":\"N\"},\"MessageId\":7,\"AgentId\":null}";
+            ////var expected = new Message<>
+
+            //// Act
+            //var result = parser.Parse(jsonString);
+
+            //// Assert
+            ////Assert.IsInstanceOfType(result.MessageId, typeof(NotDefinedError));
         }
     }
 }
