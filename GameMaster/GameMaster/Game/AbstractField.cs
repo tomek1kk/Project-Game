@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using GameMaster.GUI;
 
 namespace GameMaster.Game
 {
@@ -43,6 +44,11 @@ namespace GameMaster.Game
         public int Y
         {
             get => y;
+        }
+        public FieldType GetFieldTypeForGUI()
+        {
+            //TODO: proper logic, for now return only FieldType.Empty
+            return FieldType.Empty;
         }
     }
 }
