@@ -72,5 +72,10 @@ namespace CommunicationServer
         {
             throw new NotImplementedException();
         }
+
+        public void Send<T>(Message<T> m) where T : MessagePayload
+        {
+            throw new NotImplementedException();
+        }
     }
 }

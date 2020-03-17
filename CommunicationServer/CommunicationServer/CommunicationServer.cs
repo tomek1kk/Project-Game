@@ -3,7 +3,10 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 
 namespace CommunicationServer
 {
@@ -16,27 +19,48 @@ namespace CommunicationServer
         static void Main(string[] args)
         {
             // TODO: Get config
-            Console.WriteLine("cos");
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            TcpListener tcpListener = new TcpListener(ipAddress, 8080);
+            tcpListener.Start();
 
-            Stream stream = new MemoryStream();
-            Parser parser = new Parser();
-            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
-            BlockingCollection<Message> messages = new BlockingCollection<Message>();
-            streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
             while (true)
             {
-                if (messages.Count > 0)
-                {
-                    Message m = messages.Take();
-                    Console.WriteLine("Received message: ");
-                    Console.WriteLine(m.MessageId);
-                }
+                Console.Write("Waiting for a connection... ");
+                Parser parser = new Parser();
+                TcpClient client = tcpListener.AcceptTcpClient();
+                Console.WriteLine("Connected!");
+                Thread t = new Thread(HandleThread);
+                t.Start(client);
+
             }
         }
 
-        public void GetConfig()
+        private static void HandleThread(object client)
         {
+            Console.WriteLine("In new thread");
 
+            Byte[] bytes = new Byte[256];
+            String data = null;
+            NetworkStream stream = ((TcpClient)client).GetStream();
+            int i;
+            // DZIALA
+            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
+            {
+                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
+                Console.WriteLine("Received: {0}", data);
+            }
+
+            // NIE DZIALA
+            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
+            BlockingCollection<Message> messages = new BlockingCollection<Message>();
+            streamMessageSenderReceiver.StartReceiving(message =>
+            {
+                Console.WriteLine("Received message: " + message.MessageId);
+            });
+            while(true)
+            {
+
+            }
         }
 
     }
