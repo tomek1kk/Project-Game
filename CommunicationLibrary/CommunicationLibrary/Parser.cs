@@ -20,7 +20,7 @@ namespace CommunicationLibrary
         {
             public int MessageId { get; set; }
         }
-        public Message Parse<T>(string messageString) where T : MessagePayload
+        public Message Parse(string messageString) where T : MessagePayload
         {
             EmptyMessage message = (EmptyMessage)JsonSerializer.Deserialize(messageString, typeof(EmptyMessage));
 
@@ -64,7 +64,7 @@ namespace CommunicationLibrary
                 #endregion
                 #region Errors
                 case 901:
-                    return (MoveError)JsonSerializer.Deserialize(messageString, typeof(MoveError));
+                    return (Message)JsonSerializer.Deserialize(messageString, typeof(Message<MoveError>));
                 case 902:
                     return (PickPieceError)JsonSerializer.Deserialize(messageString, typeof(PickPieceError));
                 case 903:
