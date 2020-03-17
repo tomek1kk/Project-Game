@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class MoveResponse : Message
+    public class MoveResponse : MessagePayload
     {
         public bool? MadeMove { get; set; }
         public (int? x, int? y) CurrentPosition { get; set; }
@@ -19,13 +19,6 @@ namespace CommunicationLibrary.Response
             if (ClosestPiece == null || ClosestPiece < 0)
                 return false;
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 108;
-            }
         }
     }
 }

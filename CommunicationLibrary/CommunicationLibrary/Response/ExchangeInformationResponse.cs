@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class ExchangeInformationResponse : Message
+    public class ExchangeInformationResponse : MessagePayload
     {
         public int? RespondToID { get; set; }
         public List<int> Distances { get; set; }
@@ -23,13 +23,6 @@ namespace CommunicationLibrary.Response
             if (BlueTeamGoalAreaInformations == null)
                 return false;
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 4;
-            }
         }
     }
 }

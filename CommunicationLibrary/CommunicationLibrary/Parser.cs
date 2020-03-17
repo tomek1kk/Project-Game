@@ -11,7 +11,7 @@ namespace CommunicationLibrary
     public class Parser : IParser
     {
 
-        public string AsString<T>(T message) where T : Message
+        public string AsString<T>(T message) where T : MessagePayload
         {
             return JsonSerializer.Serialize<T>(message);
         }
@@ -20,7 +20,7 @@ namespace CommunicationLibrary
         {
             public int MessageId { get; set; }
         }
-        public Message Parse(string messageString)
+        public Message Parse<T>(string messageString) where T : MessagePayload
         {
             EmptyMessage message = (EmptyMessage)JsonSerializer.Deserialize(messageString, typeof(EmptyMessage));
 
@@ -28,7 +28,7 @@ namespace CommunicationLibrary
             {
                 #region Requests
                 case 1:
-                    return (CheckHoldedPieceRequest)JsonSerializer.Deserialize(messageString, typeof(CheckHoldedPieceRequest));
+                    return (Message<T>)JsonSerializer.Deserialize(messageString, typeof(Message<T>));
                 case 2:
                     return (DestroyPieceRequest)JsonSerializer.Deserialize(messageString, typeof(DestroyPieceRequest));
                 case 3:

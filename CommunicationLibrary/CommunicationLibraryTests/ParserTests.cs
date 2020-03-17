@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json;
 
 namespace CommunicationLibrary.Tests
 {
@@ -280,6 +281,23 @@ namespace CommunicationLibrary.Tests
 
             // Assert
             Assert.IsInstanceOfType(result, typeof(NotDefinedError));
+        }
+
+        [TestMethod]
+        public void TestParseMoveRequestConcrete()
+        {
+            // Arrange
+            MoveRequest expected = new MoveRequest()
+            {
+                Direction = "N"
+            };
+            string json = JsonSerializer.Serialize(expected);
+
+            // Act
+            var result = parser.Parse(json);
+
+            // Assert
+            Assert.AreEqual(expected, result);
         }
 
     }

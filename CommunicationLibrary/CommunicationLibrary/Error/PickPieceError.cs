@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Error
 {
-    public class PickPieceError : Message
+    public class PickPieceError : MessagePayload
     {
         public string ErrorSubtype { get; set; }
 
@@ -13,13 +13,6 @@ namespace CommunicationLibrary.Error
             if (ErrorSubtype == null || (ErrorSubtype != "NothingThere" && ErrorSubtype != "Other"))
                 return false;
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 902;
-            }
         }
     }
 }

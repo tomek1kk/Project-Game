@@ -3,6 +3,6 @@
     public interface IParser
     {
         Message Parse(string messageString);
-        string AsString<T>(T message) where T : Message;
+        string AsString<T>(Message<T> message) where T : MessagePayload;
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class DiscoveryResponse : Message
+    public class DiscoveryResponse : MessagePayload
     {
         public int? DistanceFromCurrent { get; set; }
         public int? DistanceN { get; set; }
@@ -23,13 +23,6 @@ namespace CommunicationLibrary.Response
                 DistanceSW == null || DistanceW == null || DistanceNW == null)
                 return false;
             return true;
-        }
-        public override int MessageId
-        {
-            get
-            {
-                return 103;
-            }
         }
     }
 }
