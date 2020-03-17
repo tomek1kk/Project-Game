@@ -7,6 +7,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using System.Text.Json;
 
 namespace CommunicationServer
 {
@@ -15,7 +16,7 @@ namespace CommunicationServer
         private Dictionary<int, Descriptor> correlation;
         private Descriptor GMDescriptor;
 
-        
+
         static void Main(string[] args)
         {
             // TODO: Get config
@@ -39,28 +40,16 @@ namespace CommunicationServer
         {
             Console.WriteLine("In new thread");
 
-            Byte[] bytes = new Byte[256];
-            String data = null;
             NetworkStream stream = ((TcpClient)client).GetStream();
-            int i;
-            // DZIALA
-            while ((i = stream.Read(bytes, 0, bytes.Length)) != 0)
-            {
-                data = System.Text.Encoding.ASCII.GetString(bytes, 0, i);
-                Console.WriteLine("Received: {0}", data);
-            }
 
-            // NIE DZIALA
             StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
             BlockingCollection<Message> messages = new BlockingCollection<Message>();
+
             streamMessageSenderReceiver.StartReceiving(message =>
             {
                 Console.WriteLine("Received message: " + message.MessageId);
             });
-            while(true)
-            {
 
-            }
         }
 
     }
