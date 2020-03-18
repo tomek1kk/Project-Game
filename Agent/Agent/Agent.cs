@@ -14,11 +14,8 @@ namespace Agent
 {
     public class Agent
     {
-        public static Queue<string> messageQueue = new Queue<string>();
-        private AgentConfiguration configuration;
-        private IParser parser = new Parser();
-
-        public Agent()
+        public AgentConfiguration configuration { get; set; }
+        public AgentConfiguration ReadConfiguration()
         {
             configuration = new AgentConfiguration()
             {
@@ -26,32 +23,35 @@ namespace Agent
                 CsPort = 8080,
                 TeamId = Enum.GetName(typeof(Team), Team.Blue)
             };
+        }
+       
+        static void Main(string[] args)
+        {
+            Agent agent = new Agent();
+            var configuration = agent.ReadConfiguration();
 
             TcpClient client = new TcpClient(configuration.CsIp, configuration.CsPort);
             NetworkStream stream = client.GetStream();
             StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
-
-            int i = 0;
-            while (i++ < 100)
+            streamMessageSenderReceiver.StartReceiving(message => Console.WriteLine("Got message: " + message.MessageId));
+            streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+            
+            Random r = new Random();
+            while (true)
             {
-                streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
-                streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "red" } });
+
                 Console.ReadKey();
+                var p = r.Next() % 2;
+                if (p == 0)
+                    streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+                else
+                    streamMessageSenderReceiver.Send(new Message<PickPieceRequest>() { MessagePayload = new PickPieceRequest() });
             }
             streamMessageSenderReceiver.Dispose();
-        }
-
-        static void Main(string[] args)
-        {
-            AgentConfiguration agentConfiguration = AgentConfiguration.ReadConfiguration(args);
-
-            Agent agent = new Agent();
-        }
-
-        public void JoinTheGame()
-        {
 
         }
+
+
     }
 }
 
