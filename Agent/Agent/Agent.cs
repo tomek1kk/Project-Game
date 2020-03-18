@@ -16,8 +16,7 @@ namespace Agent
     {
         public AgentConfiguration ReadConfiguration()
         {
-            // todo: read configuration from json file
-            return new AgentConfiguration()
+            configuration = new AgentConfiguration()
             {
                 CsIp = "127.0.0.1",
                 CsPort = 8080,
