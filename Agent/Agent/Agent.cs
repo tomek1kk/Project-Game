@@ -14,6 +14,7 @@ namespace Agent
 {
     public class Agent
     {
+        public AgentConfiguration configuration { get; set; }
         public AgentConfiguration ReadConfiguration()
         {
             configuration = new AgentConfiguration()
