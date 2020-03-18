@@ -24,6 +24,7 @@ namespace GameMaster.Game
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < heigth; j++)
                     fieldsArray[i, j] = new Field();
+            TakeRandomsFromRange(1, 0, 30, new Random());
         }
         public BoardModel GetCurrentBoardModel()
         {
@@ -43,6 +44,19 @@ namespace GameMaster.Game
         private static FieldType ConvertFieldForGUI(AbstractField field)
         {
             return field.GetFieldTypeForGUI();
+        }
+        public static List<int> TakeRandomsFromRange(int randomCounts, int rangeFrom, int rangeTo, Random rand, int shuffleCount = 50)
+        {
+            var range = Enumerable.Range(rangeFrom, rangeTo).ToList();
+            for (int i = 0; i < shuffleCount; i++)
+            {
+                for (int j = range.Count() - 1; j > 0; j--)
+                {
+                    int r = rand.Next(0, j + 1);
+                    (range[r], range[j]) = (range[j], range[r]);
+                }
+            }
+            return Enumerable.Take(range, randomCounts).ToList();
         }
     }
 }

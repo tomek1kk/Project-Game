@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Text;
 using Moq;
 
-namespace GameMaster.Game
+namespace GameMaster.Game.Tests
 {
     [TestClass()]
     public class PlayerTests
