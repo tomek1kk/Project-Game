@@ -1,0 +1,6 @@
+﻿{
+"CsIP": "127.0.0.1",
+"CsPort": 8080,
+"teamID": "red",
+"strategy": 1
+}

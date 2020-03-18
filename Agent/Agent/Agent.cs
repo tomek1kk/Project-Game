@@ -43,6 +43,8 @@ namespace Agent
 
         static void Main(string[] args)
         {
+            AgentConfiguration agentConfiguration = AgentConfiguration.ReadConfiguration(args);
+
             Agent agent = new Agent();
         }
 
