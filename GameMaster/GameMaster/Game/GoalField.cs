@@ -8,9 +8,16 @@ namespace GameMaster.Game
 {
     public class GoalField : AbstractField
     {
+        public GoalField(int _x, int _y) : base(_x, _y)
+        {
+        }
+
         public override FieldType GetFieldTypeForGUI()
         {
-            return FieldType.Goal;
+            if (discovered)
+                return FieldType.DiscoveredGoal;
+            else
+                return FieldType.Goal;
         }
 
         public override void PickUp(Player player)

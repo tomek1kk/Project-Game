@@ -8,10 +8,17 @@ namespace GameMaster.Game
 {
     public abstract class AbstractField
     {
-        private readonly int x;
-        private readonly int y;
-        private List<Player> whos_here;
-        private List<AbstractPiece> pieces;
+        protected readonly int x;
+        protected readonly int y;
+        protected List<Player> whos_here;
+        protected List<AbstractPiece> pieces;
+        protected bool discovered = false;//change this field only for fields in goal area
+
+        public AbstractField(int _x, int _y)
+        {
+            pieces = new List<AbstractPiece>();
+            whos_here = new List<Player>();
+        }
 
         public void LeavePlayer(Player player)
         {
@@ -46,5 +53,9 @@ namespace GameMaster.Game
             get => y;
         }
         abstract public FieldType GetFieldTypeForGUI();
+        public void PutGeneratedPiece()
+        {
+            pieces.Add(new Piece());
+        }
     }
 }

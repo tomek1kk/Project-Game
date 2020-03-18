@@ -14,6 +14,7 @@ namespace GameMaster.Game
         private int heigth;
         private int width;
         private int numberOfGoals;
+        private int numberOfPieces;
 
         public Map(GMConfiguration config)
         {
@@ -21,12 +22,13 @@ namespace GameMaster.Game
             width = config.BoardX;
             goalAreaHeight = config.GoalAreaHight;
             numberOfGoals = config.NumberOfGoals;
-            //TODO: board creation with goals and pieces, for now only standard empty fields
+            numberOfPieces = config.NumberOfPieces;
             fieldsArray = new AbstractField[width, heigth];
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < heigth; j++)
-                    fieldsArray[i, j] = new Field();
+                    fieldsArray[i, j] = new Field(i, j);
             AddGoalFields();
+            AddPieces();
         }
         public BoardModel GetCurrentBoardModel()
         {
@@ -43,7 +45,9 @@ namespace GameMaster.Game
                 Fields = fieldsForGUI
             };
         }
-
+        /// <summary>
+        /// Add GoalFields to map, symmetric for both teams
+        /// </summary>
         private void AddGoalFields()
         {
             List<int> randomList = TakeRandomsFromRange(numberOfGoals, 0, goalAreaHeight * width - 1, new Random());
@@ -51,20 +55,29 @@ namespace GameMaster.Game
             {
                 int redX = randomList[i] % width;
                 int redY = randomList[i] / width;
-                fieldsArray[redX, redY] = new GoalField();
+                fieldsArray[redX, redY] = new GoalField(redX, redY);
                 int blueX = (width - 1) - redX;
                 int blueY = (heigth - 1) - redY;
-                fieldsArray[blueX, blueY] = new GoalField();
+                fieldsArray[blueX, blueY] = new GoalField(blueX, blueY);
+            }
+        }
+        private void AddPieces()
+        {
+            var rand = new Random();
+            for (int i = 0; i < numberOfPieces; i++)
+            {
+                int idx = rand.Next(width * goalAreaHeight - 1, width * (heigth - goalAreaHeight));
+                fieldsArray[idx % width, idx / width].PutGeneratedPiece();
             }
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
         /// </summary>
-        /// <param name="randomCounts"></param>
-        /// <param name="rangeFrom"></param>
-        /// <param name="rangeTo"></param>
-        /// <param name="rand"></param>
-        /// <param name="shuffleCount"></param>
+        /// <param name="randomCounts">length of returned list</param>
+        /// <param name="rangeFrom">boundary of given range</param>
+        /// <param name="rangeTo">boundary of given range</param>
+        /// <param name="rand">Random object use in function</param>
+        /// <param name="shuffleCount">optional: amount of "shuffles" to be done</param>
         public static List<int> TakeRandomsFromRange(int randomCounts, int rangeFrom, int rangeTo, Random rand, int shuffleCount = 200)
         {
             var range = Enumerable.Range(rangeFrom, rangeTo - rangeFrom + 1).ToList();
