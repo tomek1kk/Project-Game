@@ -17,7 +17,7 @@ namespace Agent
         public AgentConfiguration configuration { get; set; }
         public AgentConfiguration ReadConfiguration()
         {
-            configuration = new AgentConfiguration()
+           return configuration = new AgentConfiguration()
             {
                 CsIp = "127.0.0.1",
                 CsPort = 8080,
