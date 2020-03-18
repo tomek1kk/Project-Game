@@ -10,29 +10,25 @@ using System.IO;
 using Moq;
 using System.Collections.Concurrent;
 using CommunicationLibraryTests.HelperClasses;
+using CommunicationLibrary.Request;
 
 namespace CommunicationLibrary.Tests
 {
     [TestClass()]
     public class StreamMessageSenderReceiverTests
     {
-        class TestMessage : Message
-        {
-            public string Text { get; set; }
-            public override bool ValidateMessage()
-            {
-                return true;
-            }
-        }
         class TestParser : IParser
         {
-            public string AsString(Message message)
+
+            public string AsString<T>(Message<T> message) where T : MessagePayload
             {
-                return ((TestMessage)message).Text;
+                return ((Message<JoinGameRequest>)(Message)message).MessagePayload.TeamId.ToString();
             }
+
             public Message Parse(string messageString)
             {
-                return new TestMessage { Text = messageString };
+                return new Message<JoinGameRequest>(
+                    new JoinGameRequest { TeamId = messageString });
             }
         }
         [TestMethod()]
@@ -59,15 +55,16 @@ namespace CommunicationLibrary.Tests
             Message received = messages.Take();
 
             //then
-            Assert.AreEqual(expected, ((TestMessage)received).Text);
+            Assert.AreEqual(expected, ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
         }
 
         [TestMethod()]
         public void TestStreamMessageSenderReceiverCanTransferMessage()
         {
-            TestMessage expected = new TestMessage { Text = "Hello world" };
             Stream stream = new EchoStream();
-            BinaryReader reader = new BinaryReader(stream);
+
+            Message<JoinGameRequest> expected = new Message<JoinGameRequest>
+                (new JoinGameRequest { TeamId = "Hello" });
 
             StreamMessageSenderReceiver streamMessageSenderReceiver
                 = new StreamMessageSenderReceiver(stream, new TestParser());
@@ -79,7 +76,30 @@ namespace CommunicationLibrary.Tests
             Message received = messages.Take();
 
             //then
-            Assert.AreEqual(expected.Text, ((TestMessage)received).Text);
+            Assert.AreEqual(expected.MessagePayload.TeamId,
+                ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
+        }
+
+        [TestMethod()]
+        public void TestStreamMessageSenderReceiverCanUseParser()
+        {
+            Stream stream = new EchoStream();
+
+            Message<JoinGameRequest> expected = new Message<JoinGameRequest>
+                (new JoinGameRequest { TeamId = "Hello" });
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(stream, new Parser());
+
+            BlockingCollection<Message> messages = new BlockingCollection<Message>();
+            streamMessageSenderReceiver.StartReceiving(message => messages.Add(message));
+
+            //when
+            streamMessageSenderReceiver.Send(expected);
+            Message received = messages.Take();
+
+            //then
+            Assert.AreEqual(expected.MessagePayload.TeamId,
+                ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
         }
     }
 }

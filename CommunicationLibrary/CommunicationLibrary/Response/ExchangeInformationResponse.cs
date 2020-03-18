@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    class ExchangeInformationResponse : Message
+    public class ExchangeInformationResponse : MessagePayload
     {
         public int? RespondToID { get; set; }
         public List<int> Distances { get; set; }

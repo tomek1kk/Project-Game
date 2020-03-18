@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class JoinGameResponse : Message
+    public class JoinGameResponse : MessagePayload
     {
         public bool? Accepted { get; set; }
         public int? AgentID { get; set; }

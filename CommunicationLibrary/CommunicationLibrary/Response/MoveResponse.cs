@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Response
 {
-    public class MoveResponse : Message
+    public class MoveResponse : MessagePayload
     {
         public bool? MadeMove { get; set; }
         public (int? x, int? y) CurrentPosition { get; set; }

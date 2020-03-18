@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CommunicationLibrary.Request
 {
-    public class PickPieceRequest : Message
+    public class PickPieceRequest : MessagePayload
     {
         public override bool ValidateMessage()
         {
