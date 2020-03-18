@@ -45,10 +45,6 @@ namespace GameMaster.Game
         {
             get => y;
         }
-        public FieldType GetFieldTypeForGUI()
-        {
-            //TODO: proper logic, for now return only FieldType.Empty
-            return FieldType.Empty;
-        }
+        abstract public FieldType GetFieldTypeForGUI();
     }
 }

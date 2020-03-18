@@ -19,7 +19,7 @@ namespace GameMasterTests.Game.Tests
             int rangeFrom = 0;
             int rangeTo = 199;
             int shuffleCount = 200;
-            List<int> properResult = new List<int>() { 45, 139, 96, 69, 148 };
+            List<int> properResult = new List<int>() { 155, 29, 10, 9, 71 };
 
             //when
             var returnedList = Map.TakeRandomsFromRange(randomCount, rangeFrom, rangeTo, rand, shuffleCount);
