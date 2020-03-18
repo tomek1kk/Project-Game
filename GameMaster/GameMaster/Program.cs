@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using GameMaster.Configuration;
 
 namespace GameMaster
 {
@@ -18,7 +19,9 @@ namespace GameMaster
     {
         public static void Main(string[] args)
         {
-            GameMaster gameMaster = new GameMaster(new GuiMantainer());
+
+            GMConfiguration config = GMConfiguration.ReadConfiguration(args);
+            GameMaster gameMaster = new GameMaster(new GuiMantainer(),config);
             gameMaster.Start();
         }
 
