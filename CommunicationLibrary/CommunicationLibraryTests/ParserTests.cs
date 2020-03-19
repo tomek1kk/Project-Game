@@ -14,7 +14,7 @@ using CommunicationLibrary.Information;
 namespace CommunicationLibrary.Tests
 {
     [TestClass]
-    public class ParserTests
+    public class ParserParseTests
     {
         IParser parser = new Parser();
 
@@ -215,46 +215,72 @@ namespace CommunicationLibrary.Tests
         [TestMethod]
         public void TestParseExchangeInformationResponse()
         {
-            //// Arrange
-            //string jsonString = "{\"MessagePayload\":{},\"MessageId\":102,\"AgentId\":null}";
-            //var expected = new Message<ExchangeInformationResponse>()
-            //{
-            //    MessagePayload = new ExchangeInformationResponse()
-            //    {
-                    
-            //    }
-            //};
-            //// Act
-            //var result = parser.Parse(jsonString);
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"RespondToID\":10,\"Distances\":[10,20,30,50],\"RedTeamGoalAreaInformations\":[\"r1\",\"r2 \"],\"BlueTeamGoalAreaInformations\":[\"i1\",\"i2\"]},\"MessageId\":4,\"AgentId\":null}";
+            var expected = new Message<ExchangeInformationResponse>()
+            {
+                MessagePayload = new ExchangeInformationResponse()
+                {
+                    BlueTeamGoalAreaInformations = new List<string>() { "i1", "i2" },
+                    RedTeamGoalAreaInformations = new List<string>() { "r1", "r2 "},
+                    RespondToID = 10,
+                    Distances = new List<int>() { 10, 20, 30, 50 }
+                }
+            };
 
-            //// Assert
-            //result.Should().BeEquivalentTo(expected);
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
         public void TestParseJoinGameResponse()
         {
-            //// Arrange
-            //string jsonString = "{\"MessageId\":107,\"AgentId\":null}";
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"Accepted\":true,\"AgentID\":10},\"MessageId\":107,\"AgentId\":null}";
+            var expected = new Message<JoinGameResponse>()
+            {
+                MessagePayload = new JoinGameResponse()
+                {
+                    Accepted = true,
+                    AgentID = 10
+                }
+            };
 
-            //// Act
-            //var result = parser.Parse(jsonString);
+            // Act
+            var result = parser.Parse(jsonString);
 
-            //// Assert
-            //Assert.IsInstanceOfType(result, typeof(JoinGameResponse));
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
         public void TestParseMoveResponse()
         {
-            //// Arrange
-            //string jsonString = "{\"MessageId\":108,\"AgentId\":null}";
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"MadeMove\":true,\"CurrentPosition\":{\"X\":3,\"Y\":2},\"ClosestPiece\":5},\"MessageId\":108,\"AgentId\":null}";
 
-            //// Act
-            //var result = parser.Parse(jsonString);
+            var expected = new Message<MoveResponse>()
+            {
+                MessagePayload = new MoveResponse()
+                {
+                    ClosestPiece = 5,
+                    CurrentPosition = new Position()
+                    {
+                        X = 3,
+                        Y = 2
+                    },
+                    MadeMove = true
+                }
+            };
 
-            //// Assert
-            //Assert.IsInstanceOfType(result, typeof(MoveResponse));
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
@@ -316,58 +342,160 @@ namespace CommunicationLibrary.Tests
         [TestMethod]
         public void TestParsePickPieceError()
         {
-            //// Arrange
-            //string jsonString = "{\"MessageId\":902,\"AgentId\":null}";
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"ErrorSubtype\":\"cannot pick here\"},\"MessageId\":902,\"AgentId\":null}";
+            var expected = new Message<PickPieceError>()
+            {
+                MessagePayload = new PickPieceError()
+                {
+                    ErrorSubtype = "cannot pick here"
+                }
+            };
+            // Act
+            var result = parser.Parse(jsonString);
 
-            //// Act
-            //var result = parser.Parse(jsonString);
-
-            //// Assert
-            //Assert.IsInstanceOfType(result, typeof(PickPieceError));
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
         public void TestParsePutPieceError()
         {
-            //// Arrange
-            //string jsonString = "{\"MessageId\":903,\"AgentId\":null}";
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"ErrorSubtype\":\"cannot put here\"},\"MessageId\":903,\"AgentId\":5}";
+            var expected = new Message<PutPieceError>()
+            {
+                MessagePayload = new PutPieceError()
+                {
+                    ErrorSubtype = "cannot put here"
+                }
+            };
+            // Act
+            var result = parser.Parse(jsonString);
 
-            //// Act
-            //var result = parser.Parse(jsonString);
-
-            //// Assert
-            //Assert.IsInstanceOfType(result, typeof(PutPieceError));
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
         public void TestParseNotDefinedError()
         {
-            //// Arrange
-            //string jsonString = "{\"MessageId\":905,\"AgentId\":null}";
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"Position\":{\"X\":2,\"Y\":10},\"HoldingPiece\":true},\"MessageId\":905,\"AgentId\":null}";
+            var expected = new Message<NotDefinedError>()
+            {
+                MessagePayload = new NotDefinedError()
+                {
+                    HoldingPiece = true,
+                    Position = new Position()
+                    {
+                        X = 2,
+                        Y = 10
+                    }
+                }
+            };
 
-            //// Act
-            //var result = parser.Parse(jsonString);
+            // Act
+            var result = parser.Parse(jsonString);
 
-            //// Assert
-            //Assert.IsInstanceOfType(result, typeof(NotDefinedError));
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
-        public void TestParseMessageNotFound()
+        public void TestParseGameStarted()
         {
-            //// Arrange
-            //string jsonString = "\"MessagePayload\":{\"Direction\":\"N\"},\"MessageId\":7,\"AgentId\":null}";
-            ////var expected = new Message<>
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"AgentId\":0,\"AlliesIds\":[3,5,7],\"LeaderId\":0,\"EnemiesIds\":null,\"TeamId\":null,\"BoardSize\":null,\"GoalAreaSize\":0,\"NumberOfPlayers\":null,\"NumberOfPieces\":0,\"NumberOfGoals\":0,\"Penalties\":{\"Move\":null,\"CheckForSham\":\"check\",\"Discovery\":null,\"DestroyPiece\":\"xd\",\"PutPiece\":null,\"InformationExchange\":null},\"ShamPieceProbability\":0,\"Position\":{\"X\":10,\"Y\":20}},\"MessageId\":105,\"AgentId\":null}";
+            var expected = new Message<GameStarted>()
+            {
+                MessagePayload = new GameStarted()
+                {
+                    Penalties = new Penalties()
+                    {
+                        CheckForSham = "check",
+                        DestroyPiece = "xd"
+                    },
+                    Position = new Position()
+                    {
+                        X = 10,
+                        Y = 20
+                    },
+                    AlliesIds = new List<int>() { 3, 5, 7 }
+                }
+            };
 
-            //// Act
-            //var result = parser.Parse(jsonString);
+            // Act
+            var result = parser.Parse(jsonString);
 
-            //// Assert
-            ////Assert.IsInstanceOfType(result.MessageId, typeof(NotDefinedError));
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
-        public void TestGameStarted()
+        public void TestParsePenaltyNotWaitedError()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"WaitUntill\":\"2020-03-19T11:50:55.5\"},\"MessageId\":904,\"AgentId\":null}";
+            var expected = new Message<PenaltyNotWaitedError>()
+            {
+                MessagePayload = new PenaltyNotWaitedError()
+                {
+                    WaitUntill = new DateTime(2020, 3, 19, 11, 50, 55, 500)
+                }
+            };
+
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseGameEnded()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"Winner\":\"blue\"},\"MessageId\":104,\"AgentId\":null}";
+            var expected = new Message<GameEnded>()
+            {
+                MessagePayload = new GameEnded()
+                {
+                    Winner = "blue"
+                }
+            };
+
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestParseRedirectedExchangeInformationRequest()
+        {
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{\"TeamId\":\"blue\",\"AskingId\":1,\"Leader\":true},\"MessageId\":106,\"AgentId\":null}";
+            var expected = new Message<RedirectedExchangeInformationRequest>()
+            {
+                MessagePayload = new RedirectedExchangeInformationRequest()
+                {
+                    AskingId = 1,
+                    Leader = true,
+                    TeamId = "blue"
+                }
+            };
+
+            // Act
+            var result = parser.Parse(jsonString);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestAsStringGameStarted()
         {
             // Arrange
             string expected = "{\"MessagePayload\":{\"AgentId\":0,\"AlliesIds\":[3,5,7],\"LeaderId\":0,\"EnemiesIds\":null,\"TeamId\":null,\"BoardSize\":null,\"GoalAreaSize\":0,\"NumberOfPlayers\":null,\"NumberOfPieces\":0,\"NumberOfGoals\":0,\"Penalties\":{\"Move\":null,\"CheckForSham\":\"check\",\"Discovery\":null,\"DestroyPiece\":\"xd\",\"PutPiece\":null,\"InformationExchange\":null},\"ShamPieceProbability\":0,\"Position\":{\"X\":10,\"Y\":20}},\"MessageId\":105,\"AgentId\":null}";
@@ -397,7 +525,7 @@ namespace CommunicationLibrary.Tests
         }
 
         [TestMethod]
-        public void TestPenaltyNotWaitedError()
+        public void TestAsStringPenaltyNotWaitedError()
         {
             // Arrange
             string expected = "{\"MessagePayload\":{\"WaitUntill\":\"2020-03-19T11:50:55.5\"},\"MessageId\":904,\"AgentId\":null}";
