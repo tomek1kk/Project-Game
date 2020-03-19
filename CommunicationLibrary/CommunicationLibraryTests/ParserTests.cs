@@ -6,8 +6,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using CommunicationLibrary.Model;
 using System.Text.Json;
 using FluentAssertions;
+using CommunicationLibrary.Information;
 
 namespace CommunicationLibrary.Tests
 {
@@ -345,6 +347,56 @@ namespace CommunicationLibrary.Tests
 
             //// Assert
             ////Assert.IsInstanceOfType(result.MessageId, typeof(NotDefinedError));
+        }
+
+        [TestMethod]
+        public void TestGameStarted()
+        {
+            // Arrange
+            string expected = "{\"MessagePayload\":{\"AgentId\":0,\"AlliesIds\":[3,5,7],\"LeaderId\":0,\"EnemiesIds\":null,\"TeamId\":null,\"BoardSize\":null,\"GoalAreaSize\":0,\"NumberOfPlayers\":null,\"NumberOfPieces\":0,\"NumberOfGoals\":0,\"Penalties\":{\"Move\":null,\"CheckForSham\":\"check\",\"Discovery\":null,\"DestroyPiece\":\"xd\",\"PutPiece\":null,\"InformationExchange\":null},\"ShamPieceProbability\":0,\"Position\":{\"X\":10,\"Y\":20}},\"MessageId\":105,\"AgentId\":null}";
+            Message<GameStarted> message = new Message<GameStarted>()
+            {
+                MessagePayload = new GameStarted()
+                {
+                    Penalties = new Penalties()
+                    {
+                        CheckForSham = "check",
+                        DestroyPiece = "xd"
+                    },
+                    Position = new Position()
+                    {
+                        X = 10,
+                        Y = 20
+                    },
+                    AlliesIds = new List<int>() { 3, 5, 7 }
+                }
+            };
+
+            // Act
+            var result = parser.AsString<GameStarted>(message);
+
+            //Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
+        public void TestPenaltyNotWaitedError()
+        {
+            // Arrange
+            string expected = "{\"MessagePayload\":{\"WaitUntill\":\"2020-03-19T11:50:55.5\"},\"MessageId\":904,\"AgentId\":null}";
+            Message<PenaltyNotWaitedError> message = new Message<PenaltyNotWaitedError>()
+            {
+                MessagePayload = new PenaltyNotWaitedError()
+                {
+                    WaitUntill = new DateTime(2020, 3, 19, 11, 50, 55, 500)
+                }
+            };
+
+            // Act
+            var result = parser.AsString<PenaltyNotWaitedError>(message);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
         }
     }
 }
