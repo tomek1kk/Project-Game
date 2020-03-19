@@ -1,8 +1,15 @@
-﻿using GameMaster.Configuration;
+﻿using CommunicationLibrary;
+using CommunicationLibrary.Error;
+using CommunicationLibrary.Request;
+using CommunicationLibrary.Response;
+using GameMaster.Configuration;
 using GameMaster.GUI;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace GameMaster
@@ -23,9 +30,21 @@ namespace GameMaster
             InitGui();
             //TODO: rest of starting game master
 
+            TcpClient client = new TcpClient("127.0.0.1", 8081);
+            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(client.GetStream(), new Parser());
+            //streamMessageSenderReceiver.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "DUUPA" } });
+            streamMessageSenderReceiver.StartReceiving(GetCSMessage);
+            Console.WriteLine("Try connect");
+
+
             Thread.Sleep(10000);
             _guiMantainer.StopGui();
         }
+        private void GetCSMessage(Message message)
+        {
+            Console.WriteLine(message.MessageId + "  " + message.GetPayload());
+        }
+
         public void GenerateGui()
         {
             //TODO: use manual gui data provider to set apropriate fields
