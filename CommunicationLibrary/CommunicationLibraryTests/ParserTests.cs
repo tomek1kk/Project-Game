@@ -373,7 +373,7 @@ namespace CommunicationLibrary.Tests
             };
 
             // Act
-            var result = parser.AsString<GameStarted>(message);
+            var result = parser.AsString(message);
 
             //Assert
             result.Should().BeEquivalentTo(expected);
@@ -393,7 +393,7 @@ namespace CommunicationLibrary.Tests
             };
 
             // Act
-            var result = parser.AsString<PenaltyNotWaitedError>(message);
+            var result = parser.AsString(message);
 
             // Assert
             result.Should().BeEquivalentTo(expected);

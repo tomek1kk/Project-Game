@@ -20,7 +20,7 @@ namespace CommunicationLibrary.Tests
         class TestParser : IParser
         {
 
-            public string AsString<T>(Message<T> message) where T : MessagePayload
+            public string AsString(Message message)
             {
                 return ((Message<JoinGameRequest>)(Message)message).MessagePayload.TeamId.ToString();
             }

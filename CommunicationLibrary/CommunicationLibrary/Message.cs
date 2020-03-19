@@ -36,6 +36,7 @@ namespace CommunicationLibrary
             return MessagePayload;
         }
 
+
         private static Dictionary<Type, MessageType> messageDictionary = new Dictionary<Type, MessageType>()
         {
             { typeof(CheckHoldedPieceRequest), MessageType.CheckHoldedPieceRequest },
