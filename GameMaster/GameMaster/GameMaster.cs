@@ -26,7 +26,7 @@ namespace GameMaster
             InitGui();
             //TODO: rest of starting game master
 
-            Thread.Sleep(1000000);
+            Thread.Sleep(10000);
             _guiMantainer.StopGui();
         }
         public void GenerateGui()
