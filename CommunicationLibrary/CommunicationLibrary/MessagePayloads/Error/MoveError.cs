@@ -11,7 +11,7 @@ namespace CommunicationLibrary.Error
 
         public override bool ValidateMessage()
         {
-            if (Position.x == null || Position.y == null)
+            if (Position.X == null || Position.Y == null)
                 return false;
             return true;
         }

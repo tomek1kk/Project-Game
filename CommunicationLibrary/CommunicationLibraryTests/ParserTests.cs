@@ -216,13 +216,19 @@ namespace CommunicationLibrary.Tests
         public void TestParseExchangeInformationResponse()
         {
             //// Arrange
-            //string jsonString = "{\"MessageId\":4,\"AgentId\":null}";
-
+            //string jsonString = "{\"MessagePayload\":{},\"MessageId\":102,\"AgentId\":null}";
+            //var expected = new Message<ExchangeInformationResponse>()
+            //{
+            //    MessagePayload = new ExchangeInformationResponse()
+            //    {
+                    
+            //    }
+            //};
             //// Act
             //var result = parser.Parse(jsonString);
 
             //// Assert
-            //Assert.IsInstanceOfType(result, typeof(ExchangeInformationResponse));
+            //result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]
@@ -287,21 +293,24 @@ namespace CommunicationLibrary.Tests
         public void TestParseMoveError()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":901,\"AgentId\":null}";
+            string jsonString = "{\"MessagePayload\":{\"Position\":{\"X\":10,\"Y\":20}},\"MessageId\":901,\"AgentId\":null}";
             var expected = new Message<MoveError>()
             {
                 MessagePayload = new MoveError()
                 {
-                    Position = (10, 20)
+                    Position = new Position()
+                    {
+                        X = 10,
+                        Y = 20
+                    }
                 }
             };
-            var x = parser.AsString(expected);
 
             // Act
             var result = parser.Parse(jsonString);
 
             // Assert
-            Assert.IsInstanceOfType(result, typeof(MoveError));
+            result.Should().BeEquivalentTo(expected);
         }
 
         [TestMethod]

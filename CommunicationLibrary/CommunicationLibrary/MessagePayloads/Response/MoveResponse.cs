@@ -15,7 +15,7 @@ namespace CommunicationLibrary.Response
         {
             if (MadeMove == null)
                 return false;
-            if (CurrentPosition.x == null || CurrentPosition.y == null)
+            if (CurrentPosition.X == null || CurrentPosition.Y == null)
                 return false;
             if (ClosestPiece == null || ClosestPiece < 0)
                 return false;
