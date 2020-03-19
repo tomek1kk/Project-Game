@@ -12,6 +12,7 @@ namespace CommunicationLibrary
         CheckHoldedPieceRequest = 1,
         DestroyPieceRequest = 2,
         DiscoveryRequest = 3,
+        ExchangeInformationResponse = 4,
         ExchangeInformationRequest = 5,
         JoinGameRequest = 6,
         MoveRequest = 7,
@@ -20,15 +21,19 @@ namespace CommunicationLibrary
         CheckHoldedPieceResponse = 101,
         DestroyPieceResponse = 102,
         DiscoveryResponse = 103,
-        ExchangeInformationResponse = 4,
+        GameEnded = 104,
+        GameStarted = 105,
+        RedirectedExchangeInformationRequest = 106,
         JoinGameResponse = 107,
         MoveResponse = 108,
         PickPieceResponse = 109,
         PutPieceResponse = 110,
         MoveError = 901,
-        NotDefinedError = 905,
         PickPieceError = 902,
         PutPieceError = 903,
+        PenaltyNotWaitedError = 904,
+        NotDefinedError = 905,
+
 
     }
     public static class MessageTypeExtensions
