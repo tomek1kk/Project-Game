@@ -14,13 +14,13 @@ namespace GameMaster.Game
 
         public override FieldType GetFieldTypeForGUI()
         {
-            if (whos_here.Count > 0)
+            if (_whos_here.Count > 0)
             {
-                if (whos_here[0].IsHolding)
-                    return whos_here[0].Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
-                return whos_here[0].Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
+                if (_whos_here[0].IsHolding)
+                    return _whos_here[0].Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
+                return _whos_here[0].Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
             }
-            if (discovered)
+            if (_discovered)
                 return FieldType.DiscoveredGoal;
             else
                 return FieldType.Goal;

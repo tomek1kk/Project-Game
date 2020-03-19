@@ -9,26 +9,26 @@ namespace GameMaster.Game
 {
     public class Map : IGuiDataProvider
     {
-        private AbstractField[,] fieldsArray;
-        private List<Player> players;
-        private int goalAreaHeight;
-        private int heigth;
-        private int width;
-        private int numberOfGoals;
-        private int numberOfPieces;
+        private AbstractField[,] _fieldsArray;
+        private List<Player> _players;
+        private int _goalAreaHeight;
+        private int _heigth;
+        private int _width;
+        private int _numberOfGoals;
+        private int _numberOfPieces;
 
         public Map(GMConfiguration config)
         {
-            heigth = config.BoardY;
-            width = config.BoardX;
-            goalAreaHeight = config.GoalAreaHight;
-            numberOfGoals = config.NumberOfGoals;
-            numberOfPieces = config.NumberOfPieces;
-            players = new List<Player>();
-            fieldsArray = new AbstractField[width, heigth];
-            for (int i = 0; i < width; i++)
-                for (int j = 0; j < heigth; j++)
-                    fieldsArray[i, j] = new Field(i, j);
+            _heigth = config.BoardY;
+            _width = config.BoardX;
+            _goalAreaHeight = config.GoalAreaHight;
+            _numberOfGoals = config.NumberOfGoals;
+            _numberOfPieces = config.NumberOfPieces;
+            _players = new List<Player>();
+            _fieldsArray = new AbstractField[_width, _heigth];
+            for (int i = 0; i < _width; i++)
+                for (int j = 0; j < _heigth; j++)
+                    _fieldsArray[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
             //for demo only:
@@ -42,8 +42,8 @@ namespace GameMaster.Game
         private int ClosestPieceForField(AbstractField field)
         {
             int distance = int.MaxValue;
-            for (int x = 0; x < width; x++)
-                for (int y = goalAreaHeight; y < heigth - goalAreaHeight; y++)
+            for (int x = 0; x < _width; x++)
+                for (int y = _goalAreaHeight; y < _heigth - _goalAreaHeight; y++)
                     if (field.ContainsPieces() && Manhattan(field, x, y) < distance)
                         distance = Manhattan(field, x, y);
             return distance;
@@ -51,15 +51,15 @@ namespace GameMaster.Game
         public BoardModel GetCurrentBoardModel()
         {
             //prepare fieldsForGUI:
-            FieldType[,] fieldsForGUI = new FieldType[width, heigth];
-            for (int i = 0; i < width; i++)
-                for (int j = 0; j < heigth; j++)
-                    fieldsForGUI[i, j] = fieldsArray[i, j].GetFieldTypeForGUI();
+            FieldType[,] fieldsForGUI = new FieldType[_width, _heigth];
+            for (int i = 0; i < _width; i++)
+                for (int j = 0; j < _heigth; j++)
+                    fieldsForGUI[i, j] = _fieldsArray[i, j].GetFieldTypeForGUI();
             return new BoardModel()
             {
-                Width = width,
-                Height = heigth,
-                GoalAreaHeight = goalAreaHeight,
+                Width = _width,
+                Height = _heigth,
+                GoalAreaHeight = _goalAreaHeight,
                 Fields = fieldsForGUI
             };
         }
@@ -68,40 +68,40 @@ namespace GameMaster.Game
         /// </summary>
         private void AddGoalFields()
         {
-            List<int> randomList = TakeRandomsFromRange(numberOfGoals, 0, goalAreaHeight * width - 1, new Random());
-            for (int i = 0; i < numberOfGoals; i++)
+            List<int> randomList = TakeRandomsFromRange(_numberOfGoals, 0, _goalAreaHeight * _width - 1, new Random());
+            for (int i = 0; i < _numberOfGoals; i++)
             {
-                int redX = randomList[i] % width;
-                int redY = randomList[i] / width;
-                fieldsArray[redX, redY] = new GoalField(redX, redY);
-                int blueX = (width - 1) - redX;
-                int blueY = (heigth - 1) - redY;
-                fieldsArray[blueX, blueY] = new GoalField(blueX, blueY);
+                int redX = randomList[i] % _width;
+                int redY = randomList[i] / _width;
+                _fieldsArray[redX, redY] = new GoalField(redX, redY);
+                int blueX = (_width - 1) - redX;
+                int blueY = (_heigth - 1) - redY;
+                _fieldsArray[blueX, blueY] = new GoalField(blueX, blueY);
             }
         }
         private void AddPieces()
         {
             var rand = new Random();
-            for (int i = 0; i < numberOfPieces; i++)
+            for (int i = 0; i < _numberOfPieces; i++)
             {
-                int idx = rand.Next(width * goalAreaHeight - 1, width * (heigth - goalAreaHeight));
-                fieldsArray[idx % width, idx / width].PutGeneratedPiece();
+                int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
+                _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece();
             }
         }
         public void AddPlayer(Team team, int agentId)
         {
             var rand = new Random();
             Player player = new Player(team, agentId);
-            int idx = rand.Next(width * goalAreaHeight - 1, width * (heigth - goalAreaHeight));
-            fieldsArray[idx % width, idx / width].MoveHere(player);
-            players.Add(player);
+            int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
+            _fieldsArray[idx % _width, idx / _width].MoveHere(player);
+            _players.Add(player);
         }
         public Player GetPlayerById(int agentId)
         {
-            for (int i = 0; i < players.Count(); i++)
+            for (int i = 0; i < _players.Count(); i++)
             {
-                if (players[i].AgentId == agentId)
-                    return players[i];
+                if (_players[i].AgentId == agentId)
+                    return _players[i];
             }
             return null;
         }

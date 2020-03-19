@@ -8,21 +8,21 @@ namespace GameMaster.Game
 {
     public class Field : AbstractField
     {
-        public Field(int _x, int _y) : base(_x, _y)
+        public Field(int x, int y) : base(x, y)
         {
         }
 
         public override FieldType GetFieldTypeForGUI()
         {
-            if (whos_here.Count > 0)
+            if (_whos_here.Count > 0)
             {
-                if (whos_here[0].IsHolding)
-                    return whos_here[0].Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
-                return whos_here[0].Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
+                if (_whos_here[0].IsHolding)
+                    return _whos_here[0].Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
+                return _whos_here[0].Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
             }
-            if (discovered)
+            if (_discovered)
                 return FieldType.DiscoveredNonGoal;
-            else if (pieces.Count > 0)
+            else if (_pieces.Count > 0)
                 return FieldType.Piece;
             else
                 return FieldType.Empty;

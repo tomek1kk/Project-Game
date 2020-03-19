@@ -13,7 +13,7 @@ namespace GameMaster
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
         ManualGuiDataProvider _guiDataProvider;
-        Map map;
+        Map _map;
 
         public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
         {
@@ -22,7 +22,7 @@ namespace GameMaster
         }
         public void Start()
         {
-            map = new Map(_gmConfiguration);
+            _map = new Map(_gmConfiguration);
             InitGui();
             //TODO: rest of starting game master
 
@@ -42,7 +42,7 @@ namespace GameMaster
             //_guiMantainer.StartGui(_guiDataProvider);
 
             //prototype of GameMaster Map
-            _guiMantainer.StartGui(map);
+            _guiMantainer.StartGui(_map);
         }
     }
 }
