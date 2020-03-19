@@ -15,59 +15,55 @@ namespace CommunicationServer
 {
     public class CommunicationServer
     {
-        private Dictionary<int, Descriptor> correlation;
-        private Descriptor GMDescriptor;
+        private List<Descriptor> _agents = new List<Descriptor>();
+        private Descriptor _gameMaster;
+        private bool isWaitingForMoreAgents = true; //to me, there will be info fram game master when we stop listening for new agent clients.
 
 
-        static void Main(string[] args)
+        public void ConnectGameMaster()
         {
-            // TODO: Get config
+            Console.WriteLine("GM connect");
+            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
+            TcpListener tcpListener = new TcpListener(ipAddress, 8081);
+            tcpListener.Start();
+            TcpClient client = tcpListener.AcceptTcpClient();
+            _gameMaster = new Descriptor(client);
+            _gameMaster.StartReceiving(GetGMMessage);
+            Console.WriteLine("GM end");
+        }
+
+        public void GetGMMessage(Message message)
+        {
+            if (isWaitingForMoreAgents) isWaitingForMoreAgents = !isWaitingForMoreAgents;
+            
+            Console.WriteLine("I've got such message: " + message.GetPayload());
+            Descriptor agent = _agents.Find(x => x.Id == message.AgentId);
+            agent.SendMessage<MessagePayload>(message);
+        }
+
+        public void ConnectAgents()
+        {
+            Console.WriteLine("Agent connect");
             IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
             TcpListener tcpListener = new TcpListener(ipAddress, 8080);
             tcpListener.Start();
-
-            while (true)
+            int i = 0;
+            while (isWaitingForMoreAgents)
             {
-                Console.Write("Waiting for a connection... ");
-                Parser parser = new Parser();
-                TcpClient client = tcpListener.AcceptTcpClient();
-                Console.WriteLine("Connected!");
-                Thread t = new Thread(HandleClient);
-                t.Start(client);
 
+                TcpClient agentClient = tcpListener.AcceptTcpClient();
+                Descriptor agent = new Descriptor(agentClient);
+                _agents.Add(agent);
+                agent.StartReceiving(GetAgentMessage);
+                Console.WriteLine("Agent connected: " + ++i);
             }
+            Console.WriteLine("Agent end");
         }
 
-        private static void HandleClient(object client)
+        public void GetAgentMessage(Message message)
         {
-            Console.WriteLine("In new thread");
-
-            NetworkStream stream = ((TcpClient)client).GetStream();
-
-            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
-            BlockingCollection<Message> messages = new BlockingCollection<Message>();
-
-            streamMessageSenderReceiver.StartReceiving(message =>
-            {
-                Console.WriteLine("Received message: " + message.MessageId);
-                messages.Add(message);
-                SendResponse(message, streamMessageSenderReceiver);
-            });
-
-        }
-
-        private static void SendResponse(Message message, IMessageSenderReceiver messageSender)
-        {
-            switch (message.MessageId)
-            {
-                case MessageType.JoinGameRequest:
-                    messageSender.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest() { TeamId = "bbb" } });
-                    break;
-                default:
-                    messageSender.Send(new Message<NotDefinedError>() { MessagePayload = new NotDefinedError() { HoldingPiece = true } });
-                    break;
-
-            }
+            Console.WriteLine("I've got such message: " + message.GetPayload());
+            _gameMaster.SendMessage<MessagePayload>(message);
         }
 
     }
