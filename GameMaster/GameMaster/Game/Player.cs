@@ -8,26 +8,31 @@ namespace GameMaster.Game
 {
     public class Player
     {
-        private int id;
-        private int messageCorellationId;
-        private Team team;
-        private bool isLeader;
-        private AbstractPiece holding;
-        private AbstractField position;
-        private DateTime lockedTill;
+        protected int agentId;
+        protected int messageCorellationId;
+        protected Team team;
+        protected bool isLeader;
+        protected AbstractPiece holding;
+        protected AbstractField position;
+        protected DateTime lockedTill;
         //private MessageSenderService messageService; //TODO:MessageSenderService
 
-        public Player(DateTime _lockedTill, int _id = -1, int _messageCorellationId = -1, Team _team = Team.Blue, bool _isLeader = false)
+        public Player(Team _team, int _agentId)
         {
-            id = _id;
+            agentId = _agentId;
+            team = _team;
+        }
+        public Player(DateTime _lockedTill, int _agentId = -1, int _messageCorellationId = -1, Team _team = Team.Blue, bool _isLeader = false)
+        {
+            agentId = _agentId;
             messageCorellationId = _messageCorellationId;
             team = _team;
             isLeader = _isLeader;
             lockedTill = _lockedTill;
         }
-        public Player(DateTime _lockedTill, AbstractField _field, AbstractPiece _piece, int _id = -1, int _messageCorellationId = -1, Team _team = Team.Blue, bool _isLeader = false)
+        public Player(DateTime _lockedTill, AbstractField _field, AbstractPiece _piece, int _agentId = -1, int _messageCorellationId = -1, Team _team = Team.Blue, bool _isLeader = false)
         {
-            id = _id;
+            agentId = _agentId;
             messageCorellationId = _messageCorellationId;
             team = _team;
             isLeader = _isLeader;
@@ -94,6 +99,14 @@ namespace GameMaster.Game
         public int Y
         {
             get => position.Y;
+        }
+        public bool IsHolding
+        {
+            get => holding != null;
+        }
+        public Team Team
+        {
+            get => team;
         }
     }
 }

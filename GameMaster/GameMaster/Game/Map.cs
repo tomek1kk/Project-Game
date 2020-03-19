@@ -29,6 +29,12 @@ namespace GameMaster.Game
                     fieldsArray[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
+            //for demo only:
+            for (int i = 0; i < 5; i++)
+            {
+                AddPlayer(Team.Red, 2 * i);
+                AddPlayer(Team.Blue, 2 * i + 1);
+            }
         }
         public BoardModel GetCurrentBoardModel()
         {
@@ -69,6 +75,13 @@ namespace GameMaster.Game
                 int idx = rand.Next(width * goalAreaHeight - 1, width * (heigth - goalAreaHeight));
                 fieldsArray[idx % width, idx / width].PutGeneratedPiece();
             }
+        }
+        public void AddPlayer(Team team, int agentId)
+        {
+            var rand = new Random();
+            Player player = new Player(team, agentId);
+            int idx = rand.Next(width * goalAreaHeight - 1, width * (heigth - goalAreaHeight));
+            fieldsArray[idx % width, idx / width].MoveHere(player);
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
