@@ -44,14 +44,8 @@ namespace GameMaster.Game
         {
             return pieces.Count > 0 ? true : false;
         }
-        public int X
-        {
-            get => x;
-        }
-        public int Y
-        {
-            get => y;
-        }
+        public int X => x;
+        public int Y => y;
         abstract public FieldType GetFieldTypeForGUI();
         public void PutGeneratedPiece()
         {

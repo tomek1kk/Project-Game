@@ -92,25 +92,10 @@ namespace GameMaster.Game
             position.PickUp(this);
             //TODO:MessageSenderService
         }
-        public int X
-        {
-            get => position.X;
-        }
-        public int Y
-        {
-            get => position.Y;
-        }
-        public bool IsHolding
-        {
-            get => holding != null;
-        }
-        public Team Team
-        {
-            get => team;
-        }
-        public int AgentId
-        {
-            get => agentId;
-        }
+        public int X => position.X;
+        public int Y => position.Y;
+        public bool IsHolding => holding != null;
+        public Team Team => team;
+        public int AgentId => agentId;
     }
 }
