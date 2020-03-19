@@ -6,7 +6,7 @@ namespace CommunicationLibrary
 {
     public interface IMessageSenderReceiver : IDisposable
     {
-        void Send<T>(Message<T> m) where T : MessagePayload;
+        void Send(Message m);
         void StartReceiving(Action<Message> receiveCallback);
     }
 }

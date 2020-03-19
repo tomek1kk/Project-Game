@@ -11,9 +11,9 @@ namespace CommunicationLibrary
     public class Parser : IParser
     {
 
-        public string AsString<T>(Message<T> message) where T : MessagePayload
+        public string AsString(Message message)
         {
-            return JsonSerializer.Serialize<Message<T>>(message);
+            return JsonSerializer.Serialize(message, message.GetType());
         }
 
         class EmptyMessage
