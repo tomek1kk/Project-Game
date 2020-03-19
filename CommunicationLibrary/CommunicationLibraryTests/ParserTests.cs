@@ -286,14 +286,22 @@ namespace CommunicationLibrary.Tests
         [TestMethod]
         public void TestParseMoveError()
         {
-            //// Arrange
-            //string jsonString = "{\"MessageId\":901,\"AgentId\":null}";
+            // Arrange
+            string jsonString = "{\"MessagePayload\":{},\"MessageId\":901,\"AgentId\":null}";
+            var expected = new Message<MoveError>()
+            {
+                MessagePayload = new MoveError()
+                {
+                    Position = (10, 20)
+                }
+            };
+            var x = parser.AsString(expected);
 
-            //// Act
-            //var result = parser.Parse(jsonString);
+            // Act
+            var result = parser.Parse(jsonString);
 
-            //// Assert
-            //Assert.IsInstanceOfType(result, typeof(MoveError));
+            // Assert
+            Assert.IsInstanceOfType(result, typeof(MoveError));
         }
 
         [TestMethod]
