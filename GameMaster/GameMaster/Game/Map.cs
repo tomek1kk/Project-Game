@@ -10,6 +10,7 @@ namespace GameMaster.Game
     public class Map : IGuiDataProvider
     {
         private AbstractField[,] fieldsArray;
+        private List<Player> players;
         private int goalAreaHeight;
         private int heigth;
         private int width;
@@ -23,6 +24,7 @@ namespace GameMaster.Game
             goalAreaHeight = config.GoalAreaHight;
             numberOfGoals = config.NumberOfGoals;
             numberOfPieces = config.NumberOfPieces;
+            players = new List<Player>();
             fieldsArray = new AbstractField[width, heigth];
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < heigth; j++)
@@ -36,6 +38,16 @@ namespace GameMaster.Game
                 AddPlayer(Team.Blue, 2 * i + 1);
             }
         }
+        //TODO: tests
+        private int ClosestPieceForField(AbstractField field)
+        {
+            int distance = int.MaxValue;
+            for (int x = 0; x < width; x++)
+                for (int y = goalAreaHeight; y < heigth - goalAreaHeight; y++)
+                    if (field.ContainsPieces() && Manhattan(field, x, y) < distance)
+                        distance = Manhattan(field, x, y);
+            return distance;
+        }
         public BoardModel GetCurrentBoardModel()
         {
             //prepare fieldsForGUI:
@@ -47,7 +59,7 @@ namespace GameMaster.Game
             {
                 Width = width,
                 Height = heigth,
-                GoalAreaHeight = this.goalAreaHeight,
+                GoalAreaHeight = goalAreaHeight,
                 Fields = fieldsForGUI
             };
         }
@@ -82,6 +94,16 @@ namespace GameMaster.Game
             Player player = new Player(team, agentId);
             int idx = rand.Next(width * goalAreaHeight - 1, width * (heigth - goalAreaHeight));
             fieldsArray[idx % width, idx / width].MoveHere(player);
+            players.Add(player);
+        }
+        public Player GetPlayerById(int agentId)
+        {
+            for (int i = 0; i < players.Count(); i++)
+            {
+                if (players[i].AgentId == agentId)
+                    return players[i];
+            }
+            return null;
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
@@ -103,6 +125,11 @@ namespace GameMaster.Game
                 }
             }
             return Enumerable.Take(range, randomCounts).ToList();
+        }
+        //TODO: tests
+        private static int Manhattan(AbstractField field, int x, int y)
+        {
+            return Math.Abs(field.X - x) + Math.Abs(field.Y - y);
         }
     }
 }

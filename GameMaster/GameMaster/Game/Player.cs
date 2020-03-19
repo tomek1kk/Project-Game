@@ -108,5 +108,9 @@ namespace GameMaster.Game
         {
             get => team;
         }
+        public int AgentId
+        {
+            get => agentId;
+        }
     }
 }
