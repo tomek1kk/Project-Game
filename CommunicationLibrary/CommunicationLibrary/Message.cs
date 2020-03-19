@@ -16,7 +16,7 @@ namespace CommunicationLibrary
             get;
         }
         public abstract MessagePayload GetPayload();
-        public int? AgentId { get; }
+        public int? AgentId { get; set; }
 
     }
 
