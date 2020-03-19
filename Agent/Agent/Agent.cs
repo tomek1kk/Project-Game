@@ -1,4 +1,5 @@
-﻿using CommunicationLibrary;
+﻿using Agent.CommunicationServices;
+using CommunicationLibrary;
 using CommunicationLibrary.Request;
 using System;
 using System.Collections;
@@ -9,49 +10,57 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
+using FibonacciHeap;
 
 namespace Agent
 {
-    public class Agent
+    public class Agent : IDisposable
     {
-        public AgentConfiguration configuration { get; set; }
-        public AgentConfiguration ReadConfiguration()
-        {
-           return configuration = new AgentConfiguration()
-            {
-                CsIp = "127.0.0.1",
-                CsPort = 8080,
-                TeamId = Enum.GetName(typeof(Team), Team.Blue)
-            };
-        }
-       
-        static void Main(string[] args)
-        {
-            Agent agent = new Agent();
-            var configuration = agent.ReadConfiguration();
+        public AgentConfiguration _configuration { get; set; }
+        private StreamMessageSenderReceiver _communicator;
+        private Queue<Message> _queue = new Queue<Message>();
+        //FibonacciHeap<Message, int> _queue = new FibonacciHeap<Message, int>(1);
 
-            TcpClient client = new TcpClient(configuration.CsIp, configuration.CsPort);
+
+        public Agent(AgentConfiguration configuration)
+        {
+            this._configuration = configuration;
+            TcpClient client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
             NetworkStream stream = client.GetStream();
-            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(stream, new Parser());
-            streamMessageSenderReceiver.StartReceiving(message => Console.WriteLine("Got message: " + message.MessageId));
-            streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
-            
-            Random r = new Random();
-            while (true)
-            {
-
-                Console.ReadKey();
-                var p = r.Next() % 2;
-                if (p == 0)
-                    streamMessageSenderReceiver.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
-                else
-                    streamMessageSenderReceiver.Send(new Message<PickPieceRequest>() { MessagePayload = new PickPieceRequest() });
-            }
-            streamMessageSenderReceiver.Dispose();
+            StreamMessageSenderReceiver _communicator = new StreamMessageSenderReceiver(stream, new Parser());
 
         }
 
+        public void StartListening()
+        {
+            ThreadPool.SetMaxThreads(2, 1);
+            _communicator.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+            _communicator.StartReceiving(this.AddToQueue);
+        }
 
+        public void StartSending(object message)
+        {
+            Random r = new Random();
+
+            Console.ReadKey();
+            var p = r.Next() % 2;
+            if (p == 0)
+                _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+            else
+                _communicator.Send(new Message<PickPieceRequest>() { MessagePayload = new PickPieceRequest() });
+        }
+
+        private void AddToQueue(Message message)
+        {
+            Console.WriteLine("Got message: " + message.MessageId);
+            _queue.Enqueue(message);
+            ThreadPool.QueueUserWorkItem(new WaitCallback(this.StartSending));
+        }
+
+        public void Dispose()
+        {
+            _communicator.Dispose();
+        }
     }
 }
 
