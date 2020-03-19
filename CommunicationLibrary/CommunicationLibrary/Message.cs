@@ -1,4 +1,5 @@
 ﻿using CommunicationLibrary.Error;
+using CommunicationLibrary.Information;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
 using System;
@@ -35,6 +36,7 @@ namespace CommunicationLibrary
             return MessagePayload;
         }
 
+
         private static Dictionary<Type, MessageType> messageDictionary = new Dictionary<Type, MessageType>()
         {
             { typeof(CheckHoldedPieceRequest), MessageType.CheckHoldedPieceRequest },
@@ -57,6 +59,11 @@ namespace CommunicationLibrary
             { typeof(NotDefinedError), MessageType.NotDefinedError },
             { typeof(PickPieceError), MessageType.PickPieceError },
             { typeof(PutPieceError), MessageType.PutPieceError },
+            { typeof(GameStarted), MessageType.GameStarted },
+            { typeof(GameEnded), MessageType.GameEnded },
+            { typeof(PenaltyNotWaitedError), MessageType.PenaltyNotWaitedError },
+            { typeof(RedirectedExchangeInformationRequest), MessageType.RedirectedExchangeInformationRequest },
+            
         };
 
     }
