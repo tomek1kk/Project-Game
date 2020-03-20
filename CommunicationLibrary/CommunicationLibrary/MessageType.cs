@@ -1,4 +1,5 @@
 ﻿using CommunicationLibrary.Error;
+using CommunicationLibrary.Information;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
 using System;
@@ -61,7 +62,11 @@ namespace CommunicationLibrary
             { MessageType.MoveError, typeof(MoveError) },
             { MessageType.NotDefinedError, typeof(NotDefinedError) },
             { MessageType.PickPieceError, typeof(PickPieceError) },
-            { MessageType.PutPieceError, typeof(PutPieceError) }
+            { MessageType.PutPieceError, typeof(PutPieceError) },
+            { MessageType.GameStarted, typeof(GameStarted) },
+            { MessageType.GameEnded, typeof(GameEnded) },
+            { MessageType.PenaltyNotWaitedError, typeof(PenaltyNotWaitedError)  },
+            { MessageType.RedirectedExchangeInformationRequest, typeof(RedirectedExchangeInformationRequest) }
         };
     }
 }
