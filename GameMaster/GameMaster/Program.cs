@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using GameMaster.Configuration;
+using GameMaster.Game;
 
 namespace GameMaster
 {
@@ -21,7 +22,7 @@ namespace GameMaster
         {
 
             GMConfiguration config = GMConfiguration.ReadConfiguration(args);
-            GameMaster gameMaster = new GameMaster(new GuiMantainer(),config);
+            GameMaster gameMaster = new GameMaster(new GuiMantainer(),config, new MessageHandler());
             gameMaster.Start();
         }
 

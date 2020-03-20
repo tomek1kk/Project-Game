@@ -1,4 +1,6 @@
-﻿using System;
+﻿using CommunicationLibrary;
+using CommunicationLibrary.Response;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,11 +69,17 @@ namespace GameMaster.Game
             _holding = null;
             //TODO: MessageSenderService
         }
-        public void CheckHolding()
+        public MessagePayload CheckHolding()
         {
+            bool sham;
             if (_holding != null && _holding.IsTrue() == false)
-                _holding = null;
-            //TODO: MessageSenderService
+                sham = false;
+            else
+                sham = true;
+            return new CheckHoldedPieceResponse()
+            {
+                Sham = sham
+            };
         }
         public void Discover(AbstractField[][] map)
         {
