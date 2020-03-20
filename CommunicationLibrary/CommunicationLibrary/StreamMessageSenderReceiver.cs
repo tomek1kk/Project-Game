@@ -55,6 +55,7 @@ namespace CommunicationLibrary
         }
         public void Dispose()
         {
+            _tcpStream.Dispose();
             _cancellationTokenSource.Cancel();
             _receivingThread.Join();
         }
