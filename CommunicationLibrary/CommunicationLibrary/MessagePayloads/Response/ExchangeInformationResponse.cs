@@ -8,9 +8,9 @@ namespace CommunicationLibrary.Response
     public class ExchangeInformationResponse : MessagePayload
     {
         public int? RespondToID { get; set; }
-        public List<int> Distances { get; set; }
-        public List<string> RedTeamGoalAreaInformations { get; set; }
-        public List<string> BlueTeamGoalAreaInformations { get; set; }
+        public IEnumerable<int> Distances { get; set; }
+        public IEnumerable<string> RedTeamGoalAreaInformations { get; set; }
+        public IEnumerable<string> BlueTeamGoalAreaInformations { get; set; }
 
         public override bool ValidateMessage()
         {
