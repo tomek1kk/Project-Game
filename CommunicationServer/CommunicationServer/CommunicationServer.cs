@@ -15,8 +15,8 @@ namespace CommunicationServer
 {
     public class CommunicationServer
     {
-        private List<Descriptor> _agents = new List<Descriptor>();
-        private Descriptor _gameMaster;
+        private List<AgentDescriptor> _agents = new List<AgentDescriptor>();
+        private GMDescriptor _gameMaster;
         private bool isWaitingForMoreAgents = true; //to me, there will be info fram game master when we stop listening for new agent clients.
 
 
@@ -27,8 +27,8 @@ namespace CommunicationServer
             TcpListener tcpListener = new TcpListener(ipAddress, 8081);
             tcpListener.Start();
             TcpClient client = tcpListener.AcceptTcpClient();
-            _gameMaster = new Descriptor(client);
-            _gameMaster.StartReceiving(GetGMMessage);
+            _gameMaster = new GMDescriptor(client);
+            _gameMaster.StartReceivingFromGM(GetGMMessage);
             Console.WriteLine("GM end");
         }
 
@@ -37,8 +37,8 @@ namespace CommunicationServer
             if (isWaitingForMoreAgents) isWaitingForMoreAgents = !isWaitingForMoreAgents;
             
             Console.WriteLine("I've got such message: " + message.GetPayload());
-            Descriptor agent = _agents.Find(x => x.Id == message.AgentId);
-            agent.SendMessage<MessagePayload>(message);
+            AgentDescriptor agent = _agents.Find(x => x.Id == message.AgentId);
+            agent.SendToAgent(message);
         }
 
         public void ConnectAgents()
@@ -52,9 +52,9 @@ namespace CommunicationServer
             {
 
                 TcpClient agentClient = tcpListener.AcceptTcpClient();
-                Descriptor agent = new Descriptor(agentClient);
+                AgentDescriptor agent = new AgentDescriptor(agentClient);
                 _agents.Add(agent);
-                agent.StartReceiving(GetAgentMessage);
+                agent.StartReceivingFromAgent(GetAgentMessage);
                 Console.WriteLine("Agent connected: " + ++i);
             }
             Console.WriteLine("Agent end");
@@ -63,7 +63,7 @@ namespace CommunicationServer
         public void GetAgentMessage(Message message)
         {
             Console.WriteLine("I've got such message: " + message.GetPayload());
-            _gameMaster.SendMessage<MessagePayload>(message);
+            _gameMaster.SendToGM(message);
         }
 
     }

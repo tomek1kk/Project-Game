@@ -8,12 +8,12 @@ namespace CommunicationServer
 {
     public class Descriptor
     {
-        private static int id = 1;
+        private static int id = 0;
 
         public int Id { get; private set; }
-        private TcpClient _tcpClient;// do we need that?
-        private NetworkStream _networkStream;// do we need that?
-        private StreamMessageSenderReceiver _streamMessageSenderReceiver;
+        protected TcpClient _tcpClient;// do we need that?
+        protected NetworkStream _networkStream;// do we need that?
+        protected StreamMessageSenderReceiver _streamMessageSenderReceiver;
 
         public Descriptor(TcpClient tcpClient)
         {
@@ -23,20 +23,15 @@ namespace CommunicationServer
             Id = id++;
         }
 
-        public void StartReceiving(Action<Message> action)
+
+        protected void StartReceiving(Action<Message> action)
         {
             _streamMessageSenderReceiver.StartReceiving(action);
         }
-         
-        public void SendMessage<T>(Message message) where T: MessagePayload
+
+        protected void SendMessage(Message message)
         {
-            //it cannot be generic
-            _streamMessageSenderReceiver.Send<T>((Message<T>)message);
+            _streamMessageSenderReceiver.Send(message);
         }
-
-
-
-
-
     }
 }

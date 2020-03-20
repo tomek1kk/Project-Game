@@ -11,7 +11,7 @@ namespace CommunicationServer
             CommunicationServer communicationServer = new CommunicationServer();
             communicationServer.ConnectGameMaster();
             communicationServer.ConnectAgents();
-            Console.WriteLine("Koniec Dupa");
+            Console.WriteLine("Koniec CS");
         }
     }
 }
