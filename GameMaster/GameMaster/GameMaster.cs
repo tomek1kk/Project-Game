@@ -18,6 +18,7 @@ namespace GameMaster
     {
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
+        private StreamMessageSenderReceiver _communicator;
         ManualGuiDataProvider _guiDataProvider;
 
         public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
@@ -31,9 +32,9 @@ namespace GameMaster
             //TODO: rest of starting game master
 
             TcpClient client = new TcpClient("127.0.0.1", 8081);
-            StreamMessageSenderReceiver streamMessageSenderReceiver = new StreamMessageSenderReceiver(client.GetStream(), new Parser());
+            _communicator = new StreamMessageSenderReceiver(client.GetStream(), new Parser());
             //streamMessageSenderReceiver.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "DUUPA" } });
-            streamMessageSenderReceiver.StartReceiving(GetCSMessage);
+            _communicator.StartReceiving(GetCSMessage);
             Console.WriteLine("Try connect");
 
 
@@ -42,7 +43,10 @@ namespace GameMaster
         }
         private void GetCSMessage(Message message)
         {
-            Console.WriteLine(message.MessageId + "  " + message.GetPayload());
+
+            Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
+            var payload = new JoinGameResponse() { AgentID = message.AgentId };
+            _communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
         }
 
         public void GenerateGui()
