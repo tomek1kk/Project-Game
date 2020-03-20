@@ -64,12 +64,12 @@ namespace GameMaster.Game
             }
             //TODO: MessageSenderService
         }
-        public void DestroyHolding()
+        public DestroyPieceResponse DestroyHolding()
         {
             _holding = null;
-            //TODO: MessageSenderService
+            return new DestroyPieceResponse();
         }
-        public MessagePayload CheckHolding()
+        public CheckHoldedPieceResponse CheckHolding()
         {
             bool sham;
             if (_holding != null && _holding.IsTrue() == false)
@@ -81,10 +81,10 @@ namespace GameMaster.Game
                 Sham = sham
             };
         }
-        public void Discover(AbstractField[][] map)
-        {
-            //TODO: MessageSenderService
-        }
+        //public void Discover(AbstractField[][] map)
+        //{
+        //    //TODO: MessageSenderService
+        //}
         public bool Put()
         {
             if(_holding.IsTrue() == false)

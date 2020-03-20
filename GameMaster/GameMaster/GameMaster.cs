@@ -51,7 +51,7 @@ namespace GameMaster
         {
 
             Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
-            this._messageHandler.HandleMessage(message, _communicator);
+            this._messageHandler.HandleMessage(message, _communicator, map);
             //var payload = new JoinGameResponse() { AgentID = message.AgentId };
 
             //_communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
