@@ -59,6 +59,7 @@ namespace Agent
         public void Dispose()
         {
             _communicator.Dispose();
+            _st
         }
     }
 }

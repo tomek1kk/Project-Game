@@ -10,11 +10,7 @@ namespace CommunicationServer
     {
         public AgentDescriptor(TcpClient tcpClient) : base(tcpClient) { }
 
-        /// <summary>
-        /// Receives messeges from agent
-        /// </summary>
-        /// <param name="action"></param>
-        public void StartReceivingFromAgent(Action<Message> action)
+        public override void StartReceiving(Action<Message> action)
         {
             //when we receive messege from agent we need to append AgentID before sending to GM.
             base.StartReceiving(
@@ -24,15 +20,6 @@ namespace CommunicationServer
                      action(x);
                  }
             );
-        }
-
-        /// <summary>
-        /// Sends message to Agent
-        /// </summary>
-        /// <param name="message"></param>
-        public void SendToAgent(Message m)
-        {
-            base.SendMessage(m);
         }
     }
 }

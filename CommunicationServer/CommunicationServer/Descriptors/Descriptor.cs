@@ -6,7 +6,7 @@ using System.Text;
 
 namespace CommunicationServer
 {
-    public class Descriptor
+    public class Descriptor : IDisposable
     {
         private static int id = 0;
 
@@ -23,15 +23,20 @@ namespace CommunicationServer
             Id = id++;
         }
 
-
-        protected void StartReceiving(Action<Message> action)
+        public virtual void StartReceiving(Action<Message> action)
         {
             _streamMessageSenderReceiver.StartReceiving(action);
         }
 
-        protected void SendMessage(Message message)
+        public virtual void SendMessage(Message message)
         {
             _streamMessageSenderReceiver.Send(message);
+        }
+
+        public void Dispose()
+        {
+            _networkStream.Dispose();
+            _streamMessageSenderReceiver.Dispose();
         }
     }
 }

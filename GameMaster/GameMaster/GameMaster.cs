@@ -14,7 +14,8 @@ using System.Threading;
 
 namespace GameMaster
 {
-    public class GameMaster
+    public class GameMaster :IDisposable
+
     {
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
@@ -60,6 +61,11 @@ namespace GameMaster
             //once code related to game board is complete
             _guiDataProvider = new ManualGuiDataProvider(_gmConfiguration.BoardX, _gmConfiguration.BoardY, _gmConfiguration.GoalAreaHight);
             _guiMantainer.StartGui(_guiDataProvider);
+        }
+
+        public void Dispose()
+        {
+            _communicator.Dispose();
         }
     }
 }
