@@ -8,46 +8,51 @@ namespace GameMaster.Game
 {
     public class Player
     {
-        private int id;
-        private int messageCorellationId;
-        private Team team;
-        private bool isLeader;
-        private AbstractPiece holding;
-        private AbstractField position;
-        private DateTime lockedTill;
+        protected int _agentId;
+        protected int _messageCorellationId;
+        protected Team _team;
+        protected bool _isLeader;
+        protected AbstractPiece _holding;
+        protected AbstractField _position;
+        protected DateTime _lockedTill;
         //private MessageSenderService messageService; //TODO:MessageSenderService
 
-        public Player(DateTime _lockedTill, int _id = -1, int _messageCorellationId = -1, Team _team = Team.Blue, bool _isLeader = false)
+        public Player(Team team, int agentId)
         {
-            id = _id;
-            messageCorellationId = _messageCorellationId;
-            team = _team;
-            isLeader = _isLeader;
-            lockedTill = _lockedTill;
+            _agentId = agentId;
+            _team = team;
         }
-        public Player(DateTime _lockedTill, AbstractField _field, AbstractPiece _piece, int _id = -1, int _messageCorellationId = -1, Team _team = Team.Blue, bool _isLeader = false)
+        public Player(DateTime lockedTill, int agentId = -1, int messageCorellationId = -1, Team team = Team.Blue, bool isLeader = false)
         {
-            id = _id;
-            messageCorellationId = _messageCorellationId;
-            team = _team;
-            isLeader = _isLeader;
-            lockedTill = _lockedTill;
-            holding = _piece;
-            position = _field;
+            _agentId = agentId;
+            _messageCorellationId = messageCorellationId;
+            _team = team;
+            _isLeader = isLeader;
+            _lockedTill = lockedTill;
+        }
+        public Player(DateTime lockedTill, AbstractField field, AbstractPiece piece, int agentId = -1, int messageCorellationId = -1, Team team = Team.Blue, bool isLeader = false)
+        {
+            _agentId = agentId;
+            _messageCorellationId = messageCorellationId;
+            _team = team;
+            _isLeader = isLeader;
+            _lockedTill = lockedTill;
+            _holding = piece;
+            _position = field;
         }
 
         public bool TryLock(DateTime newLockTime)
         {
-            if(lockedTill < DateTime.Now)
+            if(_lockedTill < DateTime.Now)
             {
-                lockedTill = newLockTime;
+                _lockedTill = newLockTime;
                 return true;
             }
             return false;
         }
         public void Move(AbstractField field)
         {
-            if(position.MoveOut(this) == false)
+            if(_position.MoveOut(this) == false)
             {
                 throw new InvalidOperationException("Player is not occupying this field!");
             }
@@ -59,13 +64,13 @@ namespace GameMaster.Game
         }
         public void DestroyHolding()
         {
-            holding = null;
+            _holding = null;
             //TODO: MessageSenderService
         }
         public void CheckHolding()
         {
-            if (holding != null && holding.IsTrue() == false)
-                holding = null;
+            if (_holding != null && _holding.IsTrue() == false)
+                _holding = null;
             //TODO: MessageSenderService
         }
         public void Discover(AbstractField[][] map)
@@ -74,26 +79,23 @@ namespace GameMaster.Game
         }
         public bool Put()
         {
-            if(holding.IsTrue() == false)
+            if(_holding.IsTrue() == false)
             {
-                holding = null;
+                _holding = null;
                 //TODO: MessageSenderSevrice
                 return false;
             }
-            return position.Put(holding);
+            return _position.Put(_holding);
         }
         public void SetHolding()
         {
-            position.PickUp(this);
+            _position.PickUp(this);
             //TODO:MessageSenderService
         }
-        public int X
-        {
-            get => position.X;
-        }
-        public int Y
-        {
-            get => position.Y;
-        }
+        public int X => _position.X;
+        public int Y => _position.Y;
+        public bool IsHolding => _holding != null;
+        public Team Team => _team;
+        public int AgentId => _agentId;
     }
 }
