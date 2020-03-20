@@ -1,5 +1,4 @@
-﻿using Agent.CommunicationServices;
-using CommunicationLibrary;
+﻿using CommunicationLibrary;
 using CommunicationLibrary.Request;
 using System;
 using System.Collections;
@@ -27,14 +26,14 @@ namespace Agent
             this._configuration = configuration;
             TcpClient client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
             NetworkStream stream = client.GetStream();
-            StreamMessageSenderReceiver _communicator = new StreamMessageSenderReceiver(stream, new Parser());
+           this._communicator = new StreamMessageSenderReceiver(stream, new Parser());
 
         }
 
         public void StartListening()
         {
             ThreadPool.SetMaxThreads(2, 1);
-            _communicator.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+            _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
             _communicator.StartReceiving(this.AddToQueue);
         }
 
