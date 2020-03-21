@@ -10,6 +10,7 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
 using FibonacciHeap;
+using Agent.AgentBoard;
 
 namespace Agent
 {
@@ -19,6 +20,7 @@ namespace Agent
         private StreamMessageSenderReceiver _communicator;
         private Queue<Message> _queue = new Queue<Message>();
         private TcpClient _client;
+        public AgentInfo agentInfo;
         //FibonacciHeap<Message, int> _queue = new FibonacciHeap<Message, int>(1);
 
 
@@ -27,8 +29,12 @@ namespace Agent
             this._configuration = configuration;
             _client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
             NetworkStream stream = _client.GetStream();
-           this._communicator = new StreamMessageSenderReceiver(stream, new Parser());
-
+            this._communicator = new StreamMessageSenderReceiver(stream, new Parser());
+            if (_configuration.Strategy == 1)
+            {
+                AgentBoardInfo boardInfo = new AgentBoardInfo();
+                this.agentInfo = new AgentInfo(new SampleStrategy(), true, boardInfo, (0, 0)); //TO DO: position and other informations from GM message.
+            }
         }
 
         public void StartListening()
