@@ -7,10 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMaster", "GameMaster\Ga
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GameMasterTests", "GameMasterTests\GameMasterTests.csproj", "{FB5F97E3-046A-4B8F-8667-6CCC0922F8F7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CommunicationServer", "..\CommunicationServer\CommunicationServer\CommunicationServer.csproj", "{FF04339E-AA2A-41EF-8AE1-808CE5A0F208}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Agent", "..\Agent\Agent\Agent.csproj", "{B60275E2-EAF4-44BC-AF14-EAB98FB44D60}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
