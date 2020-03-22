@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CommunicationLibrary\CommunicationLibrary\CommunicationLibrary.csproj" />
     <ProjectReference Include="..\Agent\Agent.csproj" />
   </ItemGroup>
 
