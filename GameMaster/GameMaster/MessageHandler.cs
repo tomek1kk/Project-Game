@@ -10,7 +10,7 @@ using GameMaster.MessageHandlers;
 
 namespace GameMaster.Game
 {
-    public abstract class MessageHandler
+    public abstract class MessageHandler : IMessageHandler
     {
         protected int agentId;
 
@@ -30,6 +30,7 @@ namespace GameMaster.Game
             // TODO
             return;
         }
+
         protected abstract bool CheckRequest(Map map);
         protected abstract Message GetResponse(Map map);
         protected abstract void Execute(Map map);
