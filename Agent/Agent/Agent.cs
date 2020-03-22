@@ -11,6 +11,7 @@ using System.Text.Json;
 using System.Threading;
 using FibonacciHeap;
 using Agent.AgentBoard;
+using Agent.MessageHandling;
 
 namespace Agent
 {
@@ -38,6 +39,7 @@ namespace Agent
 
         public void StartListening()
         {
+            MessageHandler m = new MessageHandler(_communicator, agentInfo);
             ThreadPool.SetMaxThreads(2, 1);
             _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
             _communicator.StartReceiving(this.AddToQueue);
