@@ -20,15 +20,11 @@ namespace GameMaster
     {
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
-        readonly MessageHandler _messageHandler;
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
-        private Dictionary<MessageType, MessageHandler> handlers = new Dictionary<MessageType, MessageHandler>()
-        {
-            { MessageType.MoveRequest, new MoveRequestHandler() }
-        };
+
 
         public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
         {
