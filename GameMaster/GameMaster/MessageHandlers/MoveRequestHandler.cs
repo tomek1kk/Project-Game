@@ -26,7 +26,8 @@ namespace GameMaster.MessageHandlers
 
         protected override void Execute(Map map)
         {
-            throw new NotImplementedException();
+            // TODO
+            return;
         }
 
         protected override Message GetResponse(Map map)
