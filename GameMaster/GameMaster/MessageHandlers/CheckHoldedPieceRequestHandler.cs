@@ -1,6 +1,7 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
+using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
 using System.Collections.Generic;
@@ -37,6 +38,11 @@ namespace GameMaster.MessageHandlers
         protected override void ReadMessage(MessagePayload payload)
         {
             return;
+        }
+
+        protected override void SetTimeout(GMConfiguration config)
+        {
+            throw new NotImplementedException();
         }
     }
 }

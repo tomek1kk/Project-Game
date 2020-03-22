@@ -1,6 +1,7 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
+using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,11 @@ namespace GameMaster.MessageHandlers
                     ClosestPiece = map.GetClosestPiece(agentId)
                 }
             };
+        }
+
+        protected override void SetTimeout(GMConfiguration config)
+        {
+            throw new NotImplementedException();
         }
     }
 }
