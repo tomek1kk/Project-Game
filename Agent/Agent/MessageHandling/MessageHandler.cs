@@ -5,11 +5,12 @@ using System.Text;
 
 namespace Agent.MessageHandling
 {
+    //assumes agent already joined the game
     class MessageHandler
     {
-        IMessageSenderReceiver _gmConnection;
+        SenderReceiverQueueAdapter _gmConnection;
         AgentInfo _agentInfo;
-        public MessageHandler(IMessageSenderReceiver gmConnection, AgentInfo agentInfo)
+        public MessageHandler(SenderReceiverQueueAdapter gmConnection, AgentInfo agentInfo)
         {
             _gmConnection = gmConnection;
             _agentInfo = agentInfo;
