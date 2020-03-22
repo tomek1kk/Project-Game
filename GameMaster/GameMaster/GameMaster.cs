@@ -19,15 +19,17 @@ namespace GameMaster
     {
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
+        readonly MessageHandler _messageHandler;
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
 
-        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
+        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, MessageHandler messageHandler)
         {
             _guiMantainer = guiMantainer;
             _gmConfiguration = config;
+            _messageHandler = messageHandler;
         }
         public void Start()
         {
@@ -48,9 +50,11 @@ namespace GameMaster
         private void GetCSMessage(Message message)
         {
 
-            Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: " + message.AgentId);
-            var payload = new JoinGameResponse() { AgentID = message.AgentId };
-            _communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload, AgentId = message.AgentId });
+            Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
+            this._messageHandler.HandleMessage(message, _communicator, _map);
+            //var payload = new JoinGameResponse() { AgentID = message.AgentId };
+
+            //_communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
         }
 
         public void GenerateGui()

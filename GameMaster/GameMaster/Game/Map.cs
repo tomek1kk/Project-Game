@@ -4,13 +4,14 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameMaster.GUI;
 using GameMaster.Configuration;
+using CommunicationLibrary.Response;
 
 namespace GameMaster.Game
 {
     public class Map : IGuiDataProvider
     {
         private AbstractField[,] _fieldsArray;
-        private List<Player> _players;
+        private Dictionary<int, Player> _players;
         private int _goalAreaHeight;
         private int _heigth;
         private int _width;
@@ -24,7 +25,7 @@ namespace GameMaster.Game
             _goalAreaHeight = config.GoalAreaHight;
             _numberOfGoals = config.NumberOfGoals;
             _numberOfPieces = config.NumberOfPieces;
-            _players = new List<Player>();
+            _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
@@ -88,22 +89,37 @@ namespace GameMaster.Game
                 _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece();
             }
         }
-        public void AddPlayer(Team team, int agentId)
+        public JoinGameResponse AddPlayer(Team team, int agentId)
         {
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
-            _players.Add(player);
+            _players.Add(agentId, player);
+            return new JoinGameResponse()
+            {
+                Accepted = true,
+                AgentID = agentId
+            };
         }
+
+        public DiscoveryResponse Discovery(int agentId)
+        {
+            // TODO: Write Discovery logic for given agent
+
+            return new DiscoveryResponse();
+        }
+
+        public MoveResponse Move(string direction, int agentId)
+        {
+            // TODO
+
+            return new MoveResponse();
+        }
+
         public Player GetPlayerById(int agentId)
         {
-            for (int i = 0; i < _players.Count(); i++)
-            {
-                if (_players[i].AgentId == agentId)
-                    return _players[i];
-            }
-            return null;
+            return _players[agentId];
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
