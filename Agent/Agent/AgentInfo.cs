@@ -11,7 +11,7 @@ namespace Agent
             this.strategy = strategy;
             this.hasPiece = false;
             this.isLeader = isLeader;
-            this.board = new Field[board.BoardSize.X,board.BoardSize.Y];
+            this.board = new Field[(int)board.BoardSize.X, (int)board.BoardSize.Y];
         }
         public (int, int) position;
         public bool isLeader;
