@@ -22,9 +22,18 @@ namespace Agent.MessageHandling
             return _queue.Take();
         }
 
-        public Message Take(CancellationToken cancellationToken)
+        public Message TryTake(CancellationToken cancellationToken, int millisecondsTimeout)
         {
-            return _queue.Take(cancellationToken);
+            try
+            {
+                //queue.take(cancellationToken) doesn't cancel for some reason
+                _queue.TryTake(out Message result, millisecondsTimeout, cancellationToken);
+                return result;
+            }
+            catch(OperationCanceledException)
+            {
+                return null;
+            }
         }
         public void Send(Message message)
         {
