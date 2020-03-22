@@ -1,13 +1,14 @@
 ﻿using System;
 using Agent.AgentBoard;
 using CommunicationLibrary;
+using CommunicationLibrary.Request;
 
 namespace Agent
 {
     public interface IStrategy
     {
         Field[,] Board {get; set;}
-        void MakeDecision(AgentInfo agent);
+        Message MakeDecision(AgentInfo agent);
         void UpdateMap(Message message);
 
     }
@@ -15,14 +16,14 @@ namespace Agent
     {
         public Field[,] Board { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public void MakeDecision(AgentInfo agent)
+        public Message MakeDecision(AgentInfo agent)
         {
-
+            return new Message<DiscoveryRequest>(new DiscoveryRequest());
         }
 
         void IStrategy.UpdateMap(Message message)
         {
-            throw new NotImplementedException();
+
         }
     }
 }

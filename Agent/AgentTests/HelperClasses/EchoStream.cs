@@ -1,14 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿
+using System;
+using System.IO;
+using System.Threading.Tasks;
+using System.Threading;
+using System.Collections.Concurrent;
 
 namespace AgentTests.HelperClasses
 {
-    using System;
-    using System.IO;
-    using System.Threading.Tasks;
-    using System.Threading;
-    using System.Collections.Concurrent;
 
     //required to simulate network stream in tests
     //blocks on read if it doesn't have enough bytes
