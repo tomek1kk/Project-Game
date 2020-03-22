@@ -15,13 +15,13 @@ using GameMaster.Game;
 
 namespace GameMaster
 {
-    public class GameMaster :IDisposable
-
+    public class GameMaster : IDisposable
     {
         readonly IGuiMantainer _guiMantainer;
         readonly GMConfiguration _gmConfiguration;
         readonly MessageHandler _messageHandler;
         private StreamMessageSenderReceiver _communicator;
+        private TcpClient _client;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
 
@@ -37,8 +37,8 @@ namespace GameMaster
             InitGui();
             //TODO: rest of starting game master
 
-            TcpClient client = new TcpClient("127.0.0.1", 8081);
-            _communicator = new StreamMessageSenderReceiver(client.GetStream(), new Parser());
+            _client = new TcpClient("127.0.0.1", 8081);
+            _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
             //streamMessageSenderReceiver.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "DUUPA" } });
             _communicator.StartReceiving(GetCSMessage);
             Console.WriteLine("Try connect");
@@ -76,6 +76,7 @@ namespace GameMaster
 
         public void Dispose()
         {
+            _client.Dispose();
             _communicator.Dispose();
         }
     }
