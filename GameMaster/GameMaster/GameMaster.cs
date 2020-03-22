@@ -19,6 +19,7 @@ namespace GameMaster
     public class GameMaster : IDisposable
     {
         readonly IGuiMantainer _guiMantainer;
+        readonly IMessageHandler _messageHandler;
         readonly GMConfiguration _gmConfiguration;
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
@@ -26,10 +27,11 @@ namespace GameMaster
         Map _map;
 
 
-        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
+        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, IMessageHandler messageHandler)
         {
             _guiMantainer = guiMantainer;
             _gmConfiguration = config;
+            _messageHandler = messageHandler;
         }
         public void Start()
         {
@@ -59,10 +61,10 @@ namespace GameMaster
                 });
                 return;
             }
-            var handler = RequestHandlerProvider.GetHandler(message.MessageId);
-            handler.BaseReadMessage(message);
-            var response = handler.ProcessRequest(_map);
-            handler.SetTimeout();
+
+            _messageHandler.BaseReadMessage(message);
+            var response = _messageHandler.ProcessRequest(_map);
+            _messageHandler.SetTimeout();
             _communicator.Send(response);
         }
 

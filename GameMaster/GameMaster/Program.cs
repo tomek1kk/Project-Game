@@ -22,7 +22,7 @@ namespace GameMaster
         {
 
             GMConfiguration config = GMConfiguration.ReadConfiguration(args);
-            GameMaster gameMaster = new GameMaster(new GuiMantainer(),config);
+            GameMaster gameMaster = new GameMaster(new GuiMantainer(),config, new ProxyMessageHandler());
             gameMaster.Start();
         }
 
