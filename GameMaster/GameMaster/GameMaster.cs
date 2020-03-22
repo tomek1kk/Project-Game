@@ -30,11 +30,10 @@ namespace GameMaster
             { MessageType.MoveRequest, new MoveRequestHandler() }
         };
 
-        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, MessageHandler messageHandler)
+        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config)
         {
             _guiMantainer = guiMantainer;
             _gmConfiguration = config;
-            _messageHandler = messageHandler;
         }
         public void Start()
         {
