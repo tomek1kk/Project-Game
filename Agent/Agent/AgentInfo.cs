@@ -16,7 +16,6 @@ namespace Agent
         public (int, int) position;
         public bool isLeader;
         public bool hasPiece; 
-        public Field[,] board;
         IStrategy strategy;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using Agent.AgentBoard;
+using CommunicationLibrary;
 
 namespace Agent
 {
@@ -12,13 +13,16 @@ namespace Agent
     }
     public class SampleStrategy : IStrategy
     {
+        public Field[,] Board { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+
         public void MakeDecision(AgentInfo agent)
         {
 
         }
-        void UpdateMap(Message message)
-        {
 
+        void IStrategy.UpdateMap(Message message)
+        {
+            throw new NotImplementedException();
         }
     }
 }
