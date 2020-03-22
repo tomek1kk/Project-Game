@@ -32,8 +32,7 @@ namespace Agent
             this._communicator = new StreamMessageSenderReceiver(stream, new Parser());
             if (_configuration.Strategy == 1)
             {
-                AgentBoardInfo boardInfo = new AgentBoardInfo();
-                this.agentInfo = new AgentInfo(new SampleStrategy(), true, boardInfo, (0, 0)); //TO DO: position and other informations from GM message.
+                this.agentInfo = new AgentInfo(new SampleStrategy(), true, (0, 0)); //TO DO: position and other informations from GM message.
             }
         }
 
