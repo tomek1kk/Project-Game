@@ -12,20 +12,22 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
+using GameMaster.MessageHandlers;
 
 namespace GameMaster
 {
     public class GameMaster : IDisposable
     {
         readonly IGuiMantainer _guiMantainer;
+        readonly IMessageHandler _messageHandler;
         readonly GMConfiguration _gmConfiguration;
-        readonly MessageHandler _messageHandler;
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
 
-        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, MessageHandler messageHandler)
+
+        public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, IMessageHandler messageHandler)
         {
             _guiMantainer = guiMantainer;
             _gmConfiguration = config;
@@ -49,12 +51,19 @@ namespace GameMaster
         }
         private void GetCSMessage(Message message)
         {
-
             Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
-            this._messageHandler.HandleMessage(message, _communicator, _map);
-            //var payload = new JoinGameResponse() { AgentID = message.AgentId };
+            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null)
+            {
+                _communicator.Send(new Message<NotDefinedError>()
+                {
+                    AgentId = message.AgentId,
+                    MessagePayload = new NotDefinedError()
+                });
+                return;
+            }
 
-            //_communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
+            var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
+            _communicator.Send(response);
         }
 
         public void GenerateGui()
