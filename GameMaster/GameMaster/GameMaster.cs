@@ -59,7 +59,7 @@ namespace GameMaster
                 });
                 return;
             }
-            var handler = handlers[message.MessageId];
+            var handler = RequestHandlerProvider.GetHandler(message.MessageId);
             handler.BaseReadMessage(message);
             var response = handler.ProcessRequest(_map);
             handler.SetTimeout();
