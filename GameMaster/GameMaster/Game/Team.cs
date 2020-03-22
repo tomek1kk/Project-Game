@@ -10,4 +10,16 @@ namespace GameMaster.Game
         Red,
         Blue
     }
+
+    public static class TeamExtensions
+    {
+        public static Team ToTeam(this string value)
+        {
+            if (value == "red")
+                return Team.Red;
+            else
+                return Team.Blue;
+        }
+    }
+
 }
