@@ -1,4 +1,5 @@
 ﻿using CommunicationLibrary;
+using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
 using System.Collections.Generic;
@@ -9,8 +10,6 @@ namespace GameMaster
 {
     public interface IMessageHandler
     {
-        void BaseReadMessage(Message message);
-        Message ProcessRequest(Map map);
-        void SetTimeout();
+        Message ProcessRequest(Map map, Message message, GMConfiguration config);
     }
 }

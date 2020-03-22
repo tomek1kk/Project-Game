@@ -62,9 +62,7 @@ namespace GameMaster
                 return;
             }
 
-            _messageHandler.BaseReadMessage(message);
-            var response = _messageHandler.ProcessRequest(_map);
-            _messageHandler.SetTimeout();
+            var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
             _communicator.Send(response);
         }
 

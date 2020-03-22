@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GameMaster.MessageHandlers;
+using GameMaster.Configuration;
 
 namespace GameMaster.Game
 {
@@ -14,26 +15,24 @@ namespace GameMaster.Game
     {
         protected int agentId;
 
-        public void BaseReadMessage(Message message)
+        private void BaseReadMessage(Message message)
         {
             agentId = (int)message.AgentId;
             ReadMessage(message.GetPayload());
         }
-        public Message ProcessRequest(Map map)
+        public Message ProcessRequest(Map map, Message message, GMConfiguration configuration)
         {
+            BaseReadMessage(message);
             if (CheckRequest(map))
                 Execute(map);
+            SetTimeout(configuration);
             return GetResponse(map);
-        }
-        public void SetTimeout()
-        {
-            // TODO
-            return;
         }
 
         protected abstract bool CheckRequest(Map map);
         protected abstract Message GetResponse(Map map);
         protected abstract void Execute(Map map);
         protected abstract void ReadMessage(MessagePayload payload);
+        protected abstract void SetTimeout(GMConfiguration config);
     }
 }

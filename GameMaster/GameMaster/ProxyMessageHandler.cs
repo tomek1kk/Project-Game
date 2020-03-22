@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommunicationLibrary;
+using GameMaster.Configuration;
 using GameMaster.Game;
 using GameMaster.MessageHandlers;
 
@@ -22,8 +23,6 @@ namespace GameMaster
         private PutPieceRequestHandler putPieceRequestHandler = new PutPieceRequestHandler();
         private RedirectExchangeInformationRequestHandler redirectExchangeInformationRequestHandler = new RedirectExchangeInformationRequestHandler();
 
-        private MessageType messageId;
-
         public ProxyMessageHandler()
         {
             handlers = new Dictionary<MessageType, MessageHandler>()
@@ -40,20 +39,9 @@ namespace GameMaster
             };
         }
 
-        public void BaseReadMessage(Message message)
+        public Message ProcessRequest(Map map, Message message, GMConfiguration configuration)
         {
-            messageId = message.MessageId;
-            handlers[messageId].BaseReadMessage(message);
-        }
-
-        public Message ProcessRequest(Map map)
-        {
-            return handlers[messageId].ProcessRequest(map);
-        }
-
-        public void SetTimeout()
-        {
-            handlers[messageId].SetTimeout();
+            return handlers[message.MessageId].ProcessRequest(map, message, configuration);
         }
     }
 }
