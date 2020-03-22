@@ -18,14 +18,15 @@ namespace Agent
         public AgentConfiguration _configuration { get; set; }
         private StreamMessageSenderReceiver _communicator;
         private Queue<Message> _queue = new Queue<Message>();
+        private TcpClient _client;
         //FibonacciHeap<Message, int> _queue = new FibonacciHeap<Message, int>(1);
 
 
         public Agent(AgentConfiguration configuration)
         {
             this._configuration = configuration;
-            TcpClient client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
-            NetworkStream stream = client.GetStream();
+            _client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
+            NetworkStream stream = _client.GetStream();
            this._communicator = new StreamMessageSenderReceiver(stream, new Parser());
 
         }
@@ -58,6 +59,7 @@ namespace Agent
 
         public void Dispose()
         {
+            _client.Dispose();
             _communicator.Dispose();
         }
     }

@@ -55,7 +55,6 @@ namespace GameMaster
             //var payload = new JoinGameResponse() { AgentID = message.AgentId };
 
             //_communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
-
         }
 
         public void GenerateGui()

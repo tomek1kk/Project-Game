@@ -35,6 +35,7 @@ namespace CommunicationServer
 
         public void Dispose()
         {
+            _tcpClient.Dispose();
             _networkStream.Dispose();
             _streamMessageSenderReceiver.Dispose();
         }
