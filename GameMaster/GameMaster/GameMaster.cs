@@ -50,18 +50,11 @@ namespace GameMaster
         private void GetCSMessage(Message message)
         {
 
-<<<<<<< HEAD
-            Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: " + message.AgentId);
-            var payload = new JoinGameResponse() { AgentID = message.AgentId };
-            _communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload, AgentId = message.AgentId });
-=======
             Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
             this._messageHandler.HandleMessage(message, _communicator, _map);
             //var payload = new JoinGameResponse() { AgentID = message.AgentId };
 
             //_communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
-
->>>>>>> feature/gm-message-handler
         }
 
         public void GenerateGui()
