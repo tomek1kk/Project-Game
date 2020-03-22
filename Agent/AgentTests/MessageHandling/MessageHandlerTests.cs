@@ -12,6 +12,9 @@ using CommunicationLibrary.Model;
 using System.IO;
 using CommunicationLibrary.Request;
 using System.Threading.Tasks;
+using CommunicationLibrary.Response;
+using System.Threading;
+using System.Diagnostics;
 
 namespace Agent.MessageHandling.Tests
 {
@@ -42,6 +45,8 @@ namespace Agent.MessageHandling.Tests
             ShamPieceProbability = 0.5,
             TeamId = "red"
         };
+
+        private Message gameEndedMessage = new Message<GameEnded>(new GameEnded());
 
         private (SenderReceiverQueueAdapter agentSide, SenderReceiverQueueAdapter gmSide)
             GetGmAgentConnections()
@@ -132,10 +137,84 @@ namespace Agent.MessageHandling.Tests
             t.Start();
 
             //when
-            gmSide.Send(new Message<GameEnded>(new GameEnded()));
+            gmSide.Send(gameEndedMessage);
 
             //then
             t.Wait();
+
+            //after
+            gmSide.Dispose();
+            agentSide.Dispose();
+        }
+
+        [TestMethod()]
+        public void TestRelaysResponseToStrategy()
+        {
+            //given
+            var expected = new Message<DiscoveryResponse>(new DiscoveryResponse());
+            Message actual = null;
+
+            var (agentSide, gmSide) = GetGmAgentConnections();
+
+            var strategyMock = new Mock<IStrategy>();
+
+            strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
+                .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
+
+            strategyMock.Setup(strategy => strategy.UpdateMap(It.IsAny<Message>()))
+                .Callback<Message>(message => actual = message);
+
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0, 0))
+            { GameStartedMessage = defaultGameStartedMessage };
+
+            MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
+            Task t = new Task(() => messageHandler.HandleMessages());
+            t.Start();
+
+            //when
+            gmSide.Send(expected);
+            gmSide.Send(gameEndedMessage);
+
+            //then
+            t.Wait();
+            Assert.AreEqual(expected.MessageId, actual?.MessageId);
+
+            //after
+            gmSide.Dispose();
+            agentSide.Dispose();
+        }
+
+        [TestMethod()]
+        public void TestSendsNextRequestAfterDelay()
+        {
+            //given
+            var minDelay = Int32.Parse(defaultGameStartedMessage.Penalties.Discovery) - 10;
+            //discovery penalty + precision
+
+            var (agentSide, gmSide) = GetGmAgentConnections();
+
+            var strategyMock = new Mock<IStrategy>();
+
+            strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
+                .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
+
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0, 0))
+            { GameStartedMessage = defaultGameStartedMessage };
+
+            MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
+            new Task(() => messageHandler.HandleMessages()).Start();
+
+            gmSide.Take();
+            gmSide.Send(new Message<DiscoveryResponse>(new DiscoveryResponse()));
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            //when
+            gmSide.Take();
+
+            //then
+            
+            Assert.IsTrue(minDelay < stopwatch.ElapsedMilliseconds,
+                $"The actual delay was {stopwatch.ElapsedMilliseconds}");
 
             //after
             gmSide.Dispose();

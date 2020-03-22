@@ -13,7 +13,7 @@ namespace Agent.MessageHandling
     {
         SenderReceiverQueueAdapter _gmConnection;
         AgentInfo _agentInfo;
-        CancellationTokenSource _tokenSource;
+        CancellationTokenSource _tokenSource = null;
         Dictionary<MessageType, int> _responsePenalties = new Dictionary<MessageType, int>(); //in miliseconds
         bool _gameOver;
         public MessageHandler(SenderReceiverQueueAdapter gmConnection, AgentInfo agentInfo)
@@ -46,11 +46,13 @@ namespace Agent.MessageHandling
             {
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
                 _gmConnection.Send(actionRequest);
+                if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();
                 while(!_gameOver && !_tokenSource.IsCancellationRequested)
                 {
-                    Message received = _gmConnection.Take(_tokenSource.Token);
-                    HandleReceived(received);
+                    Message received = _gmConnection.TryTake(_tokenSource.Token, 50);
+                    if(received != null)
+                        HandleReceived(received);
                 }
             }
         }
@@ -61,7 +63,7 @@ namespace Agent.MessageHandling
             {
                 new Task(() => {
                     Thread.Sleep(_responsePenalties[received.MessageId]);
-                    _tokenSource.Cancel();
+                    _tokenSource.Cancel(false);
                     }
                 ).Start();
             }
@@ -71,6 +73,9 @@ namespace Agent.MessageHandling
             }
             else
             {
+
+                //TODO: implement updateFromMessage, create code responding to 
+                // PenaltyNotWaitedError
                 _agentInfo.Strategy.UpdateMap(received);
                 _agentInfo.UpdateFromMessage(received);
             }
