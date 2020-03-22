@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GameMaster.GUI;
 using GameMaster.Configuration;
 using CommunicationLibrary.Response;
+using CommunicationLibrary.Model;
 
 namespace GameMaster.Game
 {
@@ -115,6 +116,20 @@ namespace GameMaster.Game
             // TODO
 
             return new MoveResponse();
+        }
+
+        public int GetClosestPiece(int agentId) // TODO
+        {
+            return 0;
+        }
+
+        public Position GetPosition(int agentId) // TODO
+        {
+            return new Position() 
+            {
+                X = 1,
+                Y = 1
+            };
         }
 
         public Player GetPlayerById(int agentId)

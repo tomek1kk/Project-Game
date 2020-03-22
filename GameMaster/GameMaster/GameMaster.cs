@@ -12,6 +12,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
+using GameMaster.MessageHandlers;
 
 namespace GameMaster
 {
@@ -24,6 +25,10 @@ namespace GameMaster
         private TcpClient _client;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
+        private Dictionary<MessageType, MessageHandler> handlers = new Dictionary<MessageType, MessageHandler>()
+        {
+            { MessageType.MoveRequest, new MoveRequestHandler() }
+        };
 
         public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, MessageHandler messageHandler)
         {
@@ -49,12 +54,21 @@ namespace GameMaster
         }
         private void GetCSMessage(Message message)
         {
-
             Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
-            this._messageHandler.HandleMessage(message, _communicator, _map);
-            //var payload = new JoinGameResponse() { AgentID = message.AgentId };
-
-            //_communicator.Send(new Message<JoinGameResponse> { MessagePayload = payload,AgentId=message.AgentId });
+            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null)
+            {
+                _communicator.Send(new Message<NotDefinedError>()
+                {
+                    AgentId = message.AgentId,
+                    MessagePayload = new NotDefinedError()
+                });
+                return;
+            }
+            var handler = handlers[message.MessageId];
+            handler.BaseReadMessage(message);
+            var response = handler.ProcessRequest(_map);
+            handler.SetTimeout();
+            _communicator.Send(response);
         }
 
         public void GenerateGui()
