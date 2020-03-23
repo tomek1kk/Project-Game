@@ -12,11 +12,14 @@ namespace Agent.Strategies
 {
     abstract public class Strategy : IStrategy
     {
-        Field[,] Board { get; set; }
+        public Field[,] Board { get; private set; }
 
         public Strategy(int width, int height)
         {
             Board = new Field[width, height];
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++)
+                    Board[i, j] = new Field();
         }
 
         virtual public Message MakeDecision(AgentInfo agent)
@@ -29,6 +32,7 @@ namespace Agent.Strategies
             switch (message.MessageId)
             {
                 case MessageType.CheckHoldedPieceResponse:
+                    CheckHoldedPieceResponseHandler((CheckHoldedPieceResponse)message.GetPayload());
                     break;
                 case MessageType.DiscoveryResponse:
                     DiscoveryResponseHandler((DiscoveryResponse)message.GetPayload(), position);
@@ -66,15 +70,15 @@ namespace Agent.Strategies
             }
         }
 
-        virtual protected void CheckHoldedPieceResponseHandler(CheckHoldedPieceResponse moveError) { }
+        virtual protected void CheckHoldedPieceResponseHandler(CheckHoldedPieceResponse checkHoldedPieceResponse) { }
         virtual protected void DiscoveryResponseHandler(DiscoveryResponse discoveryResponse, Point positon)
         {
             if (discoveryResponse.DistanceNW.HasValue) Board[positon.X - 1, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceNW);
-            if (discoveryResponse.DistanceN.HasValue) Board[positon.X, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceW);
+            if (discoveryResponse.DistanceN.HasValue) Board[positon.X, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceN);
             if (discoveryResponse.DistanceNE.HasValue) Board[positon.X + 1, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceNE);
             if (discoveryResponse.DistanceW.HasValue) Board[positon.X - 1, positon.Y].UpdateDistance(discoveryResponse.DistanceW);
             if (discoveryResponse.DistanceFromCurrent.HasValue) Board[positon.X, positon.Y].UpdateDistance(discoveryResponse.DistanceFromCurrent);
-            if (discoveryResponse.DistanceE.HasValue) Board[positon.X + 1, positon.Y].UpdateDistance(discoveryResponse.DistanceW);
+            if (discoveryResponse.DistanceE.HasValue) Board[positon.X + 1, positon.Y].UpdateDistance(discoveryResponse.DistanceE);
             if (discoveryResponse.DistanceSW.HasValue) Board[positon.X - 1, positon.Y - 1].UpdateDistance(discoveryResponse.DistanceSW);
             if (discoveryResponse.DistanceS.HasValue) Board[positon.X, positon.Y - 1].UpdateDistance(discoveryResponse.DistanceS);
             if (discoveryResponse.DistanceSE.HasValue) Board[positon.X + 1, positon.Y - 1].UpdateDistance(discoveryResponse.DistanceSE);
