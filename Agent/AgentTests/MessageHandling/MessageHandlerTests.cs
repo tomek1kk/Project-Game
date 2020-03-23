@@ -82,7 +82,7 @@ namespace Agent.MessageHandling.Tests
                         new EchoStream(),
                         new Parser()));
             var strategyMock = new Mock<IStrategy>();
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object);
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, null);
 
             //when
             _ = new MessageHandler(senderReceiverQueueAdapter, agentInfo);
@@ -103,8 +103,7 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(expected);
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
-            { GameStartedMessage = defaultGameStartedMessage };
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, defaultGameStartedMessage);
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
             new Task(() => messageHandler.HandleMessages()).Start();
@@ -131,8 +130,7 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
-            { GameStartedMessage = defaultGameStartedMessage };
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, defaultGameStartedMessage);
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
             Task t = new Task(() => messageHandler.HandleMessages());
@@ -167,8 +165,7 @@ namespace Agent.MessageHandling.Tests
             strategy.UpdateMap(It.IsAny<Message>(), new Point(defaultGameStartedMessage.Position.X.Value, defaultGameStartedMessage.Position.Y.Value)))
                 .Callback<Message,Point>((message,point) => actual = message);
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
-            { GameStartedMessage = defaultGameStartedMessage };
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, defaultGameStartedMessage);
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
             Task t = new Task(() => messageHandler.HandleMessages());
@@ -201,8 +198,7 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
-            { GameStartedMessage = defaultGameStartedMessage };
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, defaultGameStartedMessage);
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
             new Task(() => messageHandler.HandleMessages()).Start();
