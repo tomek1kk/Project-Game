@@ -64,7 +64,7 @@ namespace Agent
             agentInfo.GameStartedMessage = gameInfo;
             if (_configuration.Strategy == 1)
             {
-                this.agentInfo = new AgentInfo(new SampleStrategy(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value));
+                this.agentInfo = new AgentInfo(new SampleStrategy(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value), gameInfo);
             }
         }
 

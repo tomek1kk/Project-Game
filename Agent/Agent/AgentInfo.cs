@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using Agent.AgentBoard;
-using Agent.MessegeResponseInterpreter;
+using Agent.Exceptions;
 using Agent.Strategies;
 using CommunicationLibrary;
 using CommunicationLibrary.Error;
@@ -32,17 +32,20 @@ namespace Agent
         public bool HasPiece { get; private set; }
         public IStrategy Strategy { get; private set; }
 
-        public AgentInfo(IStrategy strategy)
+        public AgentInfo(IStrategy strategy, GameStarted gameStarted)
         {
             Strategy = strategy;
             HasPiece = false;
+            if (gameStarted == null) throw new AgentInfoNotValidException("GameStarted bad config.");
+            GameStartedMessage = gameStarted;
+
         }
 
         public void UpdateFromMessage(Message received)
         {
             switch (received.MessageId)
             {
-                case MessageType.CheckHoldedPieceRequest:
+                case MessageType.CheckHoldedPieceResponse:
                     CheckHoldedPieceHandler((CheckHoldedPieceResponse)received.GetPayload());
                     break;
                 case MessageType.MoveResponse:
