@@ -18,7 +18,10 @@ namespace GameMaster.Game
         private int _width;
         private int _numberOfGoals;
         private int _numberOfPieces;
-
+        public AbstractField this[int x, int y]
+        {
+            get => _fieldsArray[x, y];
+        }
         public Map(GMConfiguration config)
         {
             _heigth = config.BoardY;
@@ -41,7 +44,7 @@ namespace GameMaster.Game
             }
         }
         //TODO: tests
-        private int ClosestPieceForField(AbstractField field)
+        public int ClosestPieceForField(AbstractField field)
         {
             int distance = int.MaxValue;
             for (int x = 0; x < _width; x++)
@@ -135,6 +138,10 @@ namespace GameMaster.Game
         public Player GetPlayerById(int agentId)
         {
             return _players[agentId];
+        }
+        public bool IsInsideMap(int x, int y)
+        {
+            return (x >= 0 && x < _width && y > 0 && y < _heigth) ? true : false;
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts

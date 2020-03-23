@@ -14,7 +14,7 @@ namespace GameMaster.Game
     public abstract class MessageHandler : IMessageHandler
     {
         protected int _agentId;
-
+        protected bool _penaltyNotWaited = false;
         private void BaseReadMessage(Message message)
         {
             _agentId = (int)message.AgentId;

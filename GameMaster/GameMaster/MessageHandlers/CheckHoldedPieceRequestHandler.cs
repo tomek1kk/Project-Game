@@ -1,4 +1,6 @@
 ﻿using CommunicationLibrary;
+using CommunicationLibrary.Error;
+using CommunicationLibrary.Model;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
 using GameMaster.Configuration;
@@ -13,9 +15,12 @@ namespace GameMaster.MessageHandlers
     public class CheckHoldedPieceRequestHandler : MessageHandler
     {
         private bool _sham;
+        private bool _noPiece;
         protected override bool CheckRequest(Map map)
         {
-            return map.GetPlayerById(_agentId).IsHolding && map.GetPlayerById(_agentId).IsUnlocked;
+            _penaltyNotWaited = map.GetPlayerById(_agentId).IsUnlocked;
+            _noPiece = map.GetPlayerById(_agentId).IsHolding;
+            return _noPiece || _penaltyNotWaited;
         }
 
         protected override void Execute(Map map)
@@ -25,6 +30,33 @@ namespace GameMaster.MessageHandlers
 
         protected override Message GetResponse(Map map)
         {
+            if (_penaltyNotWaited)
+            {
+                return new Message<PenaltyNotWaitedError>()
+                {
+                    AgentId = _agentId,
+                    MessagePayload = new PenaltyNotWaitedError()
+                    {
+                        WaitUntill = map.GetPlayerById(_agentId).LockedTill
+                    }
+                };
+            }
+            if (_noPiece)
+            {
+                return new Message<NotDefinedError>()
+                {
+                    AgentId = _agentId,
+                    MessagePayload = new NotDefinedError()
+                    {
+                        Position = new Position()
+                        {
+                            X = map.GetPlayerById(_agentId).Position.X,
+                            Y = map.GetPlayerById(_agentId).Position.Y
+                        },
+                        HoldingPiece = map.GetPlayerById(_agentId).IsHolding
+                    }
+                };
+            }
             return new Message<CheckHoldedPieceResponse>()
             {
                 AgentId = _agentId,
