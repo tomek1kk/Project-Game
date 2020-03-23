@@ -13,11 +13,11 @@ namespace GameMaster.Game
 {
     public abstract class MessageHandler : IMessageHandler
     {
-        protected int agentId;
+        protected int _agentId;
 
         private void BaseReadMessage(Message message)
         {
-            agentId = (int)message.AgentId;
+            _agentId = (int)message.AgentId;
             ReadMessage(message.GetPayload());
         }
         public Message ProcessRequest(Map map, Message message, GMConfiguration configuration)
@@ -25,7 +25,7 @@ namespace GameMaster.Game
             BaseReadMessage(message);
             if (CheckRequest(map))
                 Execute(map);
-            SetTimeout(configuration);
+            SetTimeout(configuration, map);
             return GetResponse(map);
         }
 
@@ -33,6 +33,6 @@ namespace GameMaster.Game
         protected abstract Message GetResponse(Map map);
         protected abstract void Execute(Map map);
         protected abstract void ReadMessage(MessagePayload payload);
-        protected abstract void SetTimeout(GMConfiguration config);
+        protected abstract void SetTimeout(GMConfiguration config, Map map);
     }
 }

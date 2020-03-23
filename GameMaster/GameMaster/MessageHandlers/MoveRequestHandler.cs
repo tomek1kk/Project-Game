@@ -38,13 +38,13 @@ namespace GameMaster.MessageHandlers
                 MessagePayload = new MoveResponse()
                 {
                     MadeMove = false,
-                    CurrentPosition = map.GetPosition(agentId),
-                    ClosestPiece = map.GetClosestPiece(agentId)
+                    CurrentPosition = map.GetPosition(_agentId),
+                    ClosestPiece = map.GetClosestPiece(_agentId)
                 }
             };
         }
 
-        protected override void SetTimeout(GMConfiguration config)
+        protected override void SetTimeout(GMConfiguration config, Map map)
         {
             throw new NotImplementedException();
         }

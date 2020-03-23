@@ -12,25 +12,25 @@ namespace GameMaster.MessageHandlers
 {
     public class CheckHoldedPieceRequestHandler : MessageHandler
     {
-        private bool sham;
+        private bool _sham;
         protected override bool CheckRequest(Map map)
         {
-            return true;
+            return map.GetPlayerById(_agentId).IsHolding && map.GetPlayerById(_agentId).IsUnlocked;
         }
 
         protected override void Execute(Map map)
         {
-            sham = false; // TODO
+            _sham = map.GetPlayerById(_agentId).Holding.IsSham();
         }
 
         protected override Message GetResponse(Map map)
         {
             return new Message<CheckHoldedPieceResponse>()
             {
-                AgentId = agentId,
+                AgentId = _agentId,
                 MessagePayload = new CheckHoldedPieceResponse()
                 {
-                    Sham = sham
+                    Sham = _sham
                 }
             };
         }
@@ -40,9 +40,9 @@ namespace GameMaster.MessageHandlers
             return;
         }
 
-        protected override void SetTimeout(GMConfiguration config)
+        protected override void SetTimeout(GMConfiguration config, Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).TryLock(DateTime.Now.AddMilliseconds(config.CheckForShamPenalty));
         }
     }
 }

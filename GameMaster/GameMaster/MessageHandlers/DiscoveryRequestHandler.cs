@@ -30,7 +30,7 @@ namespace GameMaster.MessageHandlers
             throw new NotImplementedException();
         }
 
-        protected override void SetTimeout(GMConfiguration config)
+        protected override void SetTimeout(GMConfiguration config, Map map)
         {
             throw new NotImplementedException();
         }
