@@ -15,6 +15,8 @@ using System.Threading.Tasks;
 using CommunicationLibrary.Response;
 using System.Threading;
 using System.Diagnostics;
+using Agent.Strategies;
+using System.Drawing;
 
 namespace Agent.MessageHandling.Tests
 {
@@ -67,7 +69,7 @@ namespace Agent.MessageHandling.Tests
                         new Parser()));
             return (agentQueueAdapter, gmQueueAdapter);
         }
-            
+
         [TestMethod()]
         [ExpectedException(typeof(AgentInfoNotValidException))]
         public void TestConstructorThrowsExceptionIfGameStartedNull()
@@ -80,7 +82,7 @@ namespace Agent.MessageHandling.Tests
                         new EchoStream(),
                         new Parser()));
             var strategyMock = new Mock<IStrategy>();
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0,0));
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object);
 
             //when
             _ = new MessageHandler(senderReceiverQueueAdapter, agentInfo);
@@ -101,7 +103,7 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(expected);
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0, 0))
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
             { GameStartedMessage = defaultGameStartedMessage };
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
@@ -129,7 +131,7 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0, 0))
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
             { GameStartedMessage = defaultGameStartedMessage };
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
@@ -161,10 +163,11 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
 
-            strategyMock.Setup(strategy => strategy.UpdateMap(It.IsAny<Message>()))
-                .Callback<Message>(message => actual = message);
+            strategyMock.Setup(strategy =>
+            strategy.UpdateMap(It.IsAny<Message>(), new Point(defaultGameStartedMessage.Position.X.Value, defaultGameStartedMessage.Position.Y.Value)))
+                .Callback<Message,Point>((message,point) => actual = message);
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0, 0))
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
             { GameStartedMessage = defaultGameStartedMessage };
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
@@ -198,7 +201,7 @@ namespace Agent.MessageHandling.Tests
             strategyMock.Setup(strategy => strategy.MakeDecision(It.IsAny<AgentInfo>()))
                 .Returns(new Message<DiscoveryRequest>(new DiscoveryRequest()));
 
-            AgentInfo agentInfo = new AgentInfo(strategyMock.Object, false, (0, 0))
+            AgentInfo agentInfo = new AgentInfo(strategyMock.Object)
             { GameStartedMessage = defaultGameStartedMessage };
 
             MessageHandler messageHandler = new MessageHandler(agentSide, agentInfo);
@@ -212,7 +215,7 @@ namespace Agent.MessageHandling.Tests
             gmSide.Take();
 
             //then
-            
+
             Assert.IsTrue(minDelay < stopwatch.ElapsedMilliseconds,
                 $"The actual delay was {stopwatch.ElapsedMilliseconds}");
 
