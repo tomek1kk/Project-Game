@@ -14,6 +14,7 @@ using Agent.AgentBoard;
 using Agent.MessageHandling;
 using CommunicationLibrary.Response;
 using CommunicationLibrary.Information;
+using Agent.Strategies;
 
 namespace Agent
 {
@@ -24,23 +25,17 @@ namespace Agent
         private TcpClient _client;
         public AgentInfo agentInfo;
 
-
         public Agent(AgentConfiguration configuration)
         {
             this._configuration = configuration;
             _client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
             NetworkStream stream = _client.GetStream();
-            this._communicator = new SenderReceiverQueueAdapter(
-                new StreamMessageSenderReceiver(stream, new Parser()));
-            if (_configuration.Strategy == 1)
-            {
-                this.agentInfo = new AgentInfo(new SampleStrategy(), true, (0, 0)); //TO DO: position and other informations from GM message.
-            }
+            this._communicator = new SenderReceiverQueueAdapter(new StreamMessageSenderReceiver(stream, new Parser()));
         }
 
         public void StartListening()
         {
-            if(TryJoinGame())
+            if (TryJoinGame())
             {
                 MessageHandler m = new MessageHandler(_communicator, agentInfo);
                 m.HandleMessages();
@@ -63,12 +58,15 @@ namespace Agent
             SetAgentInfo(gameStarted);
             return true;
         }
+
         public void SetAgentInfo(GameStarted gameInfo)
         {
-
+            agentInfo.GameStartedMessage = gameInfo;
+            if (_configuration.Strategy == 1)
+            {
+                this.agentInfo = new AgentInfo(new SampleStrategy(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value));
+            }
         }
-
-
 
         public void Dispose()
         {
