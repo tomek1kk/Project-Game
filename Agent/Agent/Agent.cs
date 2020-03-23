@@ -11,17 +11,18 @@ using System.Text.Json;
 using System.Threading;
 using FibonacciHeap;
 using Agent.AgentBoard;
+using Agent.MessageHandling;
+using CommunicationLibrary.Response;
+using CommunicationLibrary.Information;
 
 namespace Agent
 {
     public class Agent : IDisposable
     {
         public AgentConfiguration _configuration { get; set; }
-        private StreamMessageSenderReceiver _communicator;
-        private Queue<Message> _queue = new Queue<Message>();
+        private SenderReceiverQueueAdapter _communicator;
         private TcpClient _client;
         public AgentInfo agentInfo;
-        //FibonacciHeap<Message, int> _queue = new FibonacciHeap<Message, int>(1);
 
 
         public Agent(AgentConfiguration configuration)
@@ -29,7 +30,8 @@ namespace Agent
             this._configuration = configuration;
             _client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
             NetworkStream stream = _client.GetStream();
-            this._communicator = new StreamMessageSenderReceiver(stream, new Parser());
+            this._communicator = new SenderReceiverQueueAdapter(
+                new StreamMessageSenderReceiver(stream, new Parser()));
             if (_configuration.Strategy == 1)
             {
                 this.agentInfo = new AgentInfo(new SampleStrategy(), true, (0, 0)); //TO DO: position and other informations from GM message.
@@ -38,29 +40,35 @@ namespace Agent
 
         public void StartListening()
         {
-            ThreadPool.SetMaxThreads(2, 1);
+            if(TryJoinGame())
+            {
+                MessageHandler m = new MessageHandler(_communicator, agentInfo);
+                m.HandleMessages();
+            }
+        }
+        public bool TryJoinGame()
+        {
+            //not tested
             _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
-            _communicator.StartReceiving(this.AddToQueue);
+            Message m = _communicator.Take();
+            if (m.MessageId != MessageType.JoinGameResponse)
+                return false;
+            var joinGameResponse = (JoinGameResponse)m.GetPayload();
+            if (!(joinGameResponse.Accepted ?? false))
+                return false;
+            m = _communicator.Take();
+            if (m.MessageId != MessageType.GameStarted)
+                return false;
+            var gameStarted = (GameStarted)m.GetPayload();
+            SetAgentInfo(gameStarted);
+            return true;
         }
-
-        public void StartSending(object message)
+        public void SetAgentInfo(GameStarted gameInfo)
         {
-            Random r = new Random();
 
-            Console.ReadKey();
-            var p = r.Next() % 2;
-            if (p == 0)
-                _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
-            else
-                _communicator.Send(new Message<PickPieceRequest>() { MessagePayload = new PickPieceRequest() });
         }
 
-        private void AddToQueue(Message message)
-        {
-            Console.WriteLine("Got message: " + message.MessageId);
-            _queue.Enqueue(message);
-            ThreadPool.QueueUserWorkItem(new WaitCallback(this.StartSending));
-        }
+
 
         public void Dispose()
         {
