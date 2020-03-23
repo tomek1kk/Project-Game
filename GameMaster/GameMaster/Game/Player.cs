@@ -24,7 +24,7 @@ namespace GameMaster.Game
         public Team Team => _team;
         public int AgentId => _agentId;
         public bool IsUnlocked => _lockedTill < DateTime.Now;
-        public AbstractPiece Holding => _holding;
+        public AbstractPiece Holding { get => _holding; set => _holding = value; }
         public Player(Team team, int agentId)
         {
             _agentId = agentId;

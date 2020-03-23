@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunicationLibrary.Response;
 
 namespace GameMaster.MessageHandlers
 {
@@ -12,27 +13,31 @@ namespace GameMaster.MessageHandlers
     {
         protected override bool CheckRequest(Map map)
         {
-            throw new NotImplementedException();
+            return map.GetPlayerById(_agentId).IsHolding && map.GetPlayerById(_agentId).IsUnlocked;
         }
 
         protected override void Execute(Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).Holding = null;
         }
 
         protected override Message GetResponse(Map map)
         {
-            throw new NotImplementedException();
+            return new Message<DestroyPieceResponse>()
+            {
+                AgentId = _agentId,
+                MessagePayload = new DestroyPieceResponse() {}
+            };
         }
 
         protected override void ReadMessage(MessagePayload payload)
         {
-            throw new NotImplementedException();
+            return;
         }
 
         protected override void SetTimeout(GMConfiguration config, Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).TryLock(DateTime.Now.AddMilliseconds(config.DestroyPiecePenalty));
         }
     }
 }
