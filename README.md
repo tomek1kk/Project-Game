@@ -20,7 +20,7 @@ Początkowe założenia:
 
 1. Daily scrum - spotkanie co ok. 3-4 dni.
 2. Sprint - długość tygodnia w początkowym etapie.
-3. Jira - narzędzie, w którym będziemy zarządzać pracą.
+3. Jira (https://io2.atlassian.net/secure/RapidBoard.jspa?rapidView=2&projectKey=PG) - narzędzie, w którym będziemy zarządzać pracą.
 
 ## Dokumentacja
 
