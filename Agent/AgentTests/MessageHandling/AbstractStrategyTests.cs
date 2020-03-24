@@ -61,7 +61,7 @@ namespace AgentTests.MessageHandling
             {
                 ClosestPiece = 4,
                 CurrentPosition = new Position() { X = position.X, Y = position.Y },
-                MadeMove = true // do czego to?
+                MadeMove = true
             };
             //when
             strategy.UpdateMap(new Message<MoveResponse>(moveResponse), position);
