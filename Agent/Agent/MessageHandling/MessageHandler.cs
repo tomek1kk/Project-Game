@@ -67,6 +67,7 @@ namespace Agent.MessageHandling
                     }
                 ).Start();
             }
+
             if (received.MessageId == MessageType.GameEnded)
             {
                 _gameOver = true;
@@ -76,7 +77,6 @@ namespace Agent.MessageHandling
 
                 //TODO: implement updateFromMessage, create code responding to 
                 // PenaltyNotWaitedError
-                _agentInfo.Strategy.UpdateMap(received);
                 _agentInfo.UpdateFromMessage(received);
             }
         }

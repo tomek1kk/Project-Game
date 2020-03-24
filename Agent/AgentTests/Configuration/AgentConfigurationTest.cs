@@ -11,7 +11,7 @@ namespace AgentTests.Configuration
     public class AgentConfigurationTest
     {
         [TestMethod]
-        public void ReadDefaultConfiguration()
+        public void TestReadDefaultConfiguration()
         {
             //Given
             File.WriteAllText("TMPpath.txt",
