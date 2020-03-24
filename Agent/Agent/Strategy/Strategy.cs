@@ -73,15 +73,15 @@ namespace Agent.Strategies
         virtual protected void CheckHoldedPieceResponseHandler(CheckHoldedPieceResponse checkHoldedPieceResponse) { }
         virtual protected void DiscoveryResponseHandler(DiscoveryResponse discoveryResponse, Point positon)
         {
-            if (discoveryResponse.DistanceNW.HasValue) Board[positon.X - 1, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceNW);
-            if (discoveryResponse.DistanceN.HasValue) Board[positon.X, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceN);
-            if (discoveryResponse.DistanceNE.HasValue) Board[positon.X + 1, positon.Y + 1].UpdateDistance(discoveryResponse.DistanceNE);
-            if (discoveryResponse.DistanceW.HasValue) Board[positon.X - 1, positon.Y].UpdateDistance(discoveryResponse.DistanceW);
-            if (discoveryResponse.DistanceFromCurrent.HasValue) Board[positon.X, positon.Y].UpdateDistance(discoveryResponse.DistanceFromCurrent);
-            if (discoveryResponse.DistanceE.HasValue) Board[positon.X + 1, positon.Y].UpdateDistance(discoveryResponse.DistanceE);
-            if (discoveryResponse.DistanceSW.HasValue) Board[positon.X - 1, positon.Y - 1].UpdateDistance(discoveryResponse.DistanceSW);
-            if (discoveryResponse.DistanceS.HasValue) Board[positon.X, positon.Y - 1].UpdateDistance(discoveryResponse.DistanceS);
-            if (discoveryResponse.DistanceSE.HasValue) Board[positon.X + 1, positon.Y - 1].UpdateDistance(discoveryResponse.DistanceSE);
+            if (discoveryResponse.DistanceNW.HasValue) Board[positon.X - 1, positon.Y + 1].DistToPiece = discoveryResponse.DistanceNW.Value;
+            if (discoveryResponse.DistanceN.HasValue) Board[positon.X, positon.Y + 1].DistToPiece = discoveryResponse.DistanceN.Value;
+            if (discoveryResponse.DistanceNE.HasValue) Board[positon.X + 1, positon.Y + 1].DistToPiece = discoveryResponse.DistanceNE.Value;
+            if (discoveryResponse.DistanceW.HasValue) Board[positon.X - 1, positon.Y].DistToPiece = discoveryResponse.DistanceW.Value;
+            if (discoveryResponse.DistanceFromCurrent.HasValue) Board[positon.X, positon.Y].DistToPiece = discoveryResponse.DistanceFromCurrent.Value;
+            if (discoveryResponse.DistanceE.HasValue) Board[positon.X + 1, positon.Y].DistToPiece = discoveryResponse.DistanceE.Value;
+            if (discoveryResponse.DistanceSW.HasValue) Board[positon.X - 1, positon.Y - 1].DistToPiece = discoveryResponse.DistanceSW.Value;
+            if (discoveryResponse.DistanceS.HasValue) Board[positon.X, positon.Y - 1].DistToPiece = discoveryResponse.DistanceS.Value;
+            if (discoveryResponse.DistanceSE.HasValue) Board[positon.X + 1, positon.Y - 1].DistToPiece = discoveryResponse.DistanceSE.Value;
         }
         virtual protected void DestroyPieceResponseHandler(DestroyPieceResponse moveError) { }
         virtual protected void ExchangeInformationResponseHandler(ExchangeInformationResponse exchangeInformationResponse)
@@ -90,7 +90,7 @@ namespace Agent.Strategies
         }
         virtual protected void MoveResponseHandler(MoveResponse moveResponse)
         {
-            Board[moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value].UpdateDistance(moveResponse.ClosestPiece.Value);
+            Board[moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value].DistToPiece = moveResponse.ClosestPiece.Value;
         }
         virtual protected void NotDefinedResponseHandler(NotDefinedError notDefinedError) { }
         virtual protected void MoveErrorResponseHandler(MoveError moveError) { }
