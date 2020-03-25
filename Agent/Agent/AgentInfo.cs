@@ -36,7 +36,8 @@ namespace Agent
         {
             Strategy = strategy;
             HasPiece = false;
-            if (gameStarted == null) throw new AgentInfoNotValidException("GameStarted bad config.");
+            if (gameStarted == null)
+                throw new AgentInfoNotValidException("GameStarted bad config.");
             GameStartedMessage = gameStarted;
 
         }
