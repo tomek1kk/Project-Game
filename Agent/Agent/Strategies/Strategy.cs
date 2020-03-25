@@ -10,7 +10,7 @@ using System.Text;
 
 namespace Agent.Strategies
 {
-    abstract public class Strategy : IStrategy
+    public abstract class Strategy : IStrategy
     {
         public Field[,] Board { get; private set; }
 
@@ -22,12 +22,8 @@ namespace Agent.Strategies
                     Board[i, j] = new Field();
         }
 
-        virtual public Message MakeDecision(AgentInfo agent)
-        {
-            throw new Exception("Not implemented strategy!");
-        }
-
-        public void UpdateMap(Message message, Point position)
+        public abstract Message MakeDecision(AgentInfo agent);
+        public virtual void UpdateMap(Message message, Point position)
         {
             switch (message.MessageId)
             {
@@ -100,6 +96,6 @@ namespace Agent.Strategies
         virtual protected void PutPieceResponseHandler(PutPieceResponse pickPieceRespone) { }
         virtual protected void PenaltyNotWaitedErrorResponseHandler(PenaltyNotWaitedError pickPieceRespone) { }
 
-
+      
     }
 }
