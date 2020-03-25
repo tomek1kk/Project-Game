@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Agent.Strategies;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -12,7 +13,7 @@ namespace Agent
         public int CsPort { get; set; }
         public string CsIp { get; set; }
         public string TeamId { get; set; }
-        public int Strategy { get; set; }
+        public StrategyType Strategy { get; set; }
 
         public static AgentConfiguration ReadConfiguration(string[] programArguments)
         {
