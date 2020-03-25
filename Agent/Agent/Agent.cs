@@ -61,11 +61,9 @@ namespace Agent
 
         public void SetAgentInfo(GameStarted gameInfo)
         {
-            agentInfo.GameStartedMessage = gameInfo;
-            if (_configuration.Strategy == 1)
-            {
-                this.agentInfo = new AgentInfo(new SampleStrategy(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value), gameInfo);
-            }
+            var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(_configuration.Strategy);
+            this.agentInfo = new AgentInfo(strategy, gameInfo);
+            
         }
 
         public void Dispose()
