@@ -64,7 +64,7 @@
 
   <ItemGroup>
     <Reference Include="CommunicationLibrary">
-      <HintPath>..\..\CommunicationLibrary\CommunicationLibrary\obj\Release\netcoreapp2.1\CommunicationLibrary.dll</HintPath>
+      <HintPath>..\..\CommunicationLibrary\CommunicationLibrary\bin\Debug\netcoreapp2.1\CommunicationLibrary.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -81,11 +81,7 @@ namespace GameMaster.MessageHandlers
                     AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
-                        Position = new Position()
-                        {
-                            X = map.GetPlayerById(_agentId).Position.X,
-                            Y = map.GetPlayerById(_agentId).Position.Y
-                        },
+                        Position = (Position)map.GetPlayerById(_agentId).Position,
                         HoldingPiece = map.GetPlayerById(_agentId).IsHolding
                     }
                 };
@@ -95,11 +91,7 @@ namespace GameMaster.MessageHandlers
                     AgentId = _agentId,
                     MessagePayload = new MoveError()
                     {
-                        Position = new Position()
-                        {
-                            X = map.GetPlayerById(_agentId).Position.X,
-                            Y = map.GetPlayerById(_agentId).Position.Y
-                        }
+                        Position = (Position)map.GetPlayerById(_agentId).Position
                     }
                 };
             return new Message<MoveResponse>()
@@ -107,11 +99,7 @@ namespace GameMaster.MessageHandlers
                 MessagePayload = new MoveResponse()
                 {
                     MadeMove = true,
-                    CurrentPosition = new Position()
-                    {
-                        X = map.GetPlayerById(_agentId).Position.X,
-                        Y = map.GetPlayerById(_agentId).Position.Y
-                    },
+                    CurrentPosition = (Position)map.GetPlayerById(_agentId).Position,
                     ClosestPiece = map.ClosestPieceForField(map.GetPlayerById(_agentId).Position)
                 }
             };

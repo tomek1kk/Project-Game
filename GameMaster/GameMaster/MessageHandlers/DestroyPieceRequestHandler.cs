@@ -40,11 +40,7 @@ namespace GameMaster.MessageHandlers
                     AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
-                        Position = new Position()
-                        {
-                            X = map.GetPlayerById(_agentId).Position.X,
-                            Y = map.GetPlayerById(_agentId).Position.Y
-                        },
+                        Position = (Position)map.GetPlayerById(_agentId).Position,
                         HoldingPiece = map.GetPlayerById(_agentId).IsHolding
                     }
                 };

@@ -1,4 +1,5 @@
 ﻿using System;
+using CommunicationLibrary.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,5 +51,11 @@ namespace GameMaster.Game
         {
             _pieces.Add(new Piece());
         }
+        public static explicit operator Position(AbstractField field) 
+            => new Position()
+            {
+                X = field.X,
+                Y = field.Y
+            };
     }
 }
