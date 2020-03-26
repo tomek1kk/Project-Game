@@ -17,7 +17,6 @@ namespace GameMaster.Game
         private AbstractPiece _holding;
         private AbstractField _position;
         private DateTime _lockedTill;
-        //private MessageSenderService messageService; //TODO:MessageSenderService
         public int X => _position.X;
         public int Y => _position.Y;
         public bool IsHolding => _holding != null;

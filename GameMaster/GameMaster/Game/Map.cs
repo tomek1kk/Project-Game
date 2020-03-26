@@ -101,35 +101,6 @@ namespace GameMaster.Game
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
         }
-
-        public DiscoveryResponse Discovery(int agentId)
-        {
-            // TODO: Write Discovery logic for given agent
-
-            return new DiscoveryResponse();
-        }
-
-        public MoveResponse Move(string direction, int agentId)
-        {
-            // TODO
-
-            return new MoveResponse();
-        }
-
-        public int GetClosestPiece(int agentId) // TODO
-        {
-            return 0;
-        }
-
-        public Position GetPosition(int agentId) // TODO
-        {
-            return new Position() 
-            {
-                X = 1,
-                Y = 1
-            };
-        }
-
         public Player GetPlayerById(int agentId)
         {
             if (_players.ContainsKey(agentId))
@@ -139,6 +110,14 @@ namespace GameMaster.Game
         public bool IsInsideMap(int x, int y)
         {
             return (x >= 0 && x < _width && y > 0 && y < _heigth) ? true : false;
+        }
+        public bool IsInsideRedGoalArea(int x, int y)
+        {
+            return (x >= 0 && x < _width && y >= 0 && y < _goalAreaHeight) ? true : false;
+        }
+        public bool IsInsideBlueGoalArea(int x, int y)
+        {
+            return (x >= 0 && x < _width && y >= _heigth - _goalAreaHeight && y < _heigth) ? true : false;
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
