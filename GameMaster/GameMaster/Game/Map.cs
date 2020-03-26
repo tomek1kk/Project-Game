@@ -111,6 +111,10 @@ namespace GameMaster.Game
         {
             return (x >= 0 && x < _width && y > 0 && y < _heigth) ? true : false;
         }
+        public bool IsInGoalArea(AbstractField field)
+        {
+            return IsInsideRedGoalArea(field) || IsInsideBlueGoalArea(field);
+        }
         public bool IsInsideRedGoalArea(int x, int y)
         {
             return (x >= 0 && x < _width && y >= 0 && y < _goalAreaHeight) ? true : false;
@@ -118,6 +122,14 @@ namespace GameMaster.Game
         public bool IsInsideBlueGoalArea(int x, int y)
         {
             return (x >= 0 && x < _width && y >= _heigth - _goalAreaHeight && y < _heigth) ? true : false;
+        }
+        public bool IsInsideBlueGoalArea(AbstractField field)
+        {
+            return IsInsideBlueGoalArea(field.X, field.Y);
+        }
+        public bool IsInsideRedGoalArea(AbstractField field)
+        {
+            return IsInsideRedGoalArea(field.X, field.Y);
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts

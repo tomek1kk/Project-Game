@@ -13,7 +13,7 @@ namespace GameMaster.MessageHandlers
     public class PutPieceRequestHandler : MessageHandler
     {
         private bool _agentHasNoPiece = false;
-        private string _returnedEnum;
+        private PutResult _returnedEnum;
 
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
@@ -24,39 +24,55 @@ namespace GameMaster.MessageHandlers
             _agentHasNoPiece = map.GetPlayerById(_agentId).Holding == null;
             return !_agentHasNoPiece;
         }
-
         protected override void Execute(Map map)
         {
             AbstractField position = map.GetPlayerById(_agentId).Position;
             AbstractPiece piece = map.GetPlayerById(_agentId).Holding;
-            bool isSham = piece.IsSham();
-            bool isGoalField = map.GetPlayerById(_agentId).Position.IsGoalField;
-            bool isInGoalArea = map.IsInsideBlueGoalArea(position.X, position.Y) || map.IsInsideBlueGoalArea(position.X, position.Y);
-            map.GetPlayerById(_agentId).Holding = null;
-            if (isInGoalArea)
-            {
-                if (isSham)
-                    _returnedEnum = "SchamOnGoalArea";
-                else
-                {
-                    if (isGoalField)
-                    {
-                        _returnedEnum = "NormalOnGoalField";
-                        position.Put(piece);
-                    }
-                    else
-                    {
-                        _returnedEnum = "NormapOnNonGoalField";
-                    }
-                }
-            }
-            else
-            {
-                _returnedEnum = "TaskField";
-                position.Put(piece);
-            }
-            //TODO: generating new pieces?
+            PutPieceAt(piece, position, map);
         }
+
+        private void PutPieceAt(AbstractPiece piece, AbstractField position, Map map)
+        {
+            map.GetPlayerById(_agentId).Holding = null;
+            if (map.IsInGoalArea(position))
+                PutPieceInGoalArea(piece, position);
+            else
+                PutPieceOutsideGoalArea(piece, position);
+        }
+
+        private void PutPieceInGoalArea(AbstractPiece piece, AbstractField position)
+        {
+            if (piece.IsSham())
+                PutShamInGoalArea(piece, position);
+            else
+                PutNonShamInGoalArea(piece, position);
+        }
+
+        private void PutPieceOutsideGoalArea(AbstractPiece piece, AbstractField position)
+        {
+            _returnedEnum = PutResult.TaskField;
+            position.Put(piece);
+        }
+
+        private void PutShamInGoalArea(AbstractPiece piece, AbstractField position)
+         => _returnedEnum = PutResult.ShamOnGoalArea;
+
+        private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position)
+        {
+            if (position.IsGoalField)
+                PutNonShamOnGoal(piece, position);
+            else
+                PutNormalOnNonGoal(piece, position);
+        }
+
+        private void PutNonShamOnGoal(AbstractPiece piece, AbstractField position)
+        {
+            _returnedEnum = PutResult.NormalOnGoalField;
+            position.Put(piece);
+        }
+
+        private void PutNormalOnNonGoal(AbstractPiece piece, AbstractField position)
+          => _returnedEnum = PutResult.NormalOnNonGoalField;
 
         protected override Message GetResponse(Map map)
         {
@@ -78,7 +94,6 @@ namespace GameMaster.MessageHandlers
                         //ReturnedEnum = _returnedEnum //this need to be add in documentation - https://github.com/MINI-IO/IO-project-game/issues/119
                     }
                 };
-
         }
 
         protected override void ReadMessage(MessagePayload payload)
