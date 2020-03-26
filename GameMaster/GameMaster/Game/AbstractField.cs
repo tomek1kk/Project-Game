@@ -26,7 +26,7 @@ namespace GameMaster.Game
         {
             _whos_here.Remove(player);
         }
-        abstract public void PickUp(Player player);
+        abstract public AbstractPiece PickUp();
         abstract public bool Put(AbstractPiece piece);
         public bool MoveHere(Player player)
         {

@@ -26,9 +26,9 @@ namespace GameMaster.Game
                 return FieldType.Goal;
         }
 
-        public override void PickUp(Player player)
+        public override AbstractPiece PickUp()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public override bool Put(AbstractPiece piece)

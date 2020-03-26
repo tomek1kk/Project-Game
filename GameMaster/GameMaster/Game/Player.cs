@@ -78,14 +78,5 @@ namespace GameMaster.Game
             _holding = null;
             return new DestroyPieceResponse();
         }
-        //public void Discover(AbstractField[][] map)
-        //{
-        //    //TODO: MessageSenderService
-        //}
-        public void SetHolding()
-        {
-            _position.PickUp(this);
-            //TODO:MessageSenderService
-        }
     }
 }
