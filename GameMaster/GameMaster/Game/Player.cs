@@ -61,22 +61,5 @@ namespace GameMaster.Game
                 _lockedTill.ToString() + ", new TryLock time: " + newLockTime.ToString());
             return false;
         }
-        public void Move(AbstractField field)
-        {
-            if(_position.MoveOut(this) == false)
-            {
-                throw new InvalidOperationException("Player is not occupying this field!");
-            }
-            if(field.MoveHere(this) == false)
-            {
-                throw new InvalidOperationException("Player can not move to that field");
-            }
-            //TODO: MessageSenderService
-        }
-        public DestroyPieceResponse DestroyHolding()
-        {
-            _holding = null;
-            return new DestroyPieceResponse();
-        }
     }
 }

@@ -12,6 +12,8 @@ namespace GameMaster.Game
         {
         }
 
+        public override bool IsGoalField { get => true; }
+
         public override FieldType GetFieldTypeForGUI()
         {
             if (_whos_here.Count > 0)

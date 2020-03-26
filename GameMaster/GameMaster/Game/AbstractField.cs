@@ -22,10 +22,6 @@ namespace GameMaster.Game
             _whos_here = new List<Player>();
         }
 
-        public void LeavePlayer(Player player)
-        {
-            _whos_here.Remove(player);
-        }
         abstract public AbstractPiece PickUp();
         abstract public bool Put(AbstractPiece piece);
         public bool MoveHere(Player player)
@@ -35,7 +31,7 @@ namespace GameMaster.Game
         }
         public bool MoveOut(Player player)
         {
-            if(_whos_here.Contains(player))
+            if (_whos_here.Contains(player))
             {
                 _whos_here.Remove(player);
                 return true;
@@ -49,6 +45,7 @@ namespace GameMaster.Game
         public int X => _x;
         public int Y => _y;
         abstract public FieldType GetFieldTypeForGUI();
+        abstract public bool IsGoalField {get;}
         public void PutGeneratedPiece()
         {
             _pieces.Add(new Piece());
