@@ -14,6 +14,10 @@ namespace GameMaster.MessageHandlers
     {
         private string direction;
 
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
         protected override void ReadMessage(MessagePayload payload)
         {
             MoveRequest request = (MoveRequest)payload;

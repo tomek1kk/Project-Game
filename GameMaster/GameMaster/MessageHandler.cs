@@ -14,7 +14,7 @@ namespace GameMaster.Game
     public abstract class MessageHandler : IMessageHandler
     {
         protected int _agentId;
-        protected bool _penaltyNotWaited = false;
+        protected bool _hasTimePenalty = false;
         private void BaseReadMessage(Message message)
         {
             _agentId = (int)message.AgentId;
@@ -22,6 +22,9 @@ namespace GameMaster.Game
         }
         public Message ProcessRequest(Map map, Message message, GMConfiguration configuration)
         {
+            CheckAgentPenaltyIfNeeded(map);
+            if (_hasTimePenalty)
+                return GetPenaltyError(map);
             BaseReadMessage(message);
             if (CheckRequest(map))
                 Execute(map);
@@ -34,5 +37,21 @@ namespace GameMaster.Game
         protected abstract void Execute(Map map);
         protected abstract void ReadMessage(MessagePayload payload);
         protected abstract void SetTimeout(GMConfiguration config, Map map);
+        protected abstract void CheckAgentPenaltyIfNeeded(Map map);
+        private Message GetPenaltyError(Map map)
+        {
+            return new Message<PenaltyNotWaitedError>()
+            {
+                AgentId = _agentId,
+                MessagePayload = new PenaltyNotWaitedError()
+                {
+                    WaitUntill = map.GetPlayerById(_agentId).LockedTill
+                }
+            };
+        }
+        protected void CheckIfAgentHasPenalty(Map map)
+        {
+            _hasTimePenalty = map.GetPlayerById(_agentId).IsLocked;
+        }
     }
 }

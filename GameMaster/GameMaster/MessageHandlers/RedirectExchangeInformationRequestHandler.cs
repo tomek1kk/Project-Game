@@ -10,6 +10,7 @@ namespace GameMaster.MessageHandlers
 {
     public class RedirectExchangeInformationRequestHandler : MessageHandler
     {
+        protected override void CheckAgentPenaltyIfNeeded(Map map){}
         protected override bool CheckRequest(Map map)
         {
             throw new NotImplementedException();

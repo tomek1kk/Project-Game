@@ -15,12 +15,17 @@ namespace GameMaster.MessageHandlers
     public class CheckHoldedPieceRequestHandler : MessageHandler
     {
         private bool _sham;
-        private bool _noPiece;
+        private bool _hasPiece;
+
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
+
         protected override bool CheckRequest(Map map)
         {
-            _penaltyNotWaited = map.GetPlayerById(_agentId).IsUnlocked;
-            _noPiece = map.GetPlayerById(_agentId).IsHolding;
-            return _noPiece || _penaltyNotWaited;
+            _hasPiece = map.GetPlayerById(_agentId).IsHolding;
+            return _hasPiece;
         }
 
         protected override void Execute(Map map)
@@ -30,18 +35,7 @@ namespace GameMaster.MessageHandlers
 
         protected override Message GetResponse(Map map)
         {
-            if (_penaltyNotWaited)
-            {
-                return new Message<PenaltyNotWaitedError>()
-                {
-                    AgentId = _agentId,
-                    MessagePayload = new PenaltyNotWaitedError()
-                    {
-                        WaitUntill = map.GetPlayerById(_agentId).LockedTill
-                    }
-                };
-            }
-            if (_noPiece)
+            if (!_hasPiece)
             {
                 return new Message<NotDefinedError>()
                 {

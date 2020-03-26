@@ -93,18 +93,13 @@ namespace GameMaster.Game
                 _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece();
             }
         }
-        public JoinGameResponse AddPlayer(Team team, int agentId)
+        public void AddPlayer(Team team, int agentId)
         {
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
-            return new JoinGameResponse()
-            {
-                Accepted = true,
-                AgentID = agentId
-            };
         }
 
         public DiscoveryResponse Discovery(int agentId)
@@ -137,7 +132,9 @@ namespace GameMaster.Game
 
         public Player GetPlayerById(int agentId)
         {
-            return _players[agentId];
+            if (_players.ContainsKey(agentId))
+                return _players[agentId];
+            return null;
         }
         public bool IsInsideMap(int x, int y)
         {

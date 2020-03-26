@@ -22,10 +22,14 @@ namespace GameMaster.MessageHandlers
         private int? _distanceSW;
         private int? _distanceW;
         private int? _distanceNW;
+
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
         protected override bool CheckRequest(Map map)
         {
-            _penaltyNotWaited = map.GetPlayerById(_agentId).IsUnlocked;
-            return _penaltyNotWaited;
+            return true;
         }
 
         protected override void Execute(Map map)
@@ -44,17 +48,6 @@ namespace GameMaster.MessageHandlers
 
         protected override Message GetResponse(Map map)
         {
-            if (_penaltyNotWaited)
-            {
-                return new Message<PenaltyNotWaitedError>()
-                {
-                    AgentId = _agentId,
-                    MessagePayload = new PenaltyNotWaitedError()
-                    {
-                        WaitUntill = map.GetPlayerById(_agentId).LockedTill
-                    }
-                };
-            }
             return new Message<DiscoveryResponse>()
             {
                 AgentId = _agentId,

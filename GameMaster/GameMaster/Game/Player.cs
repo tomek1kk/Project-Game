@@ -23,7 +23,7 @@ namespace GameMaster.Game
         public bool IsHolding => _holding != null;
         public Team Team => _team;
         public int AgentId => _agentId;
-        public bool IsUnlocked => _lockedTill < DateTime.Now;
+        public bool IsLocked => _lockedTill > DateTime.Now;
         public AbstractPiece Holding { get => _holding; set => _holding = value; }
         public DateTime LockedTill => _lockedTill;
         public AbstractField Position { get => _position; set => _position = value; }

@@ -1,4 +1,7 @@
 ﻿using CommunicationLibrary;
+using CommunicationLibrary.Response;
+using CommunicationLibrary.Error;
+using CommunicationLibrary.Request;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
@@ -10,29 +13,54 @@ namespace GameMaster.MessageHandlers
 {
     public class JoinGameRequestHandler : MessageHandler
     {
+        private bool _playerAlreadyOnMap = false;
+        private Team _team;
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            return;
+        }
         protected override bool CheckRequest(Map map)
         {
-            throw new NotImplementedException();
+            _playerAlreadyOnMap = map.GetPlayerById(_agentId) != null;
+            return !_playerAlreadyOnMap;
         }
 
         protected override void Execute(Map map)
         {
-            throw new NotImplementedException();
+            map.AddPlayer(_team, _agentId);
         }
 
         protected override Message GetResponse(Map map)
         {
-            throw new NotImplementedException();
+            if(_playerAlreadyOnMap)
+            {
+                return new Message<NotDefinedError>()
+                {
+                    AgentId = _agentId,
+                    MessagePayload = new NotDefinedError()
+                    {
+                    }
+                };
+            }
+            return new Message<JoinGameResponse>()
+            {
+                AgentId = _agentId,
+                MessagePayload = new JoinGameResponse()
+                {
+                    AgentID = _agentId,
+                    Accepted = true
+                }
+            };
         }
 
         protected override void ReadMessage(MessagePayload payload)
         {
-            throw new NotImplementedException();
+            _team = TeamExtensions.ToTeam(((JoinGameRequest)payload).TeamId);
         }
 
         protected override void SetTimeout(GMConfiguration config, Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).TryLock(DateTime.MinValue);
         }
     }
 }

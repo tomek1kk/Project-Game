@@ -10,6 +10,10 @@ namespace GameMaster.MessageHandlers
 {
     public class PutPieceRequestHandler : MessageHandler
     {
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
         protected override bool CheckRequest(Map map)
         {
             throw new NotImplementedException();
