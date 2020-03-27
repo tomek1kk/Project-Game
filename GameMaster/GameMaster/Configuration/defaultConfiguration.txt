@@ -10,6 +10,7 @@
 	"putPenalty": 500,
 	"checkForShamPenalty": 700,
 	"responsePenalty": 1000,
+	"destroyPiecePenalty": 100,
 	"goalAreaHight": 5,
 	"numberOfGoals": 5,
 	"numberOfPieces": 10

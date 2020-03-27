@@ -1,38 +1,65 @@
 ﻿using CommunicationLibrary;
+using CommunicationLibrary.Model;
+using CommunicationLibrary.Error;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CommunicationLibrary.Response;
 
 namespace GameMaster.MessageHandlers
 {
     public class DestroyPieceRequestHandler : MessageHandler
     {
+        private bool _hasPiece;
+
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
+
         protected override bool CheckRequest(Map map)
         {
-            throw new NotImplementedException();
+            _hasPiece = map.GetPlayerById(_agentId).IsHolding;
+            return _hasPiece;
         }
 
         protected override void Execute(Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).Holding = null;
         }
 
         protected override Message GetResponse(Map map)
         {
-            throw new NotImplementedException();
+            if (!_hasPiece)
+            {
+                return new Message<NotDefinedError>()
+                {
+                    AgentId = _agentId,
+                    MessagePayload = new NotDefinedError()
+                    {
+                        Position = (Position)map.GetPlayerById(_agentId).Position,
+                        HoldingPiece = map.GetPlayerById(_agentId).IsHolding
+                    }
+                };
+            }
+            return new Message<DestroyPieceResponse>()
+            {
+                AgentId = _agentId,
+                MessagePayload = new DestroyPieceResponse() {}
+            };
         }
 
         protected override void ReadMessage(MessagePayload payload)
         {
-            throw new NotImplementedException();
+            return;
         }
 
-        protected override void SetTimeout(GMConfiguration config)
+        protected override void SetTimeout(GMConfiguration config, Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).TryLock(DateTime.Now.AddMilliseconds(config.DestroyPiecePenalty));
         }
     }
 }

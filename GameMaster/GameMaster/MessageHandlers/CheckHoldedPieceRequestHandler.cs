@@ -1,4 +1,6 @@
 ﻿using CommunicationLibrary;
+using CommunicationLibrary.Error;
+using CommunicationLibrary.Model;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
 using GameMaster.Configuration;
@@ -12,25 +14,45 @@ namespace GameMaster.MessageHandlers
 {
     public class CheckHoldedPieceRequestHandler : MessageHandler
     {
-        private bool sham;
+        private bool _sham;
+        private bool _hasPiece;
+
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
+
         protected override bool CheckRequest(Map map)
         {
-            return true;
+            _hasPiece = map.GetPlayerById(_agentId).IsHolding;
+            return _hasPiece;
         }
 
         protected override void Execute(Map map)
         {
-            sham = false; // TODO
+            _sham = map.GetPlayerById(_agentId).Holding.IsSham();
         }
 
         protected override Message GetResponse(Map map)
         {
+            if (!_hasPiece)
+            {
+                return new Message<NotDefinedError>()
+                {
+                    AgentId = _agentId,
+                    MessagePayload = new NotDefinedError()
+                    {
+                        Position = (Position)map.GetPlayerById(_agentId).Position,
+                        HoldingPiece = map.GetPlayerById(_agentId).IsHolding
+                    }
+                };
+            }
             return new Message<CheckHoldedPieceResponse>()
             {
-                AgentId = agentId,
+                AgentId = _agentId,
                 MessagePayload = new CheckHoldedPieceResponse()
                 {
-                    Sham = sham
+                    Sham = _sham
                 }
             };
         }
@@ -40,9 +62,9 @@ namespace GameMaster.MessageHandlers
             return;
         }
 
-        protected override void SetTimeout(GMConfiguration config)
+        protected override void SetTimeout(GMConfiguration config, Map map)
         {
-            throw new NotImplementedException();
+            map.GetPlayerById(_agentId).TryLock(DateTime.Now.AddMilliseconds(config.CheckForShamPenalty));
         }
     }
 }

@@ -12,6 +12,8 @@ namespace GameMaster.Game
         {
         }
 
+        public override bool IsGoalField { get => false; }
+
         public override FieldType GetFieldTypeForGUI()
         {
             if (_whos_here.Count > 0)
@@ -28,10 +30,11 @@ namespace GameMaster.Game
                 return FieldType.Empty;
         }
 
-        public override void PickUp(Player player)
+        public override AbstractPiece PickUp()
         {
-            //TODO
-            throw new NotImplementedException();
+            AbstractPiece piece = _pieces.Last();
+            _pieces.RemoveAt(_pieces.Count - 1);
+            return piece;
         }
 
         public override bool Put(AbstractPiece piece)

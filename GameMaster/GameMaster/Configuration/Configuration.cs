@@ -23,7 +23,7 @@ namespace GameMaster.Configuration
         public int AskPenalty { get; set; }
         public int DiscoveryPenalty { get; set; }
         public int PutPenalty { get; set; }
-        public int CheckPenalty { get; set; }
+        public int DestroyPiecePenalty { get; set; }        //documentation is changing now
         public int ResponsePenalty { get; set; }
         public int NumberOfGoals { get; set; }
         public string CsIP { get; set; }

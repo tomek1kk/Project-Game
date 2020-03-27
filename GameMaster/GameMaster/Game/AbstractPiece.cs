@@ -7,6 +7,6 @@ namespace GameMaster.Game
 {
     public abstract class AbstractPiece
     {
-        abstract public bool IsTrue();
+        abstract public bool IsSham();
     }
 }

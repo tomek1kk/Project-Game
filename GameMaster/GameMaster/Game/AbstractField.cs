@@ -1,4 +1,5 @@
 ﻿using System;
+using CommunicationLibrary.Model;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,11 +23,7 @@ namespace GameMaster.Game
             _whos_here = new List<Player>();
         }
 
-        public void LeavePlayer(Player player)
-        {
-            _whos_here.Remove(player);
-        }
-        abstract public void PickUp(Player player);
+        abstract public AbstractPiece PickUp();
         abstract public bool Put(AbstractPiece piece);
         public bool MoveHere(Player player)
         {
@@ -35,7 +32,7 @@ namespace GameMaster.Game
         }
         public bool MoveOut(Player player)
         {
-            if(_whos_here.Contains(player))
+            if (_whos_here.Contains(player))
             {
                 _whos_here.Remove(player);
                 return true;
@@ -49,9 +46,16 @@ namespace GameMaster.Game
         public int X => _x;
         public int Y => _y;
         abstract public FieldType GetFieldTypeForGUI();
+        abstract public bool IsGoalField {get;}
         public void PutGeneratedPiece()
         {
             _pieces.Add(new Piece());
         }
+        public static explicit operator Position(AbstractField field) 
+            => new Position()
+            {
+                X = field.X,
+                Y = field.Y
+            };
     }
 }

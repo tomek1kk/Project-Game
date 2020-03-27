@@ -7,9 +7,9 @@ namespace GameMaster.Game
 {
     public class Piece:AbstractPiece
     {
-        public override bool IsTrue()
+        public override bool IsSham()
         {
-            return true;
+            return false;
         }
     }
 }

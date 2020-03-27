@@ -10,15 +10,22 @@ namespace GameMaster.Game
 {
     public class Player
     {
-        protected int _agentId;
-        protected int _messageCorellationId;
-        protected Team _team;
-        protected bool _isLeader;
-        protected AbstractPiece _holding;
-        protected AbstractField _position;
-        protected DateTime _lockedTill;
-        //private MessageSenderService messageService; //TODO:MessageSenderService
-
+        private int _agentId;
+        private int _messageCorellationId;
+        private Team _team;
+        private bool _isLeader;
+        private AbstractPiece _holding;
+        private AbstractField _position;
+        private DateTime _lockedTill;
+        public int X => _position.X;
+        public int Y => _position.Y;
+        public bool IsHolding => _holding != null;
+        public Team Team => _team;
+        public int AgentId => _agentId;
+        public bool IsLocked => _lockedTill > DateTime.Now;
+        public AbstractPiece Holding { get => _holding; set => _holding = value; }
+        public DateTime LockedTill => _lockedTill;
+        public AbstractField Position { get => _position; set => _position = value; }
         public Player(Team team, int agentId)
         {
             _agentId = agentId;
@@ -50,60 +57,9 @@ namespace GameMaster.Game
                 _lockedTill = newLockTime;
                 return true;
             }
+            Console.WriteLine("Agent " + AgentId.ToString() + " cannot be locked before he is unlocked. Locked till: " +
+                _lockedTill.ToString() + ", new TryLock time: " + newLockTime.ToString());
             return false;
         }
-        public void Move(AbstractField field)
-        {
-            if(_position.MoveOut(this) == false)
-            {
-                throw new InvalidOperationException("Player is not occupying this field!");
-            }
-            if(field.MoveHere(this) == false)
-            {
-                throw new InvalidOperationException("Player can not move to that field");
-            }
-            //TODO: MessageSenderService
-        }
-        public DestroyPieceResponse DestroyHolding()
-        {
-            _holding = null;
-            return new DestroyPieceResponse();
-        }
-        public CheckHoldedPieceResponse CheckHolding()
-        {
-            bool sham;
-            if (_holding != null && _holding.IsTrue() == false)
-                sham = false;
-            else
-                sham = true;
-            return new CheckHoldedPieceResponse()
-            {
-                Sham = sham
-            };
-        }
-        //public void Discover(AbstractField[][] map)
-        //{
-        //    //TODO: MessageSenderService
-        //}
-        public bool Put()
-        {
-            if(_holding.IsTrue() == false)
-            {
-                _holding = null;
-                //TODO: MessageSenderSevrice
-                return false;
-            }
-            return _position.Put(_holding);
-        }
-        public void SetHolding()
-        {
-            _position.PickUp(this);
-            //TODO:MessageSenderService
-        }
-        public int X => _position.X;
-        public int Y => _position.Y;
-        public bool IsHolding => _holding != null;
-        public Team Team => _team;
-        public int AgentId => _agentId;
     }
 }

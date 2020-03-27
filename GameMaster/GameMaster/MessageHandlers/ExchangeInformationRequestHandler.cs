@@ -10,6 +10,10 @@ namespace GameMaster.MessageHandlers
 {
     public class ExchangeInformationRequestHandler : MessageHandler
     {
+        protected override void CheckAgentPenaltyIfNeeded(Map map)
+        {
+            CheckIfAgentHasPenalty(map);
+        }
         protected override bool CheckRequest(Map map)
         {
             throw new NotImplementedException();
@@ -30,7 +34,7 @@ namespace GameMaster.MessageHandlers
             throw new NotImplementedException();
         }
 
-        protected override void SetTimeout(GMConfiguration config)
+        protected override void SetTimeout(GMConfiguration config, Map map)
         {
             throw new NotImplementedException();
         }

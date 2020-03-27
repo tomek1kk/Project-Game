@@ -18,7 +18,10 @@ namespace GameMaster.Game
         private int _width;
         private int _numberOfGoals;
         private int _numberOfPieces;
-
+        public AbstractField this[int x, int y]
+        {
+            get => _fieldsArray[x, y];
+        }
         public Map(GMConfiguration config)
         {
             _heigth = config.BoardY;
@@ -41,7 +44,7 @@ namespace GameMaster.Game
             }
         }
         //TODO: tests
-        private int ClosestPieceForField(AbstractField field)
+        public int ClosestPieceForField(AbstractField field)
         {
             int distance = int.MaxValue;
             for (int x = 0; x < _width; x++)
@@ -90,51 +93,43 @@ namespace GameMaster.Game
                 _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece();
             }
         }
-        public JoinGameResponse AddPlayer(Team team, int agentId)
+        public void AddPlayer(Team team, int agentId)
         {
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
-            return new JoinGameResponse()
-            {
-                Accepted = true,
-                AgentID = agentId
-            };
         }
-
-        public DiscoveryResponse Discovery(int agentId)
-        {
-            // TODO: Write Discovery logic for given agent
-
-            return new DiscoveryResponse();
-        }
-
-        public MoveResponse Move(string direction, int agentId)
-        {
-            // TODO
-
-            return new MoveResponse();
-        }
-
-        public int GetClosestPiece(int agentId) // TODO
-        {
-            return 0;
-        }
-
-        public Position GetPosition(int agentId) // TODO
-        {
-            return new Position() 
-            {
-                X = 1,
-                Y = 1
-            };
-        }
-
         public Player GetPlayerById(int agentId)
         {
-            return _players[agentId];
+            if (_players.ContainsKey(agentId))
+                return _players[agentId];
+            return null;
+        }
+        public bool IsInsideMap(int x, int y)
+        {
+            return (x >= 0 && x < _width && y > 0 && y < _heigth) ? true : false;
+        }
+        public bool IsInGoalArea(AbstractField field)
+        {
+            return IsInsideRedGoalArea(field) || IsInsideBlueGoalArea(field);
+        }
+        public bool IsInsideRedGoalArea(int x, int y)
+        {
+            return (x >= 0 && x < _width && y >= 0 && y < _goalAreaHeight) ? true : false;
+        }
+        public bool IsInsideBlueGoalArea(int x, int y)
+        {
+            return (x >= 0 && x < _width && y >= _heigth - _goalAreaHeight && y < _heigth) ? true : false;
+        }
+        public bool IsInsideBlueGoalArea(AbstractField field)
+        {
+            return IsInsideBlueGoalArea(field.X, field.Y);
+        }
+        public bool IsInsideRedGoalArea(AbstractField field)
+        {
+            return IsInsideRedGoalArea(field.X, field.Y);
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
