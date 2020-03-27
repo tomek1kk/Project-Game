@@ -61,7 +61,6 @@ namespace GameMaster.MessageHandlers
             else
                 _moveError = map.IsInsideRedGoalArea(x, y);
             return _moveError;
-
         }
 
         protected override void Execute(Map map)

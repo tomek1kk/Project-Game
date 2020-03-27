@@ -61,7 +61,6 @@ namespace GameMaster
                 });
                 return;
             }
-    
             var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
             _communicator.Send(response);
         }
