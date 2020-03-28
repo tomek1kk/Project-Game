@@ -42,7 +42,7 @@ namespace GameMaster
             _client = new TcpClient("127.0.0.1", 8081);
             _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
 
-            _map = new Map(_gmConfiguration, new GameStarter(_communicator, _gmConfiguration));
+            _map = new Map(_gmConfiguration);
             InitGui();
 
             _communicator.StartReceiving(GetCSMessage);
@@ -66,6 +66,12 @@ namespace GameMaster
             }
             var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
             _communicator.Send(response);
+        }
+
+        public void StartGame()
+        {
+            GameStarter gameStarter = new GameStarter(_communicator, _gmConfiguration);
+            gameStarter.StartGame(_map.Players);
         }
 
         public void GenerateGui()

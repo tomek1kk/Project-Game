@@ -20,20 +20,20 @@ namespace GameMaster.Game
         private int _numberOfPieces;
         private int _numberOfPlayers;
         private GameStarter _gameStarter;
+        public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
         {
             get => _fieldsArray[x, y];
         }
-        public Map(GMConfiguration config, GameStarter gameStarter)
+        public Map(GMConfiguration config)
         {
             _heigth = config.BoardY;
             _width = config.BoardX;
             _goalAreaHeight = config.GoalAreaHight;
             _numberOfGoals = config.NumberOfGoals;
             _numberOfPieces = config.NumberOfPieces;
-            _numberOfPlayers = 2; // TODO: should be from config (not included in documentation)
+            _numberOfPlayers = 10; // TODO: should be from config (not included in documentation)
             _players = new Dictionary<int, Player>();
-            _gameStarter = gameStarter;
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
@@ -106,8 +106,6 @@ namespace GameMaster.Game
             int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
-            if (_players.Count == _numberOfPlayers)
-                _gameStarter.StartGame(_players);
             return true;
         }
         public Player GetPlayerById(int agentId)
