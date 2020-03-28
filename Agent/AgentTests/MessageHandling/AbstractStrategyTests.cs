@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using Agent;
 
 namespace AgentTests.MessageHandling
 {
@@ -20,6 +21,11 @@ namespace AgentTests.MessageHandling
         private class MyAbstractStrategy : Strategy
         {
             public MyAbstractStrategy(int width, int height) : base(width, height) { }
+
+            public override Message MakeDecision(AgentInfo agent)
+            {
+                return new Message<JoinGameResponse>();
+            }
         }
 
         [TestMethod]
