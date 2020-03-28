@@ -26,7 +26,6 @@ namespace GameMaster
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
         private bool _gameStarted = false;
-        ManualGuiDataProvider _guiDataProvider;
         Map _map;
 
 
@@ -55,8 +54,7 @@ namespace GameMaster
                 _communicator.StartReceiving(GetCSMessage);
                 Log.Information("Started received messages");
 
-                Thread.Sleep(10000);
-
+                Thread.Sleep(100000);
                 _guiMantainer.StopGui();
                 Log.Information("GUI stopped");
             }
@@ -98,7 +96,7 @@ namespace GameMaster
             //_guiMantainer.StartGui(_guiDataProvider);
 
             //prototype of GameMaster Map
-            _guiMantainer.StartGui(_map);
+            _guiMantainer.StartGui(_map, new CallbackGuiActionsExcecutor(()=>StartGame()));
         }
 
         public void Dispose()
