@@ -25,14 +25,16 @@ namespace GameMaster.Game
         {
             Log.Information("Processing message from agent {_agent}");
             Log.Debug("Received message content: {@message}");
+            BaseReadMessage(message);
             CheckAgentPenaltyIfNeeded(map);
             if (_hasTimePenalty)
                 return GetPenaltyError(map);
-            BaseReadMessage(message);
+
             if (CheckRequest(map))
                 Execute(map);
             SetTimeout(configuration, map);
             var response = GetResponse(map);
+            response.AgentId = _agentId;
             Log.Debug("Prepared response: {@response}");
             return response;
         }
