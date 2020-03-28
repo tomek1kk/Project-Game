@@ -10,9 +10,9 @@ namespace CommunicationLibrary.Request
 
         public override bool ValidateMessage()
         {
-            if (TeamId != "red" || TeamId != "blue")
-                return false;
-            return true;
+            if (TeamId == "red" || TeamId == "blue")
+                return true;
+            return false;
         }
     }
 }

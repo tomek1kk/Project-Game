@@ -18,7 +18,7 @@ namespace Agent.Strategies
 
         public override Message MakeDecision(AgentInfo agent)
         {
-            var last = History.Peek();
+            var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
 
             if (agent.HasPiece && agent.inGoalArea())
             {
