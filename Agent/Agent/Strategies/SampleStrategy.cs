@@ -3,6 +3,7 @@ using CommunicationLibrary;
 using CommunicationLibrary.Request;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Text;
 
 namespace Agent.Strategies
@@ -17,58 +18,80 @@ namespace Agent.Strategies
 
         public override Message MakeDecision(AgentInfo agent)
         {
-            Message m;
-
-            //sprawdzic requesty o zapytanie informacji
             var last = History.Peek();
+
             if (agent.HasPiece && agent.inGoalArea())
             {
-                m = new Message<PutPieceRequest>(new PutPieceRequest());
+                return PutPiece();
             }
             else if (!agent.HasPiece && agent.inGoalArea())
             {
-                var req = new MoveRequest();
-                req.Direction = agent.GoalDirection == "N" ? "S" : "N";
-                m = new Message<MoveRequest>(req);
+                return BackToBoard(agent);
             }
-            else if (last == MessageType.DiscoveryRequest)
+            else if (last == MessageType.DiscoveryResponse)
             {
-                var req = new MoveRequest();
-
-                int N = Board[agent.Position.X, agent.Position.Y + 1].DistToPiece;
-                int S = Board[agent.Position.X, agent.Position.Y - 1].DistToPiece;
-                int W = Board[agent.Position.X + 1, agent.Position.Y].DistToPiece;
-                int E = Board[agent.Position.X - 1, agent.Position.Y].DistToPiece;
-                int min = Math.Min(Math.Min(Math.Min(S, N), E), W);
-                if (min == N)
-                    req.Direction = "N";
-                else if(min == S)
-                    req.Direction = "S";
-                else if(min == W)
-                    req.Direction = "W";
-                else if(min == E)
-                    req.Direction = "W";                
-                m = new Message<MoveRequest>(req);
+                return FindPiece(agent);
             }
             else if (Board[agent.Position.X, agent.Position.Y].DistToPiece == 0)
             {
-                m = new Message<PickPieceRequest>(new PickPieceRequest());
+                return PickPiece();
             }
             else if (agent.HasPiece && !agent.inGoalArea())
             {
-                var req = new MoveRequest();
-                req.Direction = agent.GoalDirection;
-                m = new Message<MoveRequest>(req);
+                return MoveToGoals(agent);
             }
             else
-                m = new Message<DiscoveryRequest>(new DiscoveryRequest());
-            
-
-            History.Push(m.MessageId); 
-            return m;
+                return MakeDiscovery();
+        }
+        public override void UpdateMap(Message message, Point position)
+        {
+            History.Push(message.MessageId);
+            base.UpdateMap(message, position);
         }
 
-        
+        private Message FindPiece(AgentInfo agent)
+        {
+            var req = new MoveRequest();
+            int N = Board[agent.Position.X, agent.Position.Y + 1].DistToPiece;
+            int S = Board[agent.Position.X, agent.Position.Y - 1].DistToPiece;
+            int W = Board[agent.Position.X + 1, agent.Position.Y].DistToPiece;
+            int E = Board[agent.Position.X - 1, agent.Position.Y].DistToPiece;
+            int min = Math.Min(Math.Min(Math.Min(S, N), E), W);
+            if (min == N)
+                req.Direction = "N";
+            else if (min == S)
+                req.Direction = "S";
+            else if (min == W)
+                req.Direction = "W";
+            else if (min == E)
+                req.Direction = "W";
+            return  new Message<MoveRequest>(req);
+        }
+        private Message PutPiece()
+        {
+            return new Message<PutPieceRequest>(new PutPieceRequest());
+        }
+        private Message BackToBoard(AgentInfo agent)
+        {
+            var req = new MoveRequest();
+            req.Direction = agent.GoalDirection == "N" ? "S" : "N";
+            return new Message<MoveRequest>(req);
+        }
+        private Message PickPiece()
+        {
+            return new Message<PickPieceRequest>(new PickPieceRequest());
+        }
+        private Message MoveToGoals(AgentInfo agent)
+        {
+            var req = new MoveRequest();
+            req.Direction = agent.GoalDirection;
+            return new Message<MoveRequest>(req);
+        }
+        private Message MakeDiscovery()
+        {
+            return new Message<DiscoveryRequest>(new DiscoveryRequest());
+        }
+
     }
     //public enum StrategyDirections
     //{
@@ -77,3 +100,4 @@ namespace Agent.Strategies
     //    MoveToDiscoveryField = 3,
     //}
 }
+ 

@@ -13,8 +13,6 @@ namespace Agent.Strategies
     public abstract class Strategy : IStrategy
     {
         public Field[,] Board { get; private set; }
-        public string GoalDirection { get; private set; }
-
         public Strategy(int width, int height)
         {
             Board = new Field[width, height];
