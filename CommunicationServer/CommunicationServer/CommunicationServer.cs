@@ -11,6 +11,7 @@ using System.Text.Json;
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Request;
 using Serilog;
+using CommunicationServer.Helpers;
 
 namespace CommunicationServer
 {
@@ -36,7 +37,13 @@ namespace CommunicationServer
 
         public void GetGMMessage(Message message)
         {
-            if (isWaitingForMoreAgents) isWaitingForMoreAgents = !isWaitingForMoreAgents; //when appropiate messege is sent
+            if (message.IsGameStarted()) isWaitingForMoreAgents = false;
+            if (message.IsEndGame())
+            {
+                HandleEndGame(message);
+                _gameMasterConnection.Dispose();
+                return;
+            }
 
             Console.WriteLine("I've got such message: " + message.GetPayload());
             Log.Information("GetGMMessege: {@m}", message);
@@ -69,6 +76,13 @@ namespace CommunicationServer
             Log.Information("GetAgentMessage: {@m}", message);
             _gameMasterConnection.SendMessage(message);
         }
-
+        private void HandleEndGame(Message message)
+        {
+            foreach (var agent in _agentsConnections)
+            {
+                agent.SendMessage(message);
+                _agentsConnections.ForEach(x => x.Dispose());
+            }
+        }
     }
 }

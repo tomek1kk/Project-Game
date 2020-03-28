@@ -44,7 +44,7 @@ namespace Agent
         public bool TryJoinGame()
         {
             //not tested
-            _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "blue" } });
+            _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = _configuration.TeamId } });
             Message m = _communicator.Take();
             if (m.MessageId != MessageType.JoinGameResponse)
                 return false;
