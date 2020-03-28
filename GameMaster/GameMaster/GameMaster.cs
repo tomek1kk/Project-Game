@@ -14,6 +14,7 @@ using System.Threading;
 using GameMaster.Game;
 using GameMaster.MessageHandlers;
 using CommunicationLibrary.Information;
+using Serilog;
 
 namespace GameMaster
 {
@@ -40,17 +41,23 @@ namespace GameMaster
             //TODO: rest of starting game master
 
             _client = new TcpClient("127.0.0.1", 8081);
-            _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
+            using (_communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser()))
+            {
+                Log.Information("StreamMessageSenderReceiver started");
 
-            _map = new Map(_gmConfiguration);
-            InitGui();
+                _map = new Map(_gmConfiguration);
+                Log.Information("Map created");
 
-            _communicator.StartReceiving(GetCSMessage);
-            Console.WriteLine("Try connect");
+                InitGui();
+                Log.Information("GUI started");
 
+                _communicator.StartReceiving(GetCSMessage);
+                Log.Information("Started received messages");
 
-            Thread.Sleep(100000);
-            _guiMantainer.StopGui();
+                Thread.Sleep(100000);
+                _guiMantainer.StopGui();
+                Log.Information("GUI stopped");
+            }
         }
         private void GetCSMessage(Message message)
         {
