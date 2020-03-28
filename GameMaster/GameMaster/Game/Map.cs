@@ -19,7 +19,6 @@ namespace GameMaster.Game
         private int _numberOfGoals;
         private int _numberOfPieces;
         private int _numberOfPlayers;
-        private GameStarter _gameStarter;
         public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
         {
