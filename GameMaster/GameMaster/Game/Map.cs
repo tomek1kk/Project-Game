@@ -18,6 +18,7 @@ namespace GameMaster.Game
         private int _width;
         private int _numberOfGoals;
         private int _numberOfPieces;
+        private int _numberOfPlayers;
         public AbstractField this[int x, int y]
         {
             get => _fieldsArray[x, y];
@@ -29,6 +30,7 @@ namespace GameMaster.Game
             _goalAreaHeight = config.GoalAreaHight;
             _numberOfGoals = config.NumberOfGoals;
             _numberOfPieces = config.NumberOfPieces;
+            _numberOfPlayers = 2; // TODO: should be from config (not included in documentation)
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
@@ -36,12 +38,13 @@ namespace GameMaster.Game
                     _fieldsArray[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
+            GameStarter.Configuration = config;
             //for demo only:
-            for (int i = 0; i < 5; i++)
-            {
-                AddPlayer(Team.Red, 2 * i);
-                AddPlayer(Team.Blue, 2 * i + 1);
-            }
+            //for (int i = 0; i < 5; i++)
+            //{
+            //    AddPlayer(Team.Red, 2 * i);
+            //    AddPlayer(Team.Blue, 2 * i + 1);
+            //}
         }
         //TODO: tests
         public int ClosestPieceForField(AbstractField field)
@@ -93,13 +96,18 @@ namespace GameMaster.Game
                 _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece();
             }
         }
-        public void AddPlayer(Team team, int agentId)
+        public bool AddPlayer(Team team, int agentId)
         {
+            if (_numberOfPlayers == _players.Count)
+                return false;
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
+            if (_players.Count == _numberOfPlayers)
+                GameStarter.StartGame(_players);
+            return true;
         }
         public Player GetPlayerById(int agentId)
         {

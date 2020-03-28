@@ -13,6 +13,7 @@ using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
 using GameMaster.MessageHandlers;
+using CommunicationLibrary.Information;
 
 namespace GameMaster
 {
@@ -41,6 +42,7 @@ namespace GameMaster
 
             _client = new TcpClient("127.0.0.1", 8081);
             _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
+            GameStarter.Communicator = _communicator;
             //streamMessageSenderReceiver.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "DUUPA" } });
             _communicator.StartReceiving(GetCSMessage);
             Console.WriteLine("Try connect");
