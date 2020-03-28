@@ -36,7 +36,7 @@ namespace GameMaster
                         BoardSize = new BoardSize() { X = _configuration.BoardX, Y = _configuration.BoardY },
                         EnemiesIds = players.Values.Where(p => p.Team != player.Value.Team).Select(p => p.AgentId),
                         GoalAreaSize = _configuration.GoalAreaHight,
-                        LeaderId = players.Values.Where(p => p.Team == player.Value.Team && p.IsLeader).Select(p => p.AgentId).First(),
+                        LeaderId = players.Values.Where(p => p.Team == player.Value.Team && p.IsLeader).Select(p => p.AgentId).FirstOrDefault(),
                         NumberOfGoals = _configuration.NumberOfGoals,
                         NumberOfPieces = _configuration.NumberOfPieces,
                         NumberOfPlayers = new NumberOfPlayers()

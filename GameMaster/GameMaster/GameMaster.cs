@@ -54,7 +54,7 @@ namespace GameMaster
                 _communicator.StartReceiving(GetCSMessage);
                 Log.Information("Started received messages");
 
-                Thread.Sleep(100000);
+                Thread.Sleep(100000000);
                 _guiMantainer.StopGui();
                 Log.Information("GUI stopped");
             }

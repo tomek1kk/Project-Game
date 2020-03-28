@@ -28,6 +28,7 @@ namespace GameMaster.Game
         public bool MoveHere(Player player)
         {
             _whos_here.Add(player);
+            player.Position = this;
             return true;
         }
         public bool MoveOut(Player player)
