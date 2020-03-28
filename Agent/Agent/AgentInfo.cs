@@ -25,13 +25,17 @@ namespace Agent
                 IsLeader = value.LeaderId == value.AgentId;
             }
         }
+
         public int LeaderId => _gameStartedMessage.LeaderId;
         public IEnumerable<int> AlliesIds => _gameStartedMessage.AlliesIds;
+        public int GoalAreaSize => _gameStartedMessage.GoalAreaSize;
         public Point Position { get; private set; }
         public bool IsLeader { get; private set; }
         public bool HasPiece { get; private set; }
-        public IStrategy Strategy { get; private set; }
+        public string GoalDirection => _gameStartedMessage.TeamId == "red" ? "N" : "S";
+        public (int start, int end) goalArea { get; private set; }
 
+        public IStrategy Strategy { get; private set; }
         public AgentInfo(IStrategy strategy, GameStarted gameStarted)
         {
             Strategy = strategy;
@@ -39,9 +43,14 @@ namespace Agent
             if (gameStarted == null)
                 throw new AgentInfoNotValidException("GameStarted bad config.");
             GameStartedMessage = gameStarted;
-
+            goalArea = gameStarted.TeamId == "red"
+                ? (gameStarted.BoardSize.Y.Value - 1 - gameStarted.GoalAreaSize, gameStarted.BoardSize.Y.Value)
+                : (gameStarted.GoalAreaSize, 0);
         }
-
+        public bool inGoalArea()
+        {
+            return Position.Y >= goalArea.start && Position.Y <= goalArea.end;
+        }
         public void UpdateFromMessage(Message received)
         {
             switch (received.MessageId)
@@ -58,6 +67,8 @@ namespace Agent
                 case MessageType.PutPieceResponse | MessageType.DestroyPieceRequest:
                     HasPiece = false;
                     break;
+
+                //discovery??
             }
             Strategy.UpdateMap(received, Position);
         }
