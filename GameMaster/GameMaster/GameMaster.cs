@@ -90,7 +90,7 @@ namespace GameMaster
             //_guiMantainer.StartGui(_guiDataProvider);
 
             //prototype of GameMaster Map
-            _guiMantainer.StartGui(_map);
+            _guiMantainer.StartGui(_map, null);
         }
 
         public void Dispose()

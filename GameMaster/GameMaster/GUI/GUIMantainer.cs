@@ -15,14 +15,14 @@ namespace GameMaster.GUI
         Thread _guiThread;
         IWebHost _webHost;
         bool guiStarted = false;
-        public void StartGui(IGuiDataProvider guiDataProvider)
+        public void StartGui(IGuiDataProvider guiDataProvider, IGuiActionsExecutor guiActionsExecutor)
         {
             if(guiStarted)
             {
                 throw new InvalidOperationException("Gui is already started");
             }
 
-            _webHost = CreateWebHostBuilder(guiDataProvider).Build();
+            _webHost = CreateWebHostBuilder(guiDataProvider, guiActionsExecutor).Build();
             _guiThread = new Thread(
                 new ThreadStart(() => _webHost.Run())
                 );
@@ -42,12 +42,14 @@ namespace GameMaster.GUI
             guiStarted = false;
         }
 
-        static IWebHostBuilder CreateWebHostBuilder(IGuiDataProvider guiDataProvider) =>
+        static IWebHostBuilder CreateWebHostBuilder(IGuiDataProvider guiDataProvider,
+            IGuiActionsExecutor guiActionsExecutor) =>
             WebHost.CreateDefaultBuilder()
                 .ConfigureServices(servicesCollection =>
                 {
                     servicesCollection.AddSingleton(guiDataProvider);
-                    
+                    servicesCollection.AddSingleton(guiActionsExecutor);
+
                 })
                 .UseStartup<Startup>();
     }
