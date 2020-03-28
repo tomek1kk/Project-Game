@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace GameMaster.GUI
 {
@@ -45,6 +46,9 @@ namespace GameMaster.GUI
         static IWebHostBuilder CreateWebHostBuilder(IGuiDataProvider guiDataProvider,
             IGuiActionsExecutor guiActionsExecutor) =>
             WebHost.CreateDefaultBuilder()
+                .ConfigureLogging(logging => {
+                    logging.ClearProviders();
+                })
                 .ConfigureServices(servicesCollection =>
                 {
                     servicesCollection.AddSingleton(guiDataProvider);

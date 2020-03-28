@@ -8,13 +8,21 @@ namespace GameMaster.GUI
     public class CallbackGuiActionsExcecutor : IGuiActionsExecutor
     {
         Action _startGameCallback;
+        bool _gameStarted = false;
         public CallbackGuiActionsExcecutor(Action startGameCallback)
         {
             _startGameCallback = startGameCallback;
         }
         public void StartGame()
         {
-            _startGameCallback.Invoke();
+            lock (this)
+            {
+                if(!_gameStarted)
+                {
+                    _startGameCallback.Invoke();
+                    _gameStarted = true;
+                }
+            }
         }
     }
 }

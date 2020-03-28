@@ -27,10 +27,11 @@ namespace GameMaster.Aspnet.Controllers
         }
 
         // POST: api/<controller>/start
-        [HttpPost("start")]
-        public void Start()
+        [HttpPost]
+        public ActionResult Start()
         {
             _guiActionsExecutor.StartGame();
+            return Ok();
         }
 
 
