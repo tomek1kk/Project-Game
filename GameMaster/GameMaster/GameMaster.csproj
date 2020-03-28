@@ -63,6 +63,7 @@
 
   <ItemGroup>
     <Folder Include="Aspnet\wwwroot\images\" />
+    <Folder Include="Logs\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,8 +23,8 @@ namespace GameMaster.Game
         }
         public Message ProcessRequest(Map map, Message message, GMConfiguration configuration)
         {
-            Log.Information("Processing message from agent {_agent}");
-            Log.Debug("Received message content: {@message}");
+            Log.Information("Processing message from agent {Agent}", _agentId);
+            Log.Debug("Received message content: {@Message}", message);
             BaseReadMessage(message);
             CheckAgentPenaltyIfNeeded(map);
             if (_hasTimePenalty)
@@ -35,7 +35,7 @@ namespace GameMaster.Game
             SetTimeout(configuration, map);
             var response = GetResponse(map);
             response.AgentId = _agentId;
-            Log.Debug("Prepared response: {@response}");
+            Log.Debug("Prepared response: {@Response}", response);
             return response;
         }
 

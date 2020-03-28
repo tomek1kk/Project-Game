@@ -22,8 +22,9 @@ namespace GameMaster
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
                 .WriteTo.Console()
-                .WriteTo.File("GameMasterLog-.txt", rollingInterval: RollingInterval.Day)
+                .WriteTo.File("Logs\\GameMasterLog-.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
             Log.Logger.Information("GameMaster started");
             GMConfiguration config = GMConfiguration.ReadConfiguration(args);
