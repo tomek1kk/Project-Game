@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using GameMaster.Configuration;
 using GameMaster.Game;
+using Serilog;
 
 namespace GameMaster
 {
@@ -20,7 +21,11 @@ namespace GameMaster
     {
         public static void Main(string[] args)
         {
-
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.Console()
+                .WriteTo.File("GameMasterLog-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+            Log.Logger.Information("GameMaster started");
             GMConfiguration config = GMConfiguration.ReadConfiguration(args);
             GameMaster gameMaster = new GameMaster(new GuiMantainer(),config, new ProxyMessageHandler());
             gameMaster.Start();
