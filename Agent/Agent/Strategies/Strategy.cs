@@ -13,13 +13,10 @@ namespace Agent.Strategies
     public abstract class Strategy : IStrategy
     {
         public Field[,] Board { get; private set; }
-        public Stack<MessageType> History { get; private set; }
         public string GoalDirection { get; private set; }
 
         public Strategy(int width, int height)
         {
-            int defaultCapacity = 5; //?
-            History = new Stack<MessageType>(defaultCapacity);
             Board = new Field[width, height];
             for (int i = 0; i < width; i++)
                 for (int j = 0; j < height; j++)

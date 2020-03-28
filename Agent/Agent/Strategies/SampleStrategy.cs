@@ -9,16 +9,23 @@ namespace Agent.Strategies
 {
     public class SampleStrategy : Strategy
     {
-        public SampleStrategy(int width, int height) : base(width, height) {}
+        public Stack<MessageType> History { get; private set; }
+        public SampleStrategy(int width, int height) : base(width, height)
+        {
+            History = new Stack<MessageType>();
+        }
 
         public override Message MakeDecision(AgentInfo agent)
         {
             Message m;
-            //sprawdzic requesty o zapytanie informacji
 
-            var last = History.Pop();
-            History.Push(last);
-            if (!agent.HasPiece && agent.inGoalArea())
+            //sprawdzic requesty o zapytanie informacji
+            var last = History.Peek();
+            if (agent.HasPiece && agent.inGoalArea())
+            {
+                m = new Message<PutPieceRequest>(new PutPieceRequest());
+            }
+            else if (!agent.HasPiece && agent.inGoalArea())
             {
                 var req = new MoveRequest();
                 req.Direction = agent.GoalDirection == "N" ? "S" : "N";
