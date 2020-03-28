@@ -23,8 +23,6 @@ namespace GameMaster
 
         public void StartGame(Dictionary<int, Player> players)
         {
-            Console.WriteLine("Game started");
-            
             List<Message> messages = new List<Message>();
             foreach (var player in players)
             {
