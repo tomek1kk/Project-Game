@@ -10,19 +10,21 @@ using System.Threading.Tasks;
 
 namespace GameMaster
 {
-    public static class GameStarter
+    public class GameStarter
     {
-        public static IMessageSenderReceiver Communicator
+        private IMessageSenderReceiver _communicator;
+        private GMConfiguration _configuration;
+
+        public GameStarter(IMessageSenderReceiver communicator, GMConfiguration configuration)
         {
-            get; set;
-        }
-        public static GMConfiguration Configuration
-        {
-            get; set;
+            _communicator = communicator;
+            _configuration = configuration;
         }
 
-        public static void StartGame(Dictionary<int, Player> players)
+        public void StartGame(Dictionary<int, Player> players)
         {
+            Console.WriteLine("Game started");
+            
             List<Message> messages = new List<Message>();
             foreach (var player in players)
             {
@@ -33,12 +35,12 @@ namespace GameMaster
                     {
                         AgentId = player.Key,
                         AlliesIds = players.Values.Where(p => p.Team == player.Value.Team && p != player.Value).Select(p => p.AgentId),
-                        BoardSize = new BoardSize() { X = Configuration.BoardX, Y = Configuration.BoardY },
+                        BoardSize = new BoardSize() { X = _configuration.BoardX, Y = _configuration.BoardY },
                         EnemiesIds = players.Values.Where(p => p.Team != player.Value.Team).Select(p => p.AgentId),
-                        GoalAreaSize = Configuration.GoalAreaHight,
+                        GoalAreaSize = _configuration.GoalAreaHight,
                         LeaderId = players.Values.Where(p => p.Team == player.Value.Team && p.IsLeader).Select(p => p.AgentId).First(),
-                        NumberOfGoals = Configuration.NumberOfGoals,
-                        NumberOfPieces = Configuration.NumberOfPieces,
+                        NumberOfGoals = _configuration.NumberOfGoals,
+                        NumberOfPieces = _configuration.NumberOfPieces,
                         NumberOfPlayers = new NumberOfPlayers()
                         {
                             Allies = players.Values.Where(p => p.Team == player.Value.Team && p != player.Value).Count(),
@@ -46,12 +48,12 @@ namespace GameMaster
                         },
                         Penalties = new Penalties()
                         {
-                            CheckForSham = Configuration.CheckForShamPenalty.ToString(),
-                            DestroyPiece = Configuration.DestroyPiecePenalty.ToString(),
-                            Discovery = Configuration.DiscoveryPenalty.ToString(),
-                            InformationExchange = Configuration.AskPenalty.ToString(),
-                            Move = Configuration.MovePenalty.ToString(),
-                            PutPiece = Configuration.PutPenalty.ToString()
+                            CheckForSham = _configuration.CheckForShamPenalty.ToString(),
+                            DestroyPiece = _configuration.DestroyPiecePenalty.ToString(),
+                            Discovery = _configuration.DiscoveryPenalty.ToString(),
+                            InformationExchange = _configuration.AskPenalty.ToString(),
+                            Move = _configuration.MovePenalty.ToString(),
+                            PutPiece = _configuration.PutPenalty.ToString()
                         },
                         Position = new Position()
                         {
@@ -64,7 +66,7 @@ namespace GameMaster
                 };
                 messages.Add(message);
             }
-            messages.ForEach(m => Communicator.Send(m));
+            messages.ForEach(m => _communicator.Send(m));
         }
     }
 }

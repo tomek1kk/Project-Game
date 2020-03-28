@@ -36,14 +36,15 @@ namespace GameMaster
         }
         public void Start()
         {
-            _map = new Map(_gmConfiguration);
-            InitGui();
+            
             //TODO: rest of starting game master
 
             _client = new TcpClient("127.0.0.1", 8081);
             _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
-            GameStarter.Communicator = _communicator;
-            //streamMessageSenderReceiver.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "DUUPA" } });
+
+            _map = new Map(_gmConfiguration, new GameStarter(_communicator, _gmConfiguration));
+            InitGui();
+
             _communicator.StartReceiving(GetCSMessage);
             Console.WriteLine("Try connect");
 
