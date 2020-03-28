@@ -72,9 +72,12 @@ namespace CommunicationServer
 
         public void GetAgentMessage(Message message)
         {
-            Console.WriteLine("I've got such message: " + message.GetPayload());
-            Log.Information("GetAgentMessage: {@m}", message);
-            _gameMasterConnection.SendMessage(message);
+            lock (this)
+            {
+                Console.WriteLine("I've got such message: " + message.GetPayload());
+                Log.Information("GetAgentMessage: {@m}", message);
+                _gameMasterConnection.SendMessage(message);
+            }
         }
         private void HandleEndGame(Message message)
         {
