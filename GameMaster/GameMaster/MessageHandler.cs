@@ -8,6 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using GameMaster.MessageHandlers;
 using GameMaster.Configuration;
+using Serilog;
 
 namespace GameMaster.Game
 {
@@ -22,6 +23,8 @@ namespace GameMaster.Game
         }
         public Message ProcessRequest(Map map, Message message, GMConfiguration configuration)
         {
+            Log.Information("Processing message from agent {_agent}");
+            Log.Debug("Received message content: {@message}");
             CheckAgentPenaltyIfNeeded(map);
             if (_hasTimePenalty)
                 return GetPenaltyError(map);
@@ -29,7 +32,9 @@ namespace GameMaster.Game
             if (CheckRequest(map))
                 Execute(map);
             SetTimeout(configuration, map);
-            return GetResponse(map);
+            var response = GetResponse(map);
+            Log.Debug("Prepared response: {@response}");
+            return response;
         }
 
         protected abstract bool CheckRequest(Map map);
