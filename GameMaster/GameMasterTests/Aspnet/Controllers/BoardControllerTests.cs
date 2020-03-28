@@ -26,7 +26,7 @@ namespace GameMaster.Aspnet.Controllers.Tests
             providedBoardModel.Fields[1, 1] = FieldType.DiscoveredGoal;
             mock.Setup(guiDataProvider => guiDataProvider.GetCurrentBoardModel())
                 .Returns(providedBoardModel);
-            var boardController = new BoardController(mock.Object);
+            var boardController = new BoardController(mock.Object, null);
 
             //when
             var resultBoardModel = boardController.GetBoardModel();
@@ -36,7 +36,23 @@ namespace GameMaster.Aspnet.Controllers.Tests
             Assert.AreEqual(providedBoardModel.Width, resultBoardModel.Width);
             Assert.AreEqual(providedBoardModel.GoalAreaHeight, resultBoardModel.GoalAreaHeight);
             CollectionAssert.AreEqual(providedBoardModel.Fields, resultBoardModel.Fields);
+        }
+        [TestMethod()]
+        public void TestStartGameCallsProvidedMethod()
+        {
+            //given
+            bool gameStartCalled = false;
+            var boardController = new BoardController(null,
+                new CallbackGuiActionsExcecutor(() => gameStartCalled = true));
 
+            //when
+            boardController.Start();
+
+            //then
+            Assert.IsTrue(gameStartCalled);
+
+            //after
+            boardController.Dispose();
         }
     }
 }

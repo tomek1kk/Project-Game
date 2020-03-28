@@ -7,7 +7,7 @@ namespace GameMaster.GUI
 {
     public interface IGuiMantainer
     {
-        void StartGui(IGuiDataProvider guiDataProvider);
+        void StartGui(IGuiDataProvider guiDataProvider, IGuiActionsExecutor guiActionsExecutor);
         void StopGui();
     }
 }
