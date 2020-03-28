@@ -24,6 +24,7 @@ namespace GameMaster
         readonly GMConfiguration _gmConfiguration;
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
+        private bool _gameStarted = false;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
 
@@ -55,7 +56,7 @@ namespace GameMaster
         private void GetCSMessage(Message message)
         {
             Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
-            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null)
+            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null || (_gameStarted == false && message.MessageId != MessageType.JoinGameRequest))
             {
                 _communicator.Send(new Message<NotDefinedError>()
                 {
@@ -64,6 +65,7 @@ namespace GameMaster
                 });
                 return;
             }
+            
             var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
             _communicator.Send(response);
         }
@@ -72,6 +74,7 @@ namespace GameMaster
         {
             GameStarter gameStarter = new GameStarter(_communicator, _gmConfiguration);
             gameStarter.StartGame(_map.Players);
+            _gameStarted = true;
         }
 
         public void GenerateGui()
