@@ -13,6 +13,7 @@ using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
 using GameMaster.MessageHandlers;
+using CommunicationLibrary.Information;
 
 namespace GameMaster
 {
@@ -23,6 +24,7 @@ namespace GameMaster
         readonly GMConfiguration _gmConfiguration;
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
+        private bool _gameStarted = false;
         ManualGuiDataProvider _guiDataProvider;
         Map _map;
 
@@ -35,13 +37,15 @@ namespace GameMaster
         }
         public void Start()
         {
-            _map = new Map(_gmConfiguration);
-            InitGui();
+            
             //TODO: rest of starting game master
 
             _client = new TcpClient("127.0.0.1", 8081);
             _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
-            //streamMessageSenderReceiver.Send<JoinGameRequest>(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = "DUUPA" } });
+
+            _map = new Map(_gmConfiguration);
+            InitGui();
+
             _communicator.StartReceiving(GetCSMessage);
             Console.WriteLine("Try connect");
 
@@ -52,7 +56,7 @@ namespace GameMaster
         private void GetCSMessage(Message message)
         {
             Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
-            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null)
+            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null || (_gameStarted == false && message.MessageId != MessageType.JoinGameRequest))
             {
                 _communicator.Send(new Message<NotDefinedError>()
                 {
@@ -61,8 +65,16 @@ namespace GameMaster
                 });
                 return;
             }
+            
             var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
             _communicator.Send(response);
+        }
+
+        public void StartGame()
+        {
+            GameStarter gameStarter = new GameStarter(_communicator, _gmConfiguration);
+            gameStarter.StartGame(_map.Players);
+            _gameStarted = true;
         }
 
         public void GenerateGui()

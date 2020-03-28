@@ -14,6 +14,7 @@ namespace GameMaster.MessageHandlers
     public class JoinGameRequestHandler : MessageHandler
     {
         private bool _playerAlreadyOnMap = false;
+        private bool _accepted = false;
         private Team _team;
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
@@ -22,12 +23,13 @@ namespace GameMaster.MessageHandlers
         protected override bool CheckRequest(Map map)
         {
             _playerAlreadyOnMap = map.GetPlayerById(_agentId) != null;
+            
             return !_playerAlreadyOnMap;
         }
 
         protected override void Execute(Map map)
         {
-            map.AddPlayer(_team, _agentId);
+            _accepted = map.AddPlayer(_team, _agentId);
         }
 
         protected override Message GetResponse(Map map)
@@ -48,7 +50,7 @@ namespace GameMaster.MessageHandlers
                 MessagePayload = new JoinGameResponse()
                 {
                     AgentID = _agentId,
-                    Accepted = true
+                    Accepted = _accepted
                 }
             };
         }
