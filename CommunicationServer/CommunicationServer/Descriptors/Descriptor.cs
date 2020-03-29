@@ -11,8 +11,8 @@ namespace CommunicationServer
         private static int id = 0;
 
         public int Id { get; private set; }
-        protected TcpClient _tcpClient;// do we need that?
-        protected NetworkStream _networkStream;// do we need that?
+        protected TcpClient _tcpClient;
+        protected NetworkStream _networkStream;
         protected StreamMessageSenderReceiver _streamMessageSenderReceiver;
 
         public Descriptor(TcpClient tcpClient)

@@ -35,7 +35,7 @@ namespace CommunicationServer
             Console.WriteLine("GM end");
         }
 
-        public void GetGMMessage(Message message)
+        private void GetGMMessage(Message message)
         {
             if (message.IsGameStarted()) isWaitingForMoreAgents = false;
             if (message.IsEndGame())
@@ -70,7 +70,7 @@ namespace CommunicationServer
             Console.WriteLine("Agent end");
         }
 
-        public void GetAgentMessage(Message message)
+        private void GetAgentMessage(Message message)
         {
             lock (this)
             {
