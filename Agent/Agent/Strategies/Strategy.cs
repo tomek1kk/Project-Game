@@ -42,7 +42,7 @@ namespace Agent.Strategies
                     MoveResponseHandler((MoveResponse)message.GetPayload());
                     break;
                 case MessageType.PickPieceResponse:
-                    PickPieceResponseHandler((PickPieceResponse)message.GetPayload());
+                    PickPieceResponseHandler((PickPieceResponse)message.GetPayload(), position);
                     break;
                 case MessageType.PutPieceResponse:
                     PutPieceResponseHandler((PutPieceResponse)message.GetPayload());
@@ -90,7 +90,18 @@ namespace Agent.Strategies
         virtual protected void NotDefinedResponseHandler(NotDefinedError notDefinedError) { }
         virtual protected void MoveErrorResponseHandler(MoveError moveError) { }
         virtual protected void PickPieceErrorResponseHandler(PickPieceError pieceError) { }
-        virtual protected void PickPieceResponseHandler(PickPieceResponse pickPieceRespone) { }
+        virtual protected void PickPieceResponseHandler(PickPieceResponse pickPieceRespone, Point positon)
+        {
+            Board[positon.X, positon.Y + 1].DistToPiece = int.MaxValue;
+            Board[positon.X + 1, positon.Y + 1].DistToPiece = int.MaxValue;
+            Board[positon.X - 1, positon.Y].DistToPiece = int.MaxValue;
+            Board[positon.X, positon.Y].DistToPiece = int.MaxValue;
+            Board[positon.X + 1, positon.Y].DistToPiece = int.MaxValue;
+            Board[positon.X - 1, positon.Y - 1].DistToPiece = int.MaxValue;
+            Board[positon.X, positon.Y - 1].DistToPiece = int.MaxValue;
+            Board[positon.X + 1, positon.Y - 1].DistToPiece = int.MaxValue;
+            Board[positon.X, positon.Y].DistToPiece = int.MaxValue;
+        }
         virtual protected void PutPieceErrorResponseHandler(PutPieceError putPieceError) { }
         virtual protected void PutPieceResponseHandler(PutPieceResponse pickPieceRespone) { }
         virtual protected void PenaltyNotWaitedErrorResponseHandler(PenaltyNotWaitedError pickPieceRespone) { }

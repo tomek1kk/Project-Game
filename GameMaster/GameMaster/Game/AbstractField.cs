@@ -24,7 +24,7 @@ namespace GameMaster.Game
         }
 
         abstract public AbstractPiece PickUp();
-        abstract public bool Put(AbstractPiece piece);
+        abstract public void Put(AbstractPiece piece);
         public bool MoveHere(Player player)
         {
             _whos_here.Add(player);

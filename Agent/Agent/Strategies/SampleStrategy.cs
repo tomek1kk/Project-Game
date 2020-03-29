@@ -54,8 +54,8 @@ namespace Agent.Strategies
             var req = new MoveRequest();
             int N = Board[agent.Position.X, agent.Position.Y + 1].DistToPiece;
             int S = Board[agent.Position.X, agent.Position.Y - 1].DistToPiece;
-            int W = Board[agent.Position.X + 1, agent.Position.Y].DistToPiece;
-            int E = Board[agent.Position.X - 1, agent.Position.Y].DistToPiece;
+            int E = Board[agent.Position.X + 1, agent.Position.Y].DistToPiece;
+            int W = Board[agent.Position.X - 1, agent.Position.Y].DistToPiece;
             int min = Math.Min(Math.Min(Math.Min(S, N), E), W);
             if (min == N)
                 req.Direction = "N";
