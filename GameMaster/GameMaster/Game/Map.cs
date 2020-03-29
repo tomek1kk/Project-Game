@@ -151,7 +151,7 @@ namespace GameMaster.Game
         }
         public bool IsInsideMap(int x, int y)
         {
-            return (x >= 0 && x < _width && y > 0 && y < _heigth) ? true : false;
+            return (x >= 0 && x < _width && y >= 0 && y < _heigth) ? true : false;
         }
         public bool IsInGoalArea(AbstractField field)
         {
