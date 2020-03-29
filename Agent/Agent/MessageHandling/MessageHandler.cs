@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace Agent.MessageHandling
 {
@@ -45,19 +46,27 @@ namespace Agent.MessageHandling
 
         public void HandleMessages()
         {
-            while(!_gameOver)
+            while (!_gameOver)
             {
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
                 _gmConnection.Send(actionRequest);
+                Log.Debug("Made decision {@Decision}", actionRequest);
+
                 if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();
-                while(!_gameOver && !_tokenSource.IsCancellationRequested)
+                while (!_gameOver && !_tokenSource.IsCancellationRequested)
                 {
                     Message received = _gmConnection.TryTake(_tokenSource.Token, 50);
-                    if(received != null)
+                    if (received != null)
+                    {
+                        Log.Debug("Recieved message {@Message}", received);
                         HandleReceived(received);
+                    }
+                    else
+                        Log.Debug("Recieved null message {@Message}", received);
                 }
             }
+            Log.Information("GAME OVER");
         }
 
         private void HandleReceived(Message received)
@@ -69,10 +78,12 @@ namespace Agent.MessageHandling
             }
             if (_responsePenalties.ContainsKey(received.MessageId))
             {
-                new Task(() => {
+                new Task(() =>
+                {
+                    Log.Debug("Agnet sleeps {@Time}", _responsePenalties[received.MessageId]);
                     Thread.Sleep(_responsePenalties[received.MessageId]);
                     _tokenSource.Cancel(false);
-                    }
+                }
                 ).Start();
             }
             else if(received.MessageId.IsError())
