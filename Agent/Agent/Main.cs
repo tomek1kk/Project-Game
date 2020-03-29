@@ -9,8 +9,8 @@ namespace Agent
         static void Main(string [] args)
         {
             AgentConfiguration configuration = AgentConfiguration.ReadConfiguration(args);
-            Agent agent = new Agent(configuration);
-            agent.StartListening();
+            using (Agent agent = new Agent(configuration))
+                agent.StartListening();
         }
     }
 }
