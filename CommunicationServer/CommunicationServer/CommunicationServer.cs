@@ -11,23 +11,24 @@ using System.Text.Json;
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Request;
 using Serilog;
-using CommunicationServer.Helpers;
+using CommunicationServerNamespace.Helpers;
 
-namespace CommunicationServer
+namespace CommunicationServerNamespace
 {
     public class CommunicationServer
     {
         private List<AgentDescriptor> _agentsConnections = new List<AgentDescriptor>();
         private Descriptor _gameMasterConnection;
         private bool isWaitingForMoreAgents = true; //to me, there will be info from game master when we stop listening for new agent clients.
-        private string _ipAddress = "127.0.0.1";
-        private int _portCS = 8081;
+        public string IpAddress { get; private set; } = "127.0.0.1";
+        public int PortCSforGM { get; private set; } = 8081;
+        public int PortCSforAgents { get; private set; } = 8080;
 
         public void ConnectGameMaster()
         {
             Console.WriteLine("GM connect");
-            IPAddress ipAddress = IPAddress.Parse(_ipAddress);
-            TcpListener tcpListener = new TcpListener(ipAddress, _portCS);
+            IPAddress ipAddress = IPAddress.Parse(IpAddress);
+            TcpListener tcpListener = new TcpListener(ipAddress, PortCSforGM);
             tcpListener.Start();
             TcpClient client = tcpListener.AcceptTcpClient();
             _gameMasterConnection = new Descriptor(client);
@@ -35,7 +36,7 @@ namespace CommunicationServer
             Console.WriteLine("GM end");
         }
 
-        public void GetGMMessage(Message message)
+        private void GetGMMessage(Message message)
         {
             if (message.IsGameStarted()) isWaitingForMoreAgents = false;
             if (message.IsEndGame())
@@ -54,8 +55,8 @@ namespace CommunicationServer
         public void ConnectAgents()
         {
             Console.WriteLine("Agent connect");
-            IPAddress ipAddress = IPAddress.Parse("127.0.0.1");
-            TcpListener tcpListener = new TcpListener(ipAddress, 8080);
+            IPAddress ipAddress = IPAddress.Parse(IpAddress);
+            TcpListener tcpListener = new TcpListener(ipAddress, PortCSforAgents);
             tcpListener.Start();
             int i = 0;
             while (isWaitingForMoreAgents)
@@ -70,7 +71,7 @@ namespace CommunicationServer
             Console.WriteLine("Agent end");
         }
 
-        public void GetAgentMessage(Message message)
+        private void GetAgentMessage(Message message)
         {
             lock (this)
             {
