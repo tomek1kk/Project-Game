@@ -303,10 +303,13 @@ namespace CommunicationLibrary.Tests
         public void TestParsePutPieceResponse()
         {
             // Arrange
-            string expected = "{\"MessagePayload\":{},\"MessageId\":110,\"AgentId\":null}";
+            string expected = "{\"MessagePayload\":{\"PutResult\":\"TaskField\"},\"MessageId\":110,\"AgentId\":null}";
             var message = new Message<PutPieceResponse>()
             {
-                MessagePayload = new PutPieceResponse()
+                MessagePayload = new PutPieceResponse() 
+                {
+                   PutResult = PutResultEnum.TaskField
+                }
             };
             // Act
             var result = parser.AsString(message);
