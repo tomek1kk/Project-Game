@@ -13,5 +13,6 @@
 	"destroyPiecePenalty": 100,
 	"goalAreaHight": 5,
 	"numberOfGoals": 5,
-	"numberOfPieces": 10
+	"numberOfPieces": 10,
+	"shamPieceProbability": 20
 }

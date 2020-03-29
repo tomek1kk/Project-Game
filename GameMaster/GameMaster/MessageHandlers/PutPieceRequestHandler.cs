@@ -1,4 +1,5 @@
 ﻿using CommunicationLibrary;
+using CommunicationLibrary.Model;
 using CommunicationLibrary.Response;
 using CommunicationLibrary.Error;
 using GameMaster.Configuration;

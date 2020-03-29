@@ -48,9 +48,9 @@ namespace GameMaster.Game
         public int Y => _y;
         abstract public FieldType GetFieldTypeForGUI();
         abstract public bool IsGoalField {get;}
-        public void PutGeneratedPiece()
+        public void PutGeneratedPiece(AbstractPiece piece)
         {
-            _pieces.Add(new Piece());
+            _pieces.Add(piece);
         }
         public static explicit operator Position(AbstractField field) 
             => new Position()

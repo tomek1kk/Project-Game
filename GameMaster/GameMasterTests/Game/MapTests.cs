@@ -1,5 +1,11 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CommunicationLibrary.Request;
+using CommunicationLibrary.Error;
+using CommunicationLibrary;
+using CommunicationLibrary.Model;
 using GameMaster.Game;
+using GameMaster.MessageHandlers;
+using GameMaster.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,7 +17,7 @@ namespace GameMasterTests.Game.Tests
     public class MapTests
     {
         [TestMethod()]
-        public void TestDefaultSize()
+        public void TestRandomGenerator()
         {
             //given
             Random rand = new Random(10);
