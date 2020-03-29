@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="Moq" Version="4.13.1" />
@@ -20,6 +21,12 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameMaster\GameMaster.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="CommunicationLibrary">
+      <HintPath>..\..\CommunicationLibrary\CommunicationLibrary\bin\Debug\netcoreapp2.1\CommunicationLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>

@@ -32,9 +32,9 @@ namespace GameMaster
                     MessagePayload = new GameStarted()
                     {
                         AgentId = player.Key,
-                        AlliesIds = players.Values.Where(p => p.Team == player.Value.Team && p != player.Value).Select(p => p.AgentId),
+                        AlliesIds = players.Values.Where(p => p.Team == player.Value.Team && p != player.Value).Select(p => p.AgentId).ToList(),
                         BoardSize = new BoardSize() { X = _configuration.BoardX, Y = _configuration.BoardY },
-                        EnemiesIds = players.Values.Where(p => p.Team != player.Value.Team).Select(p => p.AgentId),
+                        EnemiesIds = players.Values.Where(p => p.Team != player.Value.Team).Select(p => p.AgentId).ToList(),
                         GoalAreaSize = _configuration.GoalAreaHight,
                         LeaderId = players.Values.Where(p => p.Team == player.Value.Team && p.IsLeader).Select(p => p.AgentId).FirstOrDefault(),
                         NumberOfGoals = _configuration.NumberOfGoals,
@@ -58,7 +58,7 @@ namespace GameMaster
                             X = player.Value.X,
                             Y = player.Value.Y
                         },
-                        ShamPieceProbability = 0.5, // TODO
+                        ShamPieceProbability = 0, // TODO
                         TeamId = player.Value.Team.ToString()
                     }
                 };
