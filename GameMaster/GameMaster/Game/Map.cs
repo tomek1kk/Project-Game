@@ -83,7 +83,7 @@ namespace GameMaster.Game
             int distance = int.MaxValue;
             for (int x = 0; x < _width; x++)
                 for (int y = _goalAreaHeight; y < _heigth - _goalAreaHeight; y++)
-                    if (field.ContainsPieces() && Manhattan(field, x, y) < distance)
+                    if (_fieldsArray[x, y].ContainsPieces() && Manhattan(field, x, y) < distance)
                         distance = Manhattan(field, x, y);
             return distance;
         }
