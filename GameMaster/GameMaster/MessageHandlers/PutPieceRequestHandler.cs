@@ -14,7 +14,7 @@ namespace GameMaster.MessageHandlers
     public class PutPieceRequestHandler : MessageHandler
     {
         private bool _agentHasNoPiece = false;
-        private PutResult _returnedEnum;
+        private PutResultEnum _returnedEnum;
 
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
@@ -51,12 +51,12 @@ namespace GameMaster.MessageHandlers
 
         private void PutPieceOutsideGoalArea(AbstractPiece piece, AbstractField position)
         {
-            _returnedEnum = PutResult.TaskField;
+            _returnedEnum = PutResultEnum.TaskField;
             position.Put(piece);
         }
 
         private void PutShamInGoalArea(AbstractPiece piece, AbstractField position)
-         => _returnedEnum = PutResult.ShamOnGoalArea;
+         => _returnedEnum = PutResultEnum.ShamOnGoalArea;
 
         private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position)
         {
@@ -68,12 +68,12 @@ namespace GameMaster.MessageHandlers
 
         private void PutNonShamOnGoal(AbstractPiece piece, AbstractField position)
         {
-            _returnedEnum = PutResult.NormalOnGoalField;
+            _returnedEnum = PutResultEnum.NormalOnGoalField;
             position.Put(piece);
         }
 
         private void PutNormalOnNonGoal(AbstractPiece piece, AbstractField position)
-          => _returnedEnum = PutResult.NormalOnNonGoalField;
+          => _returnedEnum = PutResultEnum.NormalOnNonGoalField;
 
         protected override Message GetResponse(Map map)
         {
@@ -92,7 +92,7 @@ namespace GameMaster.MessageHandlers
                     AgentId = _agentId,
                     MessagePayload = new PutPieceResponse()
                     {
-                        //ReturnedEnum = _returnedEnum //this need to be add in documentation - https://github.com/MINI-IO/IO-project-game/issues/119
+                        PutResult = _returnedEnum
                     }
                 };
         }

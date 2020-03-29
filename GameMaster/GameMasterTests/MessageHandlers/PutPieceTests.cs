@@ -54,6 +54,7 @@ namespace GameMasterTests.MessageHandlers.Tests
                 AgentId = 1,
                 MessagePayload = new PutPieceResponse()
                 {
+                    PutResult = PutResultEnum.TaskField
                 }
             };
             //when
