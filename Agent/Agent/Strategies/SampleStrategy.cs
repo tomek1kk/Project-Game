@@ -64,8 +64,8 @@ namespace Agent.Strategies
             else if (min == W)
                 req.Direction = "W";
             else if (min == E)
-                req.Direction = "W";
-            return  new Message<MoveRequest>(req);
+                req.Direction = "E";
+            return new Message<MoveRequest>(req);
         }
         private Message PutPiece()
         {
@@ -100,4 +100,3 @@ namespace Agent.Strategies
     //    MoveToDiscoveryField = 3,
     //}
 }
- 
