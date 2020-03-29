@@ -29,7 +29,6 @@ namespace GameMaster.Game
             CheckAgentPenaltyIfNeeded(map);
             if (_hasTimePenalty)
                 return GetPenaltyError(map);
-
             if (CheckRequest(map))
                 Execute(map);
             SetTimeout(configuration, map);
@@ -38,7 +37,6 @@ namespace GameMaster.Game
             Log.Debug("Prepared response: {@Response}", response);
             return response;
         }
-
         protected abstract bool CheckRequest(Map map);
         protected abstract Message GetResponse(Map map);
         protected abstract void Execute(Map map);
