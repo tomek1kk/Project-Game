@@ -1,7 +1,7 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Information;
 using CommunicationLibrary.Response;
-using CommunicationServer.Helpers;
+using CommunicationServerNamespace.Helpers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
