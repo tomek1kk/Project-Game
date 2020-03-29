@@ -1,5 +1,6 @@
 ﻿using Agent.Exceptions;
 using CommunicationLibrary;
+using CommunicationLibrary.Error;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -61,6 +62,11 @@ namespace Agent.MessageHandling
 
         private void HandleReceived(Message received)
         {
+            if (received.MessageId == MessageType.GameEnded)
+            {
+                _gameOver = true;
+                return;
+            }
             if (_responsePenalties.ContainsKey(received.MessageId))
             {
                 new Task(() => {
@@ -69,18 +75,16 @@ namespace Agent.MessageHandling
                     }
                 ).Start();
             }
-
-            if (received.MessageId == MessageType.GameEnded)
+            else if(received.MessageId.IsError())
             {
-                _gameOver = true;
+                //temporary, for agent to not hang up on error and to not spam game master when
+                //error is repeated
+                Thread.Sleep(100);
+                _tokenSource.Cancel();
             }
-            else
-            {
-
-                //TODO: implement updateFromMessage, create code responding to 
-                // PenaltyNotWaitedError
-                _agentInfo.UpdateFromMessage(received);
-            }
+            //TODO: create code responding to 
+            // PenaltyNotWaitedError and reacting better to other errors
+            _agentInfo.UpdateFromMessage(received);
         }
     }
 }
