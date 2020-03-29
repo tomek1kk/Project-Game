@@ -37,10 +37,9 @@ namespace GameMaster.Game
             return piece;
         }
 
-        public override bool Put(AbstractPiece piece)
+        public override void Put(AbstractPiece piece)
         {
-            //TODO
-            throw new NotImplementedException();
+            _pieces.Add(piece);
         }
     }
 }
