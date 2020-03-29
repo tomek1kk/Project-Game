@@ -33,6 +33,8 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
+            //Temporary, because currently there is no PickPiece penalty
+            ParsePenalty(MessageType.PickPieceResponse, penalties.DestroyPiece);
         }
         private void ParsePenalty(MessageType type, string penaltyString)
         {
