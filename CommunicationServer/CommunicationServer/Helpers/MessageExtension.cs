@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommunicationServer.Helpers
+namespace CommunicationServerNamespace.Helpers
 {
     public static class MessageExtension
     {

@@ -11,9 +11,9 @@ using System.Text.Json;
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Request;
 using Serilog;
-using CommunicationServer.Helpers;
+using CommunicationServerNamespace.Helpers;
 
-namespace CommunicationServer
+namespace CommunicationServerNamespace
 {
     public class CommunicationServer
     {
