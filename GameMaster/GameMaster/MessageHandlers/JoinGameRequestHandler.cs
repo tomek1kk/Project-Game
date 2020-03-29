@@ -62,7 +62,8 @@ namespace GameMaster.MessageHandlers
 
         protected override void SetTimeout(GMConfiguration config, Map map)
         {
-            map.GetPlayerById(_agentId).TryLock(DateTime.MinValue);
+            if (_accepted)
+                map.GetPlayerById(_agentId).TryLock(DateTime.MinValue);
         }
     }
 }
