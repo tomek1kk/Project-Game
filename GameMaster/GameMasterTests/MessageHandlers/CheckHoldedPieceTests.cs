@@ -13,7 +13,7 @@ using System.Text;
 using Moq;
 using FluentAssertions;
 
-namespace GameMasterTests.MessageHandlers
+namespace GameMasterTests.MessageHandlers.Tests
 {
     [TestClass()]
     public class CheckHoldedPieceTests

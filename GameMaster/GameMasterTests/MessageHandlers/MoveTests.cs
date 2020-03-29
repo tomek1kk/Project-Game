@@ -40,7 +40,7 @@ namespace GameMasterTests.MessageHandlers.Tests
         public void TestMoveHandlerOutsideN()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (0, 0, 1, Team.Red) };
+            var players = new List<(int x, int y, int id, Team team)>() { (0, 9, 1, Team.Red) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
@@ -59,7 +59,7 @@ namespace GameMasterTests.MessageHandlers.Tests
                     Position = new Position()
                     {
                         X = 0,
-                        Y = 0
+                        Y = 9
                     }
                 }
             };
@@ -68,13 +68,13 @@ namespace GameMasterTests.MessageHandlers.Tests
 
             //then
             response.Should().BeEquivalentTo(expectedResult);
-            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 0 });
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 9 });
         }
         [TestMethod()]
         public void TestMoveHandlerInsideN()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (0, 1, 1, Team.Red) };
+            var players = new List<(int x, int y, int id, Team team)>() { (0, 8, 1, Team.Red) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
@@ -91,7 +91,7 @@ namespace GameMasterTests.MessageHandlers.Tests
                 MessagePayload = new MoveResponse()
                 {
                     MadeMove = true,
-                    CurrentPosition = new Position() { X = 0, Y = 0 },
+                    CurrentPosition = new Position() { X = 0, Y = 9 },
                     ClosestPiece = int.MaxValue
                 }
             };
@@ -100,13 +100,13 @@ namespace GameMasterTests.MessageHandlers.Tests
 
             //then
             response.Should().BeEquivalentTo(expectedResult);
-            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 0 });
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 9 });
         }
         [TestMethod()]
         public void TestMoveHandlerOutsideS()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (9, 9, 1, Team.Blue) };
+            var players = new List<(int x, int y, int id, Team team)>() { (9, 0, 1, Team.Blue) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
@@ -125,7 +125,7 @@ namespace GameMasterTests.MessageHandlers.Tests
                     Position = new Position()
                     {
                         X = 9,
-                        Y = 9
+                        Y = 0
                     }
                 }
             };
@@ -134,13 +134,13 @@ namespace GameMasterTests.MessageHandlers.Tests
 
             //then
             response.Should().BeEquivalentTo(expectedResult);
-            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 9, Y = 9 });
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 9, Y = 0 });
         }
         [TestMethod()]
         public void TestMoveHandlerInsideS()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (9, 8, 1, Team.Blue) };
+            var players = new List<(int x, int y, int id, Team team)>() { (9, 1, 1, Team.Blue) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
@@ -157,7 +157,7 @@ namespace GameMasterTests.MessageHandlers.Tests
                 MessagePayload = new MoveResponse()
                 {
                     MadeMove = true,
-                    CurrentPosition = new Position() { X = 9, Y = 9 },
+                    CurrentPosition = new Position() { X = 9, Y = 0 },
                     ClosestPiece = int.MaxValue
                 }
             };
@@ -166,13 +166,13 @@ namespace GameMasterTests.MessageHandlers.Tests
 
             //then
             response.Should().BeEquivalentTo(expectedResult);
-            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 9, Y = 9 });
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 9, Y = 0 });
         }
         [TestMethod()]
         public void TestMoveHandlerOutsideE()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (9, 0, 1, Team.Red) };
+            var players = new List<(int x, int y, int id, Team team)>() { (9, 0, 1, Team.Blue) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
@@ -304,7 +304,7 @@ namespace GameMasterTests.MessageHandlers.Tests
         public void TestMoveBluePlayerIntoRedArea()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (0, 3, 1, Team.Blue) };
+            var players = new List<(int x, int y, int id, Team team)>() { (0, 6, 1, Team.Blue) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
@@ -312,72 +312,6 @@ namespace GameMasterTests.MessageHandlers.Tests
                 MessagePayload = new MoveRequest()
                 {
                     Direction = "N"
-                }
-            };
-            var moveHandler = new MoveRequestHandler();
-            Message<MoveError> expectedResult = new Message<MoveError>
-            {
-                AgentId = 1,
-                MessagePayload = new MoveError()
-                {
-                    Position = new Position()
-                    {
-                        X = 0,
-                        Y = 3
-                    }
-                }
-            };
-            //when
-            Message response = moveHandler.ProcessRequest(map, message, config);
-
-            //then
-            response.Should().BeEquivalentTo(expectedResult);
-            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 3 });
-        }
-        [TestMethod()]
-        public void TestMoveRedPlayerIntoRedArea()
-        {
-            //given
-            var players = new List<(int x, int y, int id, Team team)>() { (0, 3, 1, Team.Red) };
-            var map = new Map(players: players);
-            var message = new Message<MoveRequest>()
-            {
-                AgentId = 1,
-                MessagePayload = new MoveRequest()
-                {
-                    Direction = "N"
-                }
-            };
-            var moveHandler = new MoveRequestHandler();
-            Message<MoveResponse> expectedResult = new Message<MoveResponse>
-            {
-                AgentId = 1,
-                MessagePayload = new MoveResponse()
-                {
-                    MadeMove = true,
-                    CurrentPosition = new Position() { X = 0, Y = 2 },
-                    ClosestPiece = int.MaxValue
-                }
-            };
-            //when
-            Message response = moveHandler.ProcessRequest(map, message, config);
-
-            //then
-            response.Should().BeEquivalentTo(expectedResult);
-            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 2 });
-        }
-        [TestMethod()]
-        public void TestMoveRedPlayerIntoBlueArea()
-        {
-            //given
-            var players = new List<(int x, int y, int id, Team team)>() { (0, 6, 1, Team.Red) };
-            var map = new Map(players: players);
-            var message = new Message<MoveRequest>()
-            {
-                AgentId = 1,
-                MessagePayload = new MoveRequest()
-                {
-                    Direction = "S"
                 }
             };
             var moveHandler = new MoveRequestHandler();
@@ -401,17 +335,17 @@ namespace GameMasterTests.MessageHandlers.Tests
             map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 6 });
         }
         [TestMethod()]
-        public void TestMoveBluePlayerIntoBlueArea()
+        public void TestMoveRedPlayerIntoRedArea()
         {
             //given
-            var players = new List<(int x, int y, int id, Team team)>() { (0, 6, 1, Team.Blue) };
+            var players = new List<(int x, int y, int id, Team team)>() { (0, 6, 1, Team.Red) };
             var map = new Map(players: players);
             var message = new Message<MoveRequest>()
             {
                 AgentId = 1,
                 MessagePayload = new MoveRequest()
                 {
-                    Direction = "S"
+                    Direction = "N"
                 }
             };
             var moveHandler = new MoveRequestHandler();
@@ -431,6 +365,72 @@ namespace GameMasterTests.MessageHandlers.Tests
             //then
             response.Should().BeEquivalentTo(expectedResult);
             map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 7 });
+        }
+        [TestMethod()]
+        public void TestMoveRedPlayerIntoBlueArea()
+        {
+            //given
+            var players = new List<(int x, int y, int id, Team team)>() { (0, 3, 1, Team.Red) };
+            var map = new Map(players: players);
+            var message = new Message<MoveRequest>()
+            {
+                AgentId = 1,
+                MessagePayload = new MoveRequest()
+                {
+                    Direction = "S"
+                }
+            };
+            var moveHandler = new MoveRequestHandler();
+            Message<MoveError> expectedResult = new Message<MoveError>
+            {
+                AgentId = 1,
+                MessagePayload = new MoveError()
+                {
+                    Position = new Position()
+                    {
+                        X = 0,
+                        Y = 3
+                    }
+                }
+            };
+            //when
+            Message response = moveHandler.ProcessRequest(map, message, config);
+
+            //then
+            response.Should().BeEquivalentTo(expectedResult);
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 3 });
+        }
+        [TestMethod()]
+        public void TestMoveBluePlayerIntoBlueArea()
+        {
+            //given
+            var players = new List<(int x, int y, int id, Team team)>() { (0, 3, 1, Team.Blue) };
+            var map = new Map(players: players);
+            var message = new Message<MoveRequest>()
+            {
+                AgentId = 1,
+                MessagePayload = new MoveRequest()
+                {
+                    Direction = "S"
+                }
+            };
+            var moveHandler = new MoveRequestHandler();
+            Message<MoveResponse> expectedResult = new Message<MoveResponse>
+            {
+                AgentId = 1,
+                MessagePayload = new MoveResponse()
+                {
+                    MadeMove = true,
+                    CurrentPosition = new Position() { X = 0, Y = 2 },
+                    ClosestPiece = int.MaxValue
+                }
+            };
+            //when
+            Message response = moveHandler.ProcessRequest(map, message, config);
+
+            //then
+            response.Should().BeEquivalentTo(expectedResult);
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 2 });
         }
     }
 }

@@ -25,7 +25,7 @@ namespace GameMaster.MessageHandlers
             _playerAlreadyHasPiece = map.GetPlayerById(_agentId).Holding != null;
             if (_playerAlreadyHasPiece)
                 return false;
-            _fieldIsOnGoalArea = map.IsInsideBlueGoalArea(position.X, position.Y) || map.IsInsideRedGoalArea(position.X, position.Y);
+            _fieldIsOnGoalArea = map.IsInsideBlueGoalArea(position) || map.IsInsideRedGoalArea(position);
             if (_fieldIsOnGoalArea)
                 return false;
             _noPieceOnField = !position.ContainsPieces();
