@@ -18,9 +18,7 @@ namespace CommunicationLibrary.Response
 
         public override bool ValidateMessage()
         {
-            if (DistanceFromCurrent == null || DistanceN == null || DistanceNE == null ||
-                DistanceE == null || DistanceSE == null || DistanceS == null ||
-                DistanceSW == null || DistanceW == null || DistanceNW == null)
+            if (DistanceFromCurrent == null)
                 return false;
             return true;
         }

@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace GameMasterTests.MessageHandlers
+namespace GameMasterTests.MessageHandlers.Tests
 {
     [TestClass]
     public class JoinGameTests
