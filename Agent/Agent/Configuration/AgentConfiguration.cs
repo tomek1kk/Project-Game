@@ -9,7 +9,7 @@ namespace Agent
 {
     public class AgentConfiguration
     {
-        private static string pathToDefaultConfiguration = @"../../../Configuration/DefaultConfig.txt";// not working from Powershell
+        private static string pathToDefaultConfiguration = @"./Configuration/DefaultRedConfig.txt";// not working from Powershell
         public int CsPort { get; set; }
         public string CsIp { get; set; }
         public string TeamId { get; set; }

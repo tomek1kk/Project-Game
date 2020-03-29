@@ -20,4 +20,13 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Configuration\DefaultBlueConfig.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Configuration\DefaultRedConfig.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

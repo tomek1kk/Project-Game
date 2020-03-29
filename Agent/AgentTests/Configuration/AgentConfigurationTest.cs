@@ -27,7 +27,7 @@ namespace AgentTests.Configuration
             Assert.AreEqual("127.0.0.1", config.CsIp);
             Assert.AreEqual(8080, config.CsPort);
             Assert.AreEqual("red", config.TeamId);
-            Assert.AreEqual(1, config.Strategy);
+            Assert.AreEqual(1, (int)config.Strategy);
             //After
             File.Delete("TMPpath.txt");
         }
