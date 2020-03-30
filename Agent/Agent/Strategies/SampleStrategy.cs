@@ -52,11 +52,11 @@ namespace Agent.Strategies
         private Message FindPiece(AgentInfo agent)
         {
             var req = new MoveRequest();
-            int N = agent.Position.Y != Board.GetLength(1)
+            int N = agent.Position.Y != Board.GetLength(1) - 1
                 ? Board[agent.Position.X, agent.Position.Y + 1].DistToPiece : Int32.MaxValue;
             int S = agent.Position.Y != 0
                 ? Board[agent.Position.X, agent.Position.Y - 1].DistToPiece : Int32.MaxValue;
-            int E = agent.Position.X != Board.GetLength(0)
+            int E = agent.Position.X != Board.GetLength(0) - 1
                 ? Board[agent.Position.X + 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
             int W = agent.Position.X != 0
                 ? Board[agent.Position.X - 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
