@@ -93,25 +93,25 @@ namespace Agent.Strategies
         virtual protected void PickPieceResponseHandler(PickPieceResponse pickPieceRespone, Point position)
         {
             Board[position.X, position.Y].DistToPiece = int.MaxValue;
-            if (position.Y != Board.GetLength(1))
+            if (position.Y != Board.GetLength(1) - 1)
                 Board[position.X, position.Y + 1].DistToPiece = int.MaxValue;
 
             if (position.Y != 0)
                 Board[position.X, position.Y - 1].DistToPiece = int.MaxValue;
 
-            if (position.Y != Board.GetLength(1) && position.X != Board.GetLength(0))
+            if (position.Y != Board.GetLength(1)-1 && position.X != Board.GetLength(0)-1)
                 Board[position.X + 1, position.Y + 1].DistToPiece = int.MaxValue;
 
             if (position.X != 0)
                 Board[position.X - 1, position.Y].DistToPiece = int.MaxValue;
 
-            if (position.X != Board.GetLength(0))
+            if (position.X != Board.GetLength(0) - 1)
                 Board[position.X + 1, position.Y].DistToPiece = int.MaxValue;
 
             if (position.Y != 0 && position.X != 0)
                 Board[position.X - 1, position.Y - 1].DistToPiece = int.MaxValue;
 
-            if (position.Y != 0 && position.X != Board.GetLength(0))
+            if (position.Y != 0 && position.X != Board.GetLength(0) - 1)
                 Board[position.X + 1, position.Y - 1].DistToPiece = int.MaxValue;
         }
         virtual protected void PutPieceErrorResponseHandler(PutPieceError putPieceError) { }
