@@ -15,6 +15,7 @@ using Agent.MessageHandling;
 using CommunicationLibrary.Response;
 using CommunicationLibrary.Information;
 using Agent.Strategies;
+using Serilog;
 
 namespace Agent
 {
@@ -44,18 +45,32 @@ namespace Agent
         public bool TryJoinGame()
         {
             //not tested
-            _communicator.Send(new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = _configuration.TeamId } });
+
+            Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = _configuration.TeamId } };
+            _communicator.Send(joinGameRequest);
+
+            Log.Debug("Sending join game request: {@Request}", joinGameRequest);
             Message m = _communicator.Take();
             if (m.MessageId != MessageType.JoinGameResponse)
+            {
+                Log.Error("No responce for join game request");
                 return false;
+            }
             var joinGameResponse = (JoinGameResponse)m.GetPayload();
             if (!(joinGameResponse.Accepted ?? false))
+            {
+                Log.Information("Join game request declined");
                 return false;
+            }
             m = _communicator.Take();
             if (m.MessageId != MessageType.GameStarted)
+            {
+                Log.Error("No information about starting game");
                 return false;
+            }
             var gameStarted = (GameStarted)m.GetPayload();
             SetAgentInfo(gameStarted);
+            Log.Information("GAME STARTED");
             return true;
         }
 
@@ -63,7 +78,6 @@ namespace Agent
         {
             var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(_configuration.Strategy);
             this.agentInfo = new AgentInfo(strategy, gameInfo);
-            
         }
 
         public void Dispose()

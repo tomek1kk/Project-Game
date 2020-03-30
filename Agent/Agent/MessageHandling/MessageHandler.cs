@@ -1,10 +1,12 @@
 ﻿using Agent.Exceptions;
 using CommunicationLibrary;
+using CommunicationLibrary.Error;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 
 namespace Agent.MessageHandling
 {
@@ -33,6 +35,8 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
+            //Temporary, because currently there is no PickPiece penalty
+            ParsePenalty(MessageType.PickPieceResponse, penalties.DestroyPiece);
         }
         private void ParsePenalty(MessageType type, string penaltyString)
         {
@@ -42,43 +46,56 @@ namespace Agent.MessageHandling
 
         public void HandleMessages()
         {
-            while(!_gameOver)
+            while (!_gameOver)
             {
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
                 _gmConnection.Send(actionRequest);
+                Log.Debug("Made decision {@Decision}", actionRequest);
+
                 if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();
-                while(!_gameOver && !_tokenSource.IsCancellationRequested)
+                while (!_gameOver && !_tokenSource.IsCancellationRequested)
                 {
                     Message received = _gmConnection.TryTake(_tokenSource.Token, 50);
-                    if(received != null)
+                    if (received != null)
+                    {
+                        Log.Debug("Recieved message {@Message}", received);
                         HandleReceived(received);
+                    }
+                    else
+                        Log.Debug("Recieved null message {@Message}", received);
                 }
             }
+            Log.Information("GAME OVER");
         }
 
         private void HandleReceived(Message received)
         {
-            if (_responsePenalties.ContainsKey(received.MessageId))
-            {
-                new Task(() => {
-                    Thread.Sleep(_responsePenalties[received.MessageId]);
-                    _tokenSource.Cancel(false);
-                    }
-                ).Start();
-            }
-
             if (received.MessageId == MessageType.GameEnded)
             {
                 _gameOver = true;
+                return;
             }
-            else
+            if (_responsePenalties.ContainsKey(received.MessageId))
             {
-
-                //TODO: implement updateFromMessage, create code responding to 
-                // PenaltyNotWaitedError
-                _agentInfo.UpdateFromMessage(received);
+                new Task(() =>
+                {
+                    Log.Debug("Agnet sleeps {@Time}", _responsePenalties[received.MessageId]);
+                    Thread.Sleep(_responsePenalties[received.MessageId]);
+                    _tokenSource.Cancel(false);
+                }
+                ).Start();
             }
+            else if(received.MessageId.IsError())
+            {
+                //temporary, for agent to not hang up on error and to not spam game master when
+                //error is repeated
+                Thread.Sleep(100);
+                _tokenSource.Cancel();
+            }
+            //TODO: create code responding to 
+            // PenaltyNotWaitedError and reacting better to other errors
+            _agentInfo.UpdateFromMessage(received);
         }
     }
 }

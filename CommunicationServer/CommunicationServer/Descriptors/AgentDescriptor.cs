@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CommunicationServer
+namespace CommunicationServerNamespace
 {
     public class AgentDescriptor : Descriptor
     {

@@ -122,14 +122,29 @@ namespace GameMaster.Game
             var rand = new Random();
             for (int i = 0; i < _numberOfPieces; i++)
             {
-                AbstractPiece piece;
-                if (rand.Next(101) < _shamPieceProbability)
-                    piece = new ShamPiece();
-                else
-                    piece = new Piece();
-                int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
-                _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
+                AddPiece(rand);
             }
+        }
+        public void AddPiece()
+        {
+            var rand = new Random();
+            AbstractPiece piece;
+            if (rand.Next(101) < _shamPieceProbability)
+                piece = new ShamPiece();
+            else
+                piece = new Piece();
+            int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
+            _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
+        }
+        public void AddPiece(Random rand)
+        {
+            AbstractPiece piece;
+            if (rand.Next(101) < _shamPieceProbability)
+                piece = new ShamPiece();
+            else
+                piece = new Piece();
+            int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
+            _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
         }
         public bool AddPlayer(Team team, int agentId)
         {
@@ -137,7 +152,7 @@ namespace GameMaster.Game
                 return false;
             var rand = new Random();
             Player player = new Player(team, agentId);
-            int idx = rand.Next(_width * _goalAreaHeight - 1, _width * (_heigth - _goalAreaHeight));
+            int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
             _fieldsArray[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
             return true;

@@ -20,11 +20,15 @@ namespace Agent.Strategies
         {
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
 
-            if (agent.HasPiece && agent.inGoalArea())
+            if (agent.HasPiece && agent.InGoalArea())
             {
                 return PutPiece();
             }
-            else if (!agent.HasPiece && agent.inGoalArea())
+            else if (agent.HasPiece && !agent.InGoalArea())
+            {
+                return MoveToGoals(agent);
+            }
+            else if (!agent.HasPiece && agent.InGoalArea())
             {
                 return BackToBoard(agent);
             }
@@ -35,10 +39,6 @@ namespace Agent.Strategies
             else if (Board[agent.Position.X, agent.Position.Y].DistToPiece == 0)
             {
                 return PickPiece();
-            }
-            else if (agent.HasPiece && !agent.inGoalArea())
-            {
-                return MoveToGoals(agent);
             }
             else
                 return MakeDiscovery();
@@ -52,10 +52,15 @@ namespace Agent.Strategies
         private Message FindPiece(AgentInfo agent)
         {
             var req = new MoveRequest();
-            int N = Board[agent.Position.X, agent.Position.Y + 1].DistToPiece;
-            int S = Board[agent.Position.X, agent.Position.Y - 1].DistToPiece;
-            int W = Board[agent.Position.X + 1, agent.Position.Y].DistToPiece;
-            int E = Board[agent.Position.X - 1, agent.Position.Y].DistToPiece;
+            int N = agent.Position.Y != Board.GetLength(1) - 1
+                ? Board[agent.Position.X, agent.Position.Y + 1].DistToPiece : Int32.MaxValue;
+            int S = agent.Position.Y != 0
+                ? Board[agent.Position.X, agent.Position.Y - 1].DistToPiece : Int32.MaxValue;
+            int E = agent.Position.X != Board.GetLength(0) - 1
+                ? Board[agent.Position.X + 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
+            int W = agent.Position.X != 0
+                ? Board[agent.Position.X - 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
+
             int min = Math.Min(Math.Min(Math.Min(S, N), E), W);
             if (min == N)
                 req.Direction = "N";

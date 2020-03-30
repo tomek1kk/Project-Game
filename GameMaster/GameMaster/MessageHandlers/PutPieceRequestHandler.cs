@@ -36,7 +36,10 @@ namespace GameMaster.MessageHandlers
         {
             map.GetPlayerById(_agentId).Holding = null;
             if (map.IsInGoalArea(position))
+            {
+                map.AddPiece();
                 PutPieceInGoalArea(piece, position);
+            }
             else
                 PutPieceOutsideGoalArea(piece, position);
         }
@@ -60,6 +63,7 @@ namespace GameMaster.MessageHandlers
 
         private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position)
         {
+            position.Discover();
             if (position.IsGoalField)
                 PutNonShamOnGoal(piece, position);
             else

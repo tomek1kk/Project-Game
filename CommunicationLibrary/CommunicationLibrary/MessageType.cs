@@ -41,7 +41,7 @@ namespace CommunicationLibrary
     {
         public static Type GetObjectType(this MessageType type) => messageTypeDictionary[type];
 
-        private static Dictionary<MessageType, Type> messageTypeDictionary = new Dictionary<MessageType, Type>()
+        private static readonly Dictionary<MessageType, Type> messageTypeDictionary = new Dictionary<MessageType, Type>()
         {
             { MessageType.CheckHoldedPieceRequest, typeof(CheckHoldedPieceRequest) },
             { MessageType.DestroyPieceRequest, typeof(DestroyPieceRequest) },
@@ -67,6 +67,17 @@ namespace CommunicationLibrary
             { MessageType.GameEnded, typeof(GameEnded) },
             { MessageType.PenaltyNotWaitedError, typeof(PenaltyNotWaitedError)  },
             { MessageType.RedirectedExchangeInformationRequest, typeof(RedirectedExchangeInformationRequest) }
+        };
+
+        public static bool IsError(this MessageType type) => ErrorMessages.Contains(type);
+
+        private static readonly HashSet<MessageType> ErrorMessages = new HashSet<MessageType>
+        {
+            MessageType.MoveError,
+            MessageType.NotDefinedError,
+            MessageType.PenaltyNotWaitedError,
+            MessageType.PickPieceError,
+            MessageType.PutPieceError
         };
     }
 }

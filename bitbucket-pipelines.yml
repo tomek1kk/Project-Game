@@ -22,8 +22,10 @@ pipelines:
 
           - cd Agent
           - export PROJECT_NAME=Agent
+          - export TEST_NAME=AgentTests
           - dotnet restore
           - dotnet build $PROJECT_NAME
+          - dotnet test $TEST_NAME
 
           - cd ..
 
