@@ -134,7 +134,7 @@ namespace GameMaster.Game
             else
                 piece = new Piece();
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
+            GetField(idx % _width, idx / _width).PutGeneratedPiece(piece);
         }
         public void AddPiece(Random rand)
         {
@@ -144,7 +144,7 @@ namespace GameMaster.Game
             else
                 piece = new Piece();
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
+            GetField(idx % _width, idx / _width).PutGeneratedPiece(piece);
         }
         public bool AddPlayer(Team team, int agentId)
         {
@@ -153,7 +153,7 @@ namespace GameMaster.Game
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            _fieldsArray[idx % _width, idx / _width].MoveHere(player);
+            GetField(idx % _width, idx / _width).MoveHere(player);
             _players.Add(agentId, player);
             return true;
         }
