@@ -22,6 +22,7 @@ namespace GameMasterTests.MessageHandlers.Tests
         {
             BoardX = 40,
             BoardY = 40,
+            NumberOfPlayers = 10
         };
 
         [TestMethod]

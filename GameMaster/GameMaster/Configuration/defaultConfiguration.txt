@@ -14,5 +14,6 @@
 	"goalAreaHight": 5,
 	"numberOfGoals": 5,
 	"numberOfPieces": 10,
-	"shamPieceProbability": 20
+	"shamPieceProbability": 20,
+	"numberOfPlayers": 10
 }
