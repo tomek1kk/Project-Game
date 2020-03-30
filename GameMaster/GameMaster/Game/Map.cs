@@ -23,7 +23,7 @@ namespace GameMaster.Game
         public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
         {
-            get => _fieldsArray[x, _heigth - 1 - y];
+            get => (x >= 0 && x < _width && y >= 0 && y < _heigth ) ? _fieldsArray[x, _heigth - 1 - y] : null;
         }
 
         public Map
@@ -77,7 +77,7 @@ namespace GameMaster.Game
             AddGoalFields();
             AddPieces();
         }
-        //TODO: tests
+
         public int ClosestPieceForField(AbstractField field)
         {
             int distance = int.MaxValue;
@@ -212,7 +212,6 @@ namespace GameMaster.Game
             }
             return Enumerable.Take(range, randomCounts).ToList();
         }
-        //TODO: tests
         private static int Manhattan(AbstractField field, int x, int y)
         {
             return Math.Abs(field.X - x) + Math.Abs(field.Y - y);
