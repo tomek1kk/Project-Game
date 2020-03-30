@@ -29,6 +29,7 @@ namespace GameMaster.MessageHandlers
         protected override void Execute(Map map)
         {
             map.GetPlayerById(_agentId).Holding = null;
+            map.AddPiece();
         }
 
         protected override Message GetResponse(Map map)

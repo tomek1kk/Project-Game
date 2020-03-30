@@ -36,7 +36,10 @@ namespace GameMaster.MessageHandlers
         {
             map.GetPlayerById(_agentId).Holding = null;
             if (map.IsInGoalArea(position))
+            {
+                map.AddPiece();
                 PutPieceInGoalArea(piece, position);
+            }
             else
                 PutPieceOutsideGoalArea(piece, position);
         }
