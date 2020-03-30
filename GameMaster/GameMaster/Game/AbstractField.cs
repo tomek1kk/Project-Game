@@ -13,7 +13,7 @@ namespace GameMaster.Game
         protected readonly int _y;
         protected List<Player> _whos_here;
         protected List<AbstractPiece> _pieces;
-        protected bool _discovered = false;//change this field only for fields in goal area
+        protected bool _discovered = false;
 
         public AbstractField(int x, int y)
         {
@@ -51,6 +51,10 @@ namespace GameMaster.Game
         public void PutGeneratedPiece(AbstractPiece piece)
         {
             _pieces.Add(piece);
+        }
+        public void Discover()
+        {
+            _discovered = true;
         }
         public static explicit operator Position(AbstractField field) 
             => new Position()

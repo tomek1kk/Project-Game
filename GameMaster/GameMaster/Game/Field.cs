@@ -29,7 +29,6 @@ namespace GameMaster.Game
             else
                 return FieldType.Empty;
         }
-
         public override AbstractPiece PickUp()
         {
             AbstractPiece piece = _pieces.Last();

@@ -63,6 +63,7 @@ namespace GameMaster.MessageHandlers
 
         private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position)
         {
+            position.Discover();
             if (position.IsGoalField)
                 PutNonShamOnGoal(piece, position);
             else
