@@ -23,7 +23,8 @@ namespace GameMaster.Game
         public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
         {
-            get => (x >= 0 && x < _width && y >= 0 && y < _heigth ) ? _fieldsArray[x, _heigth - 1 - y] : null;
+            get { return (x >= 0 && x < _width && y >= 0 && y < _heigth) ? _fieldsArray[x, _heigth - 1 - y] : null; }
+            private set { if (x >= 0 && x < _width && y >= 0 && y < _heigth) _fieldsArray[x, _heigth - 1 - y] = value; }
         }
 
         public Map
@@ -46,17 +47,17 @@ namespace GameMaster.Game
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = _heigth - 1; j >= 0; j--)
-                    GetField(i, j) = new Field(i, j);
+                    this[i, j] = new Field(i, j);
             for (int i = 0; i < _numberOfGoals; i++)
-                GetField(goalFields[i].x, goalFields[i].y) = new GoalField(goalFields[i].Item1, goalFields[i].Item2);
+                this[goalFields[i].x, goalFields[i].y] = new GoalField(goalFields[i].Item1, goalFields[i].Item2);
             for (int i = 0; realPieces != null && i < realPieces.Count; i++)
-                GetField(realPieces[i].x, realPieces[i].y).PutGeneratedPiece(new Piece());
+                this[realPieces[i].x, realPieces[i].y].PutGeneratedPiece(new Piece());
             for (int i = 0; shamPieces != null && i < shamPieces.Count; i++)
-                GetField(shamPieces[i].x, shamPieces[i].y).PutGeneratedPiece(new ShamPiece());
+                this[shamPieces[i].x, shamPieces[i].y].PutGeneratedPiece(new ShamPiece());
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 Player player = new Player(players[i].team, players[i].id);
-                GetField(players[i].x, players[i].y).MoveHere(player);
+                this[players[i].x, players[i].y].MoveHere(player);
                 _players.Add(player.AgentId, player);
             }
         }
@@ -73,7 +74,7 @@ namespace GameMaster.Game
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = _heigth - 1; j >= 0; j--)
-                    GetField(i, j) = new Field(i, j);
+                    this[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
         }
@@ -83,7 +84,7 @@ namespace GameMaster.Game
             int distance = int.MaxValue;
             for (int x = 0; x < _width; x++)
                 for (int y = _goalAreaHeight; y < _heigth - _goalAreaHeight; y++)
-                    if (GetField(x, y).ContainsPieces() && Manhattan(field, x, y) < distance)
+                    if (this[x, y].ContainsPieces() && Manhattan(field, x, y) < distance)
                         distance = Manhattan(field, x, y);
             return distance;
         }
@@ -111,10 +112,10 @@ namespace GameMaster.Game
             {
                 int blueX = randomList[i] % _width;
                 int blueY = randomList[i] / _width;
-                GetField(blueX, blueY) = new GoalField(blueX, blueY);
+                this[blueX, blueY] = new GoalField(blueX, blueY);
                 int redX = (_width - 1) - blueX;
                 int redY = (_heigth - 1) - blueY;
-                GetField(redX, redY) = new GoalField(redX, redY);
+                this[redX, redY] = new GoalField(redX, redY);
             }
         }
         private void AddPieces()
@@ -134,7 +135,7 @@ namespace GameMaster.Game
             else
                 piece = new Piece();
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            GetField(idx % _width, idx / _width).PutGeneratedPiece(piece);
+            this[idx % _width, idx / _width].PutGeneratedPiece(piece);
         }
         public void AddPiece(Random rand)
         {
@@ -144,7 +145,7 @@ namespace GameMaster.Game
             else
                 piece = new Piece();
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            GetField(idx % _width, idx / _width).PutGeneratedPiece(piece);
+            this[idx % _width, idx / _width].PutGeneratedPiece(piece);
         }
         public bool AddPlayer(Team team, int agentId)
         {
@@ -153,7 +154,7 @@ namespace GameMaster.Game
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            GetField(idx % _width, idx / _width).MoveHere(player);
+            this[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
             return true;
         }
@@ -186,10 +187,6 @@ namespace GameMaster.Game
         public bool IsInsideRedGoalArea(AbstractField field)
         {
             return IsInsideRedGoalArea(field.X, field.Y);
-        }
-        private ref AbstractField GetField(int x, int y)
-        {
-            return ref _fieldsArray[x, _heigth - 1 - y];
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts
