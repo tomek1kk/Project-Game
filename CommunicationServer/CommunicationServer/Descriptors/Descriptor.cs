@@ -4,15 +4,15 @@ using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CommunicationServer
+namespace CommunicationServerNamespace
 {
     public class Descriptor : IDisposable
     {
         private static int id = 0;
 
         public int Id { get; private set; }
-        protected TcpClient _tcpClient;// do we need that?
-        protected NetworkStream _networkStream;// do we need that?
+        protected TcpClient _tcpClient;
+        protected NetworkStream _networkStream;
         protected StreamMessageSenderReceiver _streamMessageSenderReceiver;
 
         public Descriptor(TcpClient tcpClient)

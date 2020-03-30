@@ -3,7 +3,7 @@ using Serilog;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CommunicationServer
+namespace CommunicationServerNamespace
 {
     class MainCS
     {

@@ -33,7 +33,6 @@ namespace Agent
         public bool IsLeader { get; private set; }
         public bool HasPiece { get; private set; }
         public string GoalDirection => _gameStartedMessage.TeamId == "Red" ? "N" : "S";
-        //start and end Y of Goal area, both inclusive
         public (int start, int end) GoalArea { get; private set; }
 
         public IStrategy Strategy { get; private set; }
@@ -43,10 +42,12 @@ namespace Agent
             HasPiece = false;
             if (gameStarted == null)
                 throw new AgentInfoNotValidException("GameStarted bad config.");
+
             GameStartedMessage = gameStarted;
             GoalArea = gameStarted.TeamId == "Blue"
                 ? (gameStarted.BoardSize.Y.Value - gameStarted.GoalAreaSize, gameStarted.BoardSize.Y.Value - 1)
                 : (0, gameStarted.GoalAreaSize - 1);
+
         }
         public bool InGoalArea()
         {
@@ -69,7 +70,7 @@ namespace Agent
                     HasPiece = false;
                     break;
 
-                //discovery??
+                    //discovery??
             }
             Strategy.UpdateMap(received, Position);
         }

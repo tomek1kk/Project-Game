@@ -60,6 +60,7 @@ namespace Agent.Strategies
                 ? Board[agent.Position.X + 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
             int W = agent.Position.X != 0
                 ? Board[agent.Position.X - 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
+
             int min = Math.Min(Math.Min(Math.Min(S, N), E), W);
             if (min == N)
                 req.Direction = "N";
