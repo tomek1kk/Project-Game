@@ -35,7 +35,6 @@
         function ColorBoard() {
             for (var i = 0; i < rows; i++) {
                 for (var j = 0; j < columns; j++) {
-                    console.log(boardFields[i][j].type.text);
                     boardFields[i][j].handle.text(boardFields[i][j].type.text);
                     boardFields[i][j].handle.addClass(boardFields[i][j].type.class);
                     if (i < goalAreaHeight)
