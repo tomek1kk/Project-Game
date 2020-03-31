@@ -8,14 +8,17 @@ namespace GameMaster.GUI
 
     public enum FieldType
     {
-        Empty,
-        RedPlayer,
-        BluePlayer,
-        RedPlayerWithPiece,
-        BluePlayerWithPiece,
-        Piece,
-        Goal,
-        DiscoveredNonGoal,
-        DiscoveredGoal,
+        Empty = 0,
+        RedPlayer = 1,
+        BluePlayer = 2,
+        RedPlayerWithPiece = 3,
+        BluePlayerWithPiece = 4,
+        Piece = 5,
+        Goal = 6,
+        DiscoveredNonGoal = 7,
+        DiscoveredGoal = 8,
+        Sham = 9,
+        RedPlayerWithSham = 10,
+        BluePlayerWithSham = 11,
     }
 }

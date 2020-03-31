@@ -7,7 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Include="Aspnet\wwwroot\css\site.css" />
+    <Content Include="Aspnet\wwwroot\css\site.css">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Content>
     <Content Include="Aspnet\wwwroot\css\site.min.css" />
     <Content Include="Aspnet\wwwroot\favicon.ico" />
     <Content Include="Aspnet\wwwroot\js\site.js" />

@@ -14,18 +14,9 @@ namespace GameMaster.Game
 
         public override bool IsGoalField { get => true; }
 
-        public override FieldType GetFieldTypeForGUI()
+        protected override FieldType GetGUIFieldFromField ()
         {
-            if (_whos_here.Count > 0)
-            {
-                if (_whos_here[0].IsHolding)
-                    return _whos_here[0].Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
-                return _whos_here[0].Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
-            }
-            if (_discovered)
-                return FieldType.DiscoveredGoal;
-            else
-                return FieldType.Goal;
+            return ContainsPieces() ? FieldType.DiscoveredGoal : FieldType.Goal;
         }
 
         public override AbstractPiece PickUp()

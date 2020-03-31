@@ -93,6 +93,7 @@ namespace GameMaster.Game
             FieldType[,] fieldsForGUI = new FieldType[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
+                    //fieldsForGUI[i, j] = FieldType.Sham;
                     fieldsForGUI[i, j] = _fieldsArray[i, j].GetFieldTypeForGUI();
             return new BoardModel()
             {
