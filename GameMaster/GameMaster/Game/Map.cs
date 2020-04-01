@@ -23,7 +23,8 @@ namespace GameMaster.Game
         public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
         {
-            get => _fieldsArray[x, y];
+            get { return (x >= 0 && x < _width && y >= 0 && y < _heigth) ? _fieldsArray[x, _heigth - 1 - y] : null; }
+            private set { if (x >= 0 && x < _width && y >= 0 && y < _heigth) _fieldsArray[x, _heigth - 1 - y] = value; }
         }
 
         public Map
@@ -45,18 +46,18 @@ namespace GameMaster.Game
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
-                for (int j = 0; j < _heigth; j++)
-                    _fieldsArray[i, j] = new Field(i, j);
+                for (int j = _heigth - 1; j >= 0; j--)
+                    this[i, j] = new Field(i, j);
             for (int i = 0; i < _numberOfGoals; i++)
-                _fieldsArray[goalFields[i].x, goalFields[i].y] = new GoalField(goalFields[i].Item1, goalFields[i].Item2);
+                this[goalFields[i].x, goalFields[i].y] = new GoalField(goalFields[i].Item1, goalFields[i].Item2);
             for (int i = 0; realPieces != null && i < realPieces.Count; i++)
-                _fieldsArray[realPieces[i].x, realPieces[i].y].PutGeneratedPiece(new Piece());
+                this[realPieces[i].x, realPieces[i].y].PutGeneratedPiece(new Piece());
             for (int i = 0; shamPieces != null && i < shamPieces.Count; i++)
-                _fieldsArray[shamPieces[i].x, shamPieces[i].y].PutGeneratedPiece(new ShamPiece());
+                this[shamPieces[i].x, shamPieces[i].y].PutGeneratedPiece(new ShamPiece());
             for (int i = 0; i < _numberOfPlayers; i++)
             {
                 Player player = new Player(players[i].team, players[i].id);
-                _fieldsArray[players[i].x, players[i].y].MoveHere(player);
+                this[players[i].x, players[i].y].MoveHere(player);
                 _players.Add(player.AgentId, player);
             }
         }
@@ -72,24 +73,23 @@ namespace GameMaster.Game
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
-                for (int j = 0; j < _heigth; j++)
-                    _fieldsArray[i, j] = new Field(i, j);
+                for (int j = _heigth - 1; j >= 0; j--)
+                    this[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
         }
-        //TODO: tests
+
         public int ClosestPieceForField(AbstractField field)
         {
             int distance = int.MaxValue;
             for (int x = 0; x < _width; x++)
                 for (int y = _goalAreaHeight; y < _heigth - _goalAreaHeight; y++)
-                    if (_fieldsArray[x, y].ContainsPieces() && Manhattan(field, x, y) < distance)
+                    if (this[x, y].ContainsPieces() && Manhattan(field, x, y) < distance)
                         distance = Manhattan(field, x, y);
             return distance;
         }
         public BoardModel GetCurrentBoardModel()
         {
-            //prepare fieldsForGUI:
             FieldType[,] fieldsForGUI = new FieldType[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
@@ -110,12 +110,12 @@ namespace GameMaster.Game
             List<int> randomList = TakeRandomsFromRange(_numberOfGoals, 0, _goalAreaHeight * _width - 1, new Random());
             for (int i = 0; i < _numberOfGoals; i++)
             {
-                int redX = randomList[i] % _width;
-                int redY = randomList[i] / _width;
-                _fieldsArray[redX, redY] = new GoalField(redX, redY);
-                int blueX = (_width - 1) - redX;
-                int blueY = (_heigth - 1) - redY;
-                _fieldsArray[blueX, blueY] = new GoalField(blueX, blueY);
+                int blueX = randomList[i] % _width;
+                int blueY = randomList[i] / _width;
+                this[blueX, blueY] = new GoalField(blueX, blueY);
+                int redX = (_width - 1) - blueX;
+                int redY = (_heigth - 1) - blueY;
+                this[redX, redY] = new GoalField(redX, redY);
             }
         }
         private void AddPieces()
@@ -135,7 +135,7 @@ namespace GameMaster.Game
             else
                 piece = new Piece();
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
+            this[idx % _width, idx / _width].PutGeneratedPiece(piece);
         }
         public void AddPiece(Random rand)
         {
@@ -145,7 +145,7 @@ namespace GameMaster.Game
             else
                 piece = new Piece();
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            _fieldsArray[idx % _width, idx / _width].PutGeneratedPiece(piece);
+            this[idx % _width, idx / _width].PutGeneratedPiece(piece);
         }
         public bool AddPlayer(Team team, int agentId)
         {
@@ -154,7 +154,7 @@ namespace GameMaster.Game
             var rand = new Random();
             Player player = new Player(team, agentId);
             int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
-            _fieldsArray[idx % _width, idx / _width].MoveHere(player);
+            this[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
             return true;
         }
@@ -174,11 +174,11 @@ namespace GameMaster.Game
         }
         public bool IsInsideRedGoalArea(int x, int y)
         {
-            return (x >= 0 && x < _width && y >= 0 && y < _goalAreaHeight) ? true : false;
+            return (x >= 0 && x < _width && y >= _heigth - _goalAreaHeight && y < _heigth) ? true : false;
         }
         public bool IsInsideBlueGoalArea(int x, int y)
         {
-            return (x >= 0 && x < _width && y >= _heigth - _goalAreaHeight && y < _heigth) ? true : false;
+            return (x >= 0 && x < _width && y >= 0 && y < _goalAreaHeight) ? true : false;
         }
         public bool IsInsideBlueGoalArea(AbstractField field)
         {
@@ -209,7 +209,6 @@ namespace GameMaster.Game
             }
             return Enumerable.Take(range, randomCounts).ToList();
         }
-        //TODO: tests
         private static int Manhattan(AbstractField field, int x, int y)
         {
             return Math.Abs(field.X - x) + Math.Abs(field.Y - y);

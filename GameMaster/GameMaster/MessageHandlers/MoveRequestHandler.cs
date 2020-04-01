@@ -36,10 +36,10 @@ namespace GameMaster.MessageHandlers
             switch (_direction)
             {
                 case "N":
-                    y--;
+                    y++;
                     break;
                 case "S":
-                    y++;
+                    y--;
                     break;
                 case "W":
                     x--;

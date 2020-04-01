@@ -36,14 +36,14 @@ namespace GameMaster.MessageHandlers
         {
             _position = map.GetPlayerById(_agentId).Position;
             _distanceFromCurrent = map.ClosestPieceForField(_position);
-            _distanceN = map.IsInsideMap(_position.X, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y - 1]) : null;
-            _distanceNE = map.IsInsideMap(_position.X + 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y - 1]) : null;
+            _distanceN = map.IsInsideMap(_position.X, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y + 1]) : null;
+            _distanceNE = map.IsInsideMap(_position.X + 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y + 1]) : null;
             _distanceE = map.IsInsideMap(_position.X + 1, _position.Y) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y]) : null;
-            _distanceSE = map.IsInsideMap(_position.X + 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y + 1]) : null;
-            _distanceS = map.IsInsideMap(_position.X, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y + 1]) : null;
-            _distanceSW = map.IsInsideMap(_position.X - 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y + 1]) : null;
+            _distanceSE = map.IsInsideMap(_position.X + 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y - 1]) : null;
+            _distanceS = map.IsInsideMap(_position.X, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y - 1]) : null;
+            _distanceSW = map.IsInsideMap(_position.X - 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y - 1]) : null;
             _distanceW = map.IsInsideMap(_position.X - 1, _position.Y) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y]) : null;
-            _distanceNW = map.IsInsideMap(_position.X - 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y - 1]) : null;
+            _distanceNW = map.IsInsideMap(_position.X - 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y + 1]) : null;
         }
 
         protected override Message GetResponse(Map map)

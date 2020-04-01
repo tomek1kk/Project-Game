@@ -45,8 +45,8 @@ namespace Agent
 
             GameStartedMessage = gameStarted;
             GoalArea = gameStarted.TeamId == "Blue"
-                ? (gameStarted.BoardSize.Y.Value - gameStarted.GoalAreaSize, gameStarted.BoardSize.Y.Value - 1)
-                : (0, gameStarted.GoalAreaSize - 1);
+                ? (0, gameStarted.GoalAreaSize - 1)
+                : (gameStarted.BoardSize.Y.Value - gameStarted.GoalAreaSize, gameStarted.BoardSize.Y.Value - 1);
 
         }
         public bool InGoalArea()
