@@ -118,7 +118,7 @@ namespace CommunicationLibrary.Tests
             Exception receivedException = null;
             StreamMessageSenderReceiver streamMessageSenderReceiver
                 = new StreamMessageSenderReceiver(clientSide.GetStream(), new Parser());
-            Semaphore semaphore = new Semaphore(0, 1);
+            Semaphore semaphore = new Semaphore(0, 100);
             streamMessageSenderReceiver.StartReceiving(message => { }, e =>
             { receivedException = e; semaphore.Release(); });
 
