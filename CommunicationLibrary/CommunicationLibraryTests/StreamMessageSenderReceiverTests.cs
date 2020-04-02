@@ -11,6 +11,7 @@ using Moq;
 using System.Collections.Concurrent;
 using CommunicationLibraryTests.HelperClasses;
 using CommunicationLibrary.Request;
+using System.Threading;
 
 namespace CommunicationLibrary.Tests
 {
@@ -31,6 +32,7 @@ namespace CommunicationLibrary.Tests
                     new JoinGameRequest { TeamId = messageString });
             }
         }
+
         [TestMethod()]
         public void TestStreamMessageSenderReceiverCanReceiveMessage()
         {
@@ -101,5 +103,95 @@ namespace CommunicationLibrary.Tests
             Assert.AreEqual(expected.MessagePayload.TeamId,
                 ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
         }
+        [TestMethod()]
+        public void TestCallbackCalledOnDisconnect()
+        {
+            //given
+            (TcpClient clientSide, TcpClient serverSide) = HelperFunctions.TcpConnectClientAndServer();
+
+            Exception receivedException = null;
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(clientSide.GetStream(), new Parser());
+            Semaphore semaphore = new Semaphore(0, 1);
+            streamMessageSenderReceiver.StartReceiving(message => { }, e =>
+            { receivedException = e; semaphore.Release(); });
+
+            //when
+            serverSide.Close();
+            semaphore.WaitOne();
+
+            //then
+            Assert.IsNotNull(receivedException);
+            Assert.IsInstanceOfType(receivedException, typeof(CommunicationLibrary.Exceptions.DisconnectedException));
+
+            //after
+            streamMessageSenderReceiver.Dispose();
+            clientSide.Close();
+            semaphore.Dispose();
+        }
+
+
+        [TestMethod()]
+        public void TestCallbackCalledOnParseError()
+        {
+            Exception receivedException = null;
+            Stream agentToGmStream = new EchoStream();
+            Stream gmToAgentStream = new EchoStream();
+            Stream agentSideStream = new StreamRWJoin(gmToAgentStream, agentToGmStream);
+            Stream gmSideStream = new StreamRWJoin(agentToGmStream, gmToAgentStream);
+
+            StreamMessageSenderReceiver agentSenderReceiver
+                = new StreamMessageSenderReceiver(agentSideStream, new Parser());
+            Semaphore semaphore = new Semaphore(0, 1);
+            agentSenderReceiver.StartReceiving(message => { }, e =>
+            { receivedException = e; semaphore.Release(); });
+
+            string messageText = System.Text.Json.JsonSerializer.Serialize(new { a = "abc" });
+            byte[] messageBytes = Encoding.UTF8.GetBytes(messageText);
+            byte[] messageLengthBytes = BitConverter.GetBytes((ushort)messageBytes.Length);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(messageLengthBytes);
+
+            //when
+            gmSideStream.Write(messageLengthBytes, 0, 2);
+            gmSideStream.Write(messageBytes, 0, messageBytes.Length);
+            semaphore.WaitOne();
+
+            //then
+            Assert.IsNotNull(receivedException);
+            Assert.IsInstanceOfType(receivedException, typeof(CommunicationLibrary.Exceptions.ParsingException));
+
+            //after
+            agentSenderReceiver.Dispose();
+            gmSideStream.Close();
+            semaphore.Dispose();
+        }
+
+
+
+        [TestMethod()]
+        public void TestCallbackCalledOnReceiveCallbackError()
+        {
+            //given
+            Exception receivedException = null;
+            string expected = "callback";
+            var (agentSide, gmSide) = HelperFunctions.GetGmAgentConnections();
+            Semaphore semaphore = new Semaphore(0, 1);
+            agentSide.StartReceiving(message => throw new Exception(expected), e =>
+            { receivedException = e; semaphore.Release(); });
+
+            //when
+            gmSide.Send(new Message<CheckHoldedPieceRequest>(new CheckHoldedPieceRequest()));
+            semaphore.WaitOne();
+
+            //then
+            Assert.IsNotNull(receivedException);
+            Assert.AreEqual(receivedException.InnerException.Message, expected);
+
+            //after
+            agentSide.Dispose();
+            gmSide.Dispose();
+            semaphore.Dispose();
+        }
+
     }
 }

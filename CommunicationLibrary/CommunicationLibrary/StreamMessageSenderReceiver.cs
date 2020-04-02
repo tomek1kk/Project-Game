@@ -1,4 +1,5 @@
-﻿using CommunicationLibrary.RawMessageProcessing;
+﻿using CommunicationLibrary.Exceptions;
+using CommunicationLibrary.RawMessageProcessing;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,6 +16,7 @@ namespace CommunicationLibrary
         private CancellationTokenSource _cancellationTokenSource = new CancellationTokenSource();
         private Action<Message> _receiveCallback;
         private IParser _parser;
+        private Action<Exception> _errorCallback;
         public StreamMessageSenderReceiver(Stream tcpStream, IParser parser)
         {
             _tcpStream = tcpStream;
@@ -42,22 +44,50 @@ namespace CommunicationLibrary
                 string nextMessageString;
                 try
                 {
-                    nextMessageString = reader.GetNextMessageAsString();
+
+                    try
+                    {
+                        nextMessageString = reader.GetNextMessageAsString();
+                    }
+                    catch (Exception e)
+                    {
+                        throw new DisconnectedException(e);
+                    }
+                    Message nextMessage;
+                    try
+                    {
+                        nextMessage = _parser.Parse(nextMessageString);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new ParsingException(e);
+                    }
+                    try
+                    {
+                        _receiveCallback(nextMessage);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception("Exception thrown in callback", e);
+                    }
                 }
-                catch (Exception)
                 //either input stream has closed or thread was cancelled, in both cases we end the thread
+                catch(Exception e)
                 {
+                    if (_errorCallback != null)
+                        _errorCallback.Invoke(e);
                     break;
                 }
-                Message nextMessage = _parser.Parse(nextMessageString);
-                _receiveCallback(nextMessage);
             }
         }
         public void Dispose()
         {
             _tcpStream.Dispose();
-            _cancellationTokenSource.Cancel();
-            _receivingThread.Join();
+            if(_receiveCallback != null)
+            {
+                _cancellationTokenSource.Cancel();
+                _receivingThread.Join();
+            }
         }
 
         public void Send(Message m)
@@ -72,6 +102,12 @@ namespace CommunicationLibrary
         {
             _receiveCallback = receiveCallback;
             _receivingThread.Start();
+        }
+
+        public void StartReceiving(Action<Message> receiveCallback, Action<Exception> errorCallback)
+        {
+            _errorCallback = errorCallback;
+            StartReceiving(receiveCallback);
         }
     }
 }

@@ -8,5 +8,6 @@ namespace CommunicationLibrary
     {
         void Send(Message m);
         void StartReceiving(Action<Message> receiveCallback);
+        void StartReceiving(Action<Message> receiveCallback, Action<Exception> errorCallback);
     }
 }
