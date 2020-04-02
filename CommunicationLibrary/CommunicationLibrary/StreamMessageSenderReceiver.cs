@@ -110,7 +110,7 @@ namespace CommunicationLibrary
         /// <summary>
         /// Sends a message through connection
         /// </summary>
-        /// <param name="m"></param>
+        /// <param name="m">Message to be sent</param>
         /// <exception cref="DisconnectedException">thrown if sending message fails</exception>
         public void Send(Message m)
         {
