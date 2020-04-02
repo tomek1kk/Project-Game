@@ -41,45 +41,61 @@ namespace CommunicationLibrary
             //message reading loop
             while (!cancellationToken.IsCancellationRequested)
             {
-                string nextMessageString;
                 try
                 {
+                    
+                    string nextMessageString = GetNextMessageAsString(reader);
+                    Message nextMessage = ParseMessage(nextMessageString);
 
-                    try
-                    {
-                        nextMessageString = reader.GetNextMessageAsString();
-                    }
-                    catch (Exception e)
-                    {
-                        throw new DisconnectedException(e);
-                    }
-                    Message nextMessage;
-                    try
-                    {
-                        nextMessage = _parser.Parse(nextMessageString);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new ParsingException(e);
-                    }
-                    try
-                    {
-                        _receiveCallback(nextMessage);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception("Exception thrown in callback", e);
-                    }
                 }
-                //either input stream has closed or thread was cancelled, in both cases we end the thread
+                catch(OperationCanceledException)
+                {
+                    break;
+                }
                 catch(Exception e)
                 {
                     if (_errorCallback != null)
                         _errorCallback.Invoke(e);
-                    break;
                 }
             }
         }
+        private string GetNextMessageAsString(RawMessageReader reader)
+        {
+            try
+            {
+                return reader.GetNextMessageAsString();
+            }
+            catch (Exception e)
+            {
+                throw new DisconnectedException(e);
+            }
+        }
+
+        private Message ParseMessage(string messageString)
+        {
+            try
+            {
+                return _parser.Parse(messageString);
+            }
+            catch (Exception e)
+            {
+                throw new ParsingException(e);
+            }
+        }
+
+        private void CallMessageCallback(Message message)
+        {
+            try
+            {
+                _receiveCallback(message);
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Exception thrown in callback", e);
+            }
+        }
+
+
         public void Dispose()
         {
             _tcpStream.Dispose();
