@@ -77,7 +77,7 @@ namespace GameMasterTests.Game.Tests
             map.AddPiece();
             //then
             int count = 0;
-            for (int x = 0; x < 9; x++)
+            for (int x = 0; x <= 9; x++)
                 for (int y = 3; y < 7; y++)
                     count += map[x, y].ContainsPieces() ? 1 : 0;
             Assert.AreEqual(1, count);
@@ -92,7 +92,7 @@ namespace GameMasterTests.Game.Tests
             map.AddPiece(rand);
             //then
             int count = 0;
-            for (int x = 0; x < 9; x++)
+            for (int x = 0; x <= 9; x++)
                 for (int y = 3; y < 7; y++)
                     count += map[x, y].ContainsPieces() ? 1 : 0;
             Assert.AreEqual(1, count);
