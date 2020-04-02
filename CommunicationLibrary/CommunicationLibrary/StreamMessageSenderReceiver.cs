@@ -90,20 +90,48 @@ namespace CommunicationLibrary
             }
         }
 
+        /// <summary>
+        /// Sends a message through connection
+        /// </summary>
+        /// <param name="m"></param>
+        /// <exception cref="DisconnectedException">thrown if sending message fails</exception>
         public void Send(Message m)
         {
             RawMessageSender rawMessageSender = new RawMessageSender(
                 (bytes, count) => _tcpStream.Write(bytes, 0, count));
             string messageString = _parser.AsString(m);
-            rawMessageSender.SendMessage(messageString);
+            try
+            {
+                rawMessageSender.SendMessage(messageString);
+            }
+            catch(Exception e)
+            {
+                throw new DisconnectedException(e);
+            }
         }
 
+        /// <summary>
+        /// Starts new thread that listens for incoming messages on this connection
+        /// </summary>
+        /// <param name="receiveCallback">Will be called whenever new message arrives on this connection</param>
         public void StartReceiving(Action<Message> receiveCallback)
         {
             _receiveCallback = receiveCallback;
             _receivingThread.Start();
         }
 
+        /// <summary>
+        /// Starts new thread that listens for incoming messages on this connection
+        /// </summary>
+        /// <param name="receiveCallback">Will be called whenever new message arrives on this connection</param>
+        /// <param name="errorCallback">
+        /// Will be called whenever receiving thread throws an exception.
+        /// Its argument is:
+        /// DisconnectedException - if thread failed while reading from stream
+        /// ParsingException - if thread failed while parsing read message
+        /// Exception - if <paramref name="receiveCallback"/> throws an exception,
+        /// exception thrown by receive callback will be its inner exception
+        /// </param>
         public void StartReceiving(Action<Message> receiveCallback, Action<Exception> errorCallback)
         {
             _errorCallback = errorCallback;

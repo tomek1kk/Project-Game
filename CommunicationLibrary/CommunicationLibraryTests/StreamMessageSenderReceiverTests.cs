@@ -15,6 +15,12 @@ using System.Threading;
 
 namespace CommunicationLibrary.Tests
 {
+    //EchoStream and StreamRWJoin used whereever possible to simulate tcp stream
+    //because tests with them take on average < 150ms
+    //and tests with tcp client and listener take on average 2s.
+
+    //However they don't work like tcp streams in disconnection scenarios,
+    //so tcp streams have to be used there
     [TestClass()]
     public class StreamMessageSenderReceiverTests
     {
@@ -191,6 +197,25 @@ namespace CommunicationLibrary.Tests
             agentSide.Dispose();
             gmSide.Dispose();
             semaphore.Dispose();
+        }
+
+        [TestMethod()]
+        [ExpectedException(typeof(CommunicationLibrary.Exceptions.DisconnectedException))]
+        public void TestExceptionThrownOnSendToDisconnected()
+        {
+            //given
+            (TcpClient clientSide, TcpClient serverSide) = HelperFunctions.TcpConnectClientAndServer();
+            serverSide.Close();
+            var senderReceiver = new StreamMessageSenderReceiver(clientSide.GetStream(), new Parser());
+
+            //when
+            senderReceiver.Send(new Message<CheckHoldedPieceRequest>(new CheckHoldedPieceRequest()));
+
+            //then
+            //DisconnectedExceptionThrown
+
+            //after
+            senderReceiver.Dispose();
         }
 
     }
