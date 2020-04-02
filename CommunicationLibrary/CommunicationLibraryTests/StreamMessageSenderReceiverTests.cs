@@ -148,7 +148,7 @@ namespace CommunicationLibrary.Tests
 
             StreamMessageSenderReceiver agentSenderReceiver
                 = new StreamMessageSenderReceiver(agentSideStream, new Parser());
-            Semaphore semaphore = new Semaphore(0, 1);
+            Semaphore semaphore = new Semaphore(0, 100);
             agentSenderReceiver.StartReceiving(message => { }, e =>
             { receivedException = e; semaphore.Release(); });
 
@@ -181,7 +181,7 @@ namespace CommunicationLibrary.Tests
             Exception receivedException = null;
             string expected = "callback";
             var (agentSide, gmSide) = HelperFunctions.GetGmAgentConnections();
-            Semaphore semaphore = new Semaphore(0, 1);
+            Semaphore semaphore = new Semaphore(0, 100);
             agentSide.StartReceiving(message => throw new Exception(expected), e =>
             { receivedException = e; semaphore.Release(); });
 
