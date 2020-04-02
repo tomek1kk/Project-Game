@@ -46,6 +46,7 @@ namespace CommunicationLibrary
                     
                     string nextMessageString = GetNextMessageAsString(reader);
                     Message nextMessage = ParseMessage(nextMessageString);
+                    CallMessageCallback(nextMessage);
 
                 }
                 catch(OperationCanceledException)
