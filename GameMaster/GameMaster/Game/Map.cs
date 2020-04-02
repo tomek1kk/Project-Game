@@ -18,7 +18,7 @@ namespace GameMaster.Game
         private int _width;
         private int _numberOfGoals;
         private int _numberOfPieces;
-        private int _numberOfPlayers; //unnecessary??
+        private int _numberOfPlayers;
         private int _shamPieceProbability;
         public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
@@ -34,7 +34,8 @@ namespace GameMaster.Game
             List<(int x, int y, int id, Team team)> players = null,
             int heigth = 10,
             int width = 10,
-            int goalAreaHeight = 3)
+            int goalAreaHeight = 3,
+            int numberOfPlayers = 10)
         {
             _heigth = heigth;
             _width = width;
@@ -42,7 +43,7 @@ namespace GameMaster.Game
             _numberOfGoals = goalFields == null ? 0 : goalFields.Count;
             _numberOfPieces = realPieces == null ? 0 : realPieces.Count;
             _numberOfPieces += shamPieces == null ? 0 : shamPieces.Count;
-            _numberOfPlayers = players == null ? 0 : players.Count;
+            _numberOfPlayers = numberOfPlayers;
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
@@ -54,7 +55,7 @@ namespace GameMaster.Game
                 this[realPieces[i].x, realPieces[i].y].PutGeneratedPiece(new Piece());
             for (int i = 0; shamPieces != null && i < shamPieces.Count; i++)
                 this[shamPieces[i].x, shamPieces[i].y].PutGeneratedPiece(new ShamPiece());
-            for (int i = 0; i < _numberOfPlayers; i++)
+            for (int i = 0; players != null && i < players.Count; i++)
             {
                 Player player = new Player(players[i].team, players[i].id);
                 this[players[i].x, players[i].y].MoveHere(player);
@@ -68,7 +69,7 @@ namespace GameMaster.Game
             _goalAreaHeight = config.GoalAreaHight;
             _numberOfGoals = config.NumberOfGoals;
             _numberOfPieces = config.NumberOfPieces;
-            _numberOfPlayers = 10; // TODO: should be from config (not included in documentation)
+            _numberOfPlayers = config.NumberOfPlayers; // TODO: should be from config (not included in documentation)
             _shamPieceProbability = config.ShamPieceProbability;
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
@@ -149,11 +150,14 @@ namespace GameMaster.Game
         }
         public bool AddPlayer(Team team, int agentId)
         {
-            if (_numberOfPlayers == _players.Count)
+            var freeFields = Enumerable.Range(_goalAreaHeight * _width, _width * (_heigth - 2 * _goalAreaHeight)).ToList();
+            foreach (Player p in _players.Values)
+                freeFields.Remove(p.X + p.Y * _width);
+            if (freeFields.Count == 0 || _players.Count == _numberOfPlayers)
                 return false;
             var rand = new Random();
+            int idx = freeFields[rand.Next(freeFields.Count)];
             Player player = new Player(team, agentId);
-            int idx = rand.Next(_width * _goalAreaHeight, _width * (_heigth - _goalAreaHeight));
             this[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
             return true;

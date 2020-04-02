@@ -28,7 +28,10 @@ namespace GameMasterTests.Configuration.Tests
                 "\"responsePenalty\": 1000," +
                 "\"goalAreaHight\": 5," +
                 "\"numberOfGoals\": 5," +
-                "\"numberOfPieces\": 10}";
+                "\"numberOfPieces\": 10," +
+                "\"destroyPiecePenalty\": 100," +
+                "\"shamPieceProbability\": 20," +
+                "\"numberOfPlayers\": 10}";
             string pathToTMPFile = "testConfig";
             File.WriteAllText(pathToTMPFile, configuration);
             //When
@@ -47,6 +50,9 @@ namespace GameMasterTests.Configuration.Tests
             Assert.AreEqual(5, gmConfig.GoalAreaHight);
             Assert.AreEqual(5, gmConfig.NumberOfGoals);
             Assert.AreEqual(10, gmConfig.NumberOfPieces);
+            Assert.AreEqual(10, gmConfig.NumberOfPlayers);
+            Assert.AreEqual(100, gmConfig.DestroyPiecePenalty);
+            Assert.AreEqual(20, gmConfig.ShamPieceProbability);
             File.Delete(pathToTMPFile);
         }
 

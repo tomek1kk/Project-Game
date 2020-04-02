@@ -175,5 +175,49 @@ namespace GameMasterTests.Game.Tests
             Assert.AreEqual(false, map.IsInsideBlueGoalArea(map[8, 8]));
             Assert.AreEqual(false, map.IsInsideBlueGoalArea(map[5, 6]));
         }
+        [TestMethod()]
+        public void TestAddingMaxPlayers()
+        {
+            //given
+            int playersCount = 40;
+            bool[] results = new bool[playersCount];
+            bool[,] virtualPlayersMap = new bool[10, 10];
+            var map = new Map(numberOfPlayers: playersCount);
+            //when
+            for (int i = 0; i < playersCount; i++)
+                results[i] = map.AddPlayer(Team.Blue, i);
+            //then
+            for (int i = 0; i < playersCount; i++)
+            {
+                Assert.AreEqual(true, results[i]);
+                Assert.IsTrue(map.GetPlayerById(i).X >= 0 && map.GetPlayerById(i).X < 10);
+                Assert.IsTrue(map.GetPlayerById(i).Y >= 2 && map.GetPlayerById(i).Y < 7);
+                Assert.IsFalse(virtualPlayersMap[map.GetPlayerById(i).X, map.GetPlayerById(i).Y]);
+                virtualPlayersMap[map.GetPlayerById(i).X, map.GetPlayerById(i).Y] = true;
+            }
+        }
+        [TestMethod()]
+        public void TestAddingTooManyPlayers()
+        {
+            //given
+            int playersCount = 41;
+            List<bool> results = new List<bool>();
+            bool[,] virtualPlayersMap = new bool[10, 10];
+            var map = new Map(numberOfPlayers: playersCount);
+            //when
+            for (int i = 0; i < playersCount; i++)
+                results.Add(map.AddPlayer(Team.Blue, i));
+            //then
+            Assert.IsTrue(results.Contains(false));
+            for (int i = 0; i < playersCount; i++)
+            {
+                if (!results[i])
+                    continue;
+                Assert.IsTrue(map.GetPlayerById(i).X >= 0 && map.GetPlayerById(i).X < 10);
+                Assert.IsTrue(map.GetPlayerById(i).Y >= 2 && map.GetPlayerById(i).Y < 7);
+                Assert.IsFalse(virtualPlayersMap[map.GetPlayerById(i).X, map.GetPlayerById(i).Y]);
+                virtualPlayersMap[map.GetPlayerById(i).X, map.GetPlayerById(i).Y] = true;
+            }
+        }
     }
 }

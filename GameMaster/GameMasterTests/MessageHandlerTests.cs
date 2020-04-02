@@ -15,7 +15,7 @@ namespace GameMasterTests
     {
         MessageHandlerMock messageHandler = new MessageHandlerMock();
         Message message = new Message<NotDefinedError>();
-        Map map = new Map(new GMConfiguration() { BoardX = 10, BoardY = 10 });
+        Map map = new Map(new GMConfiguration() { BoardX = 10, BoardY = 10, NumberOfPlayers = 10 });
 
         class MessageHandlerMock : MessageHandler
         {
