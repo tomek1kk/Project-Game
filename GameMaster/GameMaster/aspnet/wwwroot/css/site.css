@@ -67,6 +67,18 @@ table {
     background-color: bisque;
     color: black;
 }
+#gameBoard .sham {
+    background-color: saddlebrown;
+    color: black;
+}
+#gameBoard .redPlayerWithSham {
+    background-color: darkred;
+    color: black;
+}
+#gameBoard .bluePlayerWithSham {
+    background-color: darkblue;
+    color: black;
+}
 #gameBoard .redGoalArea {
     border-color: crimson;
     border-width: 3px;

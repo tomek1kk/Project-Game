@@ -1,6 +1,7 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Response;
 using System;
+using GameMaster.GUI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -61,6 +62,24 @@ namespace GameMaster.Game
             Console.WriteLine("Agent " + AgentId.ToString() + " cannot be locked before he is unlocked. Locked till: " +
                 _lockedTill.ToString() + ", new TryLock time: " + newLockTime.ToString());
             return false;
+        }
+        public FieldType GetGUIFieldFromPlayer()
+        {
+            if (IsHolding)
+            {
+                if (Holding.IsSham())
+                {
+                    return Team == Team.Red ? FieldType.RedPlayerWithSham : FieldType.BluePlayerWithSham;
+                }
+                else
+                {
+                    return Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
+                }
+            }
+            else
+            {
+                return Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
+            }
         }
     }
 }

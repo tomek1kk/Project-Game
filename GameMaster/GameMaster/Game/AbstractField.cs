@@ -11,31 +11,31 @@ namespace GameMaster.Game
     {
         protected readonly int _x;
         protected readonly int _y;
-        protected List<Player> _whos_here;
+        protected Player _whos_here;
         protected List<AbstractPiece> _pieces;
         protected bool _discovered = false;
+        public bool IsOccupied { get => _whos_here != null; }
 
         public AbstractField(int x, int y)
         {
             _x = x;
             _y = y;
             _pieces = new List<AbstractPiece>();
-            _whos_here = new List<Player>();
         }
 
         abstract public AbstractPiece PickUp();
         abstract public void Put(AbstractPiece piece);
         public bool MoveHere(Player player)
         {
-            _whos_here.Add(player);
+            _whos_here = player;
             player.Position = this;
             return true;
         }
         public bool MoveOut(Player player)
         {
-            if (_whos_here.Contains(player))
+            if (_whos_here == player)
             {
-                _whos_here.Remove(player);
+                _whos_here = null;
                 return true;
             }
             return false;
@@ -46,7 +46,18 @@ namespace GameMaster.Game
         }
         public int X => _x;
         public int Y => _y;
-        abstract public FieldType GetFieldTypeForGUI();
+        public FieldType GetFieldTypeForGUI()
+        {
+            if (_whos_here == null)
+            {
+                return GetGUIFieldFromField();
+            }
+            else
+            {
+                return _whos_here.GetGUIFieldFromPlayer();
+            }
+        }
+        abstract protected FieldType GetGUIFieldFromField();
         abstract public bool IsGoalField {get;}
         public void PutGeneratedPiece(AbstractPiece piece)
         {

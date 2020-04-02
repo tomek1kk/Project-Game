@@ -432,6 +432,41 @@ namespace GameMasterTests.MessageHandlers.Tests
             response.Should().BeEquivalentTo(expectedResult);
             map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 0, Y = 2 });
         }
+        [TestMethod()]
+        public void TestMoveIntoOccupiedField()
+        {
+            //given
+            var players = new List<(int x, int y, int id, Team team)>() { (x: 5, y: 5, id: 1, team:Team.Blue),
+                (x: 4, y: 5, id: 2, team: Team.Blue) };
+            var map = new Map(players: players);
+            var message = new Message<MoveRequest>()
+            {
+                AgentId = 1,
+                MessagePayload = new MoveRequest()
+                {
+                    Direction = "W"
+                }
+            };
+            var moveHandler = new MoveRequestHandler();
+            Message<MoveError> expectedResult = new Message<MoveError>
+            {
+                AgentId = 1,
+                MessagePayload = new MoveError()
+                {
+                    Position = new Position()
+                    {
+                        X = 5,
+                        Y = 5
+                    }
+                }
+            };
+            //when
+            Message response = moveHandler.ProcessRequest(map, message, config);
+
+            //then
+            response.Should().BeEquivalentTo(expectedResult);
+            map.GetPlayerById(1).Position.Should().BeEquivalentTo(new Position() { X = 5, Y = 5 });
+        }
     }
 }
 

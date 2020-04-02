@@ -38,18 +38,18 @@ namespace GameMaster.MessageHandlers
             if (map.IsInGoalArea(position))
             {
                 map.AddPiece();
-                PutPieceInGoalArea(piece, position);
+                PutPieceInGoalArea(piece, position, map);
             }
             else
                 PutPieceOutsideGoalArea(piece, position);
         }
 
-        private void PutPieceInGoalArea(AbstractPiece piece, AbstractField position)
+        private void PutPieceInGoalArea(AbstractPiece piece, AbstractField position, Map map)
         {
             if (piece.IsSham())
                 PutShamInGoalArea(piece, position);
             else
-                PutNonShamInGoalArea(piece, position);
+                PutNonShamInGoalArea(piece, position, map);
         }
 
         private void PutPieceOutsideGoalArea(AbstractPiece piece, AbstractField position)
@@ -61,9 +61,10 @@ namespace GameMaster.MessageHandlers
         private void PutShamInGoalArea(AbstractPiece piece, AbstractField position)
          => _returnedEnum = PutResultEnum.ShamOnGoalArea;
 
-        private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position)
+        private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position, Map map)
         {
             position.Discover();
+            map.ScorePoint(position, _agentId);
             if (position.IsGoalField)
                 PutNonShamOnGoal(piece, position);
             else

@@ -20,6 +20,8 @@ namespace GameMaster.Game
         private int _numberOfPieces;
         private int _numberOfPlayers;
         private int _shamPieceProbability;
+        private int _redPoints;
+        private int _bluePoints;
         public Dictionary<int, Player> Players => _players;
         public AbstractField this[int x, int y]
         {
@@ -94,6 +96,7 @@ namespace GameMaster.Game
             FieldType[,] fieldsForGUI = new FieldType[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
+                    //fieldsForGUI[i, j] = FieldType.Sham;
                     fieldsForGUI[i, j] = _fieldsArray[i, j].GetFieldTypeForGUI();
             return new BoardModel()
             {
@@ -191,6 +194,13 @@ namespace GameMaster.Game
         public bool IsInsideRedGoalArea(AbstractField field)
         {
             return IsInsideRedGoalArea(field.X, field.Y);
+        }
+        public void ScorePoint(AbstractField field, int agentId)
+        {
+            if (field.ContainsPieces())
+                return;
+            _redPoints += Players[agentId].Team == Team.Red ? 1 : 0;
+            _bluePoints += Players[agentId].Team == Team.Blue ? 1 : 0;
         }
         /// <summary>
         /// Returns random list of integers from range [rangeFrom, rangeTo] of length equal randomCounts

@@ -51,15 +51,12 @@ namespace GameMaster.MessageHandlers
                     _errorMessage = true;
                     return false;
             }
-            _newX = x;
-            _newY = y;
-            _moveError = !map.IsInsideMap(x, y);
-            if (_moveError)
-                return false;
-            if (map.GetPlayerById(_agentId).Team == Team.Red)
-                _moveError = map.IsInsideBlueGoalArea(x, y);
-            else
-                _moveError = map.IsInsideRedGoalArea(x, y);
+            _newX = x; _newY = y;
+            if (!map.IsInsideMap(x, y) ||
+                (map.GetPlayerById(_agentId).Team == Team.Red && map.IsInsideBlueGoalArea(x, y)) ||
+                (map.GetPlayerById(_agentId).Team == Team.Blue && map.IsInsideRedGoalArea(x, y)) ||
+                map[x, y].IsOccupied)
+                _moveError = true;
             return !_moveError;
         }
 

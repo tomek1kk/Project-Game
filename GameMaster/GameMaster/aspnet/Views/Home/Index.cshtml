@@ -87,12 +87,16 @@
             GOAL: { class: "goal", text: "G" },
             DISCOVERED_NON_GOAL: { class: "discoveredNonGoal", text: "N" },
             DISCOVERED_GOAL: { class: "discoveredGoal", text: "YG" },
+            SHAM: { class : "sham", text: "S" },
+            RED_PLAYER_WITH_SHAM: { class : "redPlayerWithSham", text: "RS" },
+            BLUE_PLAYER_WITH_SHAM: { class : "bluePlayerWithSham", text: "BS" },
         };
         const FieldTypesIndexed = [
             FieldTypes.EMPTY, FieldTypes.RED_PLAYER, FieldTypes.BLUE_PLAYER,
             FieldTypes.RED_PLAYER_WITH_PIECE, FieldTypes.BLUE_PLAYER_WITH_PIECE,
             FieldTypes.PIECE, FieldTypes.GOAL,
-            FieldTypes.DISCOVERED_NON_GOAL, FieldTypes.DISCOVERED_GOAL
+            FieldTypes.DISCOVERED_NON_GOAL, FieldTypes.DISCOVERED_GOAL,
+            FieldTypes.SHAM, FieldTypes.RED_PLAYER_WITH_SHAM, FieldTypes.BLUE_PLAYER_WITH_SHAM
         ];
         FetchBoard();
     </script>
