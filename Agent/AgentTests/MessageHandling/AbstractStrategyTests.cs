@@ -74,5 +74,49 @@ namespace AgentTests.MessageHandling
             //then
             Assert.AreEqual(moveResponse.ClosestPiece, strategy.Board[position.X, position.Y].DistToPiece);
         }
+        [TestMethod]
+        public void TestPutPieceWithNormalOnGoalFieldStrategyAction()
+        {
+            //given
+            Strategy strategy = new MyAbstractStrategy(width, height);
+            PutPieceResponse putPieceResponse = new PutPieceResponse() { PutResult = PutResultEnum.NormalOnGoalField };
+            //when
+            strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
+            //then
+            Assert.AreEqual(true, strategy.Board[position.X, position.Y].IsDiscoveredGoal);
+        }
+        [TestMethod]
+        public void TestPutPieceNormalOnNonGoalFieldStrategyAction()
+        {
+            //given
+            Strategy strategy = new MyAbstractStrategy(width, height);
+            PutPieceResponse putPieceResponse = new PutPieceResponse() { PutResult = PutResultEnum.NormalOnNonGoalField };
+            //when
+            strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
+            //then
+            Assert.AreEqual(true, strategy.Board[position.X, position.Y].IsDiscoveredGoal);
+        }
+        [TestMethod]
+        public void TestPutPieceShamOnGoalAreaFieldStrategyAction()
+        {
+            //given
+            Strategy strategy = new MyAbstractStrategy(width, height);
+            PutPieceResponse putPieceResponse = new PutPieceResponse() { PutResult = PutResultEnum.ShamOnGoalArea };
+            //when
+            strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
+            //then
+            Assert.AreEqual(false, strategy.Board[position.X, position.Y].IsDiscoveredGoal);
+        }
+        [TestMethod]
+        public void TestPutPieceTaskFieldStrategyAction()
+        {
+            //given
+            Strategy strategy = new MyAbstractStrategy(width, height);
+            PutPieceResponse putPieceResponse = new PutPieceResponse() { PutResult = PutResultEnum.TaskField };
+            //when
+            strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
+            //then
+            Assert.AreEqual(false, strategy.Board[position.X, position.Y].IsDiscoveredGoal);
+        }
     }
 }
