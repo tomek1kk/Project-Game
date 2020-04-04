@@ -12,9 +12,11 @@ namespace GameMaster.MessageHandlers
 {
     public class PickPieceRequestHandler : MessageHandler
     {
-        private bool _noPieceOnField = false;
-        private bool _fieldIsOnGoalArea = false;
-        private bool _playerAlreadyHasPiece = false;
+        private bool _noPieceOnField;
+        private bool _fieldIsOnGoalArea;
+        private bool _playerAlreadyHasPiece;
+
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -44,7 +46,6 @@ namespace GameMaster.MessageHandlers
             if (_playerAlreadyHasPiece || _fieldIsOnGoalArea)
                 return new Message<PickPieceError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PickPieceError()
                     {
                         ErrorSubtype = "Other"
@@ -53,7 +54,6 @@ namespace GameMaster.MessageHandlers
             else if (_noPieceOnField)
                 return new Message<PickPieceError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PickPieceError()
                     {
                         ErrorSubtype = "NothingThere"
@@ -62,7 +62,6 @@ namespace GameMaster.MessageHandlers
             else
                 return new Message<PickPieceResponse>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PickPieceResponse() { }
                 };
         }

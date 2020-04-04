@@ -16,6 +16,7 @@ namespace GameMaster.MessageHandlers
         private bool _agentHasNoPiece = false;
         private PutResultEnum _returnedEnum;
 
+        protected override void ClearHandler() {}
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -85,7 +86,6 @@ namespace GameMaster.MessageHandlers
             if (_agentHasNoPiece)
                 return new Message<PutPieceError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PutPieceError()
                     {
                         ErrorSubtype = "AgentNotHolding"
@@ -94,7 +94,6 @@ namespace GameMaster.MessageHandlers
             else
                 return new Message<PutPieceResponse>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PutPieceResponse()
                     {
                         PutResult = _returnedEnum
