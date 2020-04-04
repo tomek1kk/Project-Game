@@ -33,6 +33,11 @@ namespace GameMasterTests.Game
                 return;
             }
 
+            public void StartReceiving(Action<Message> receiveCallback, Action<Exception> errorCallback)
+            {
+                return;
+            }
+
             public List<Message> GetResult()
             {
                 return messages;
