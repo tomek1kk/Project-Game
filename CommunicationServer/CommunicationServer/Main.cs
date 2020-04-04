@@ -22,6 +22,10 @@ namespace CommunicationServerNamespace
 
             Log.Information("Connect Agents:");
             communicationServer.ConnectAgents();
+
+            Log.Information("Wait for game over");
+            communicationServer.WaitForGameOver();
+
             Console.WriteLine("Koniec CS");
         }
     }
