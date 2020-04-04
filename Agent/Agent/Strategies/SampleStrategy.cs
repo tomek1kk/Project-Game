@@ -30,8 +30,11 @@ namespace Agent.Strategies
         public override Message MakeDecision(AgentInfo agent)
         {
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
-
-            if (agent.HasPiece && FindUndiscoveredGoalCoordinates(agent) == (agent.Position.X, agent.Position.Y))
+            if (last == MessageType.MoveError)
+            {
+                return RandomMove();
+            }
+            else if (agent.HasPiece && FindUndiscoveredGoalCoordinates(agent) == (agent.Position.X, agent.Position.Y))
             {
                 return PutPiece();
             }
@@ -58,6 +61,23 @@ namespace Agent.Strategies
         {
             History.Push(message.MessageId);
             base.UpdateMap(message, position);
+        }
+
+        private Message RandomMove()
+        {
+            Random rnd = new Random();
+            switch (rnd.Next(0, 3))
+            {
+                case 0:
+                    return new Message<MoveRequest>(new MoveRequest() { Direction = "N" });
+                case 1:
+                    return new Message<MoveRequest>(new MoveRequest() { Direction = "S" });
+                case 2:
+                    return new Message<MoveRequest>(new MoveRequest() { Direction = "W" });
+                default:
+                    return new Message<MoveRequest>(new MoveRequest() { Direction = "E" });
+            }
+
         }
 
         private Message FindPiece(AgentInfo agent)
@@ -138,7 +158,7 @@ namespace Agent.Strategies
                 lastRowOfGoals = agentInfo.GoalArea.start;
                 for (int i = lastRowOfGoals; i <= agentInfo.GoalArea.end; ++i)
                     for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j,i].IsDiscoveredGoal == false)
+                        if (Board[j, i].IsDiscoveredGoal == false)
                             return (j, i);
             }
             else
@@ -146,7 +166,7 @@ namespace Agent.Strategies
                 lastRowOfGoals = agentInfo.GoalArea.end;
                 for (int i = lastRowOfGoals; i >= 0; --i)
                     for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j,i].IsDiscoveredGoal == false)
+                        if (Board[j, i].IsDiscoveredGoal == false)
                             return (j, i);
             }
             throw new Exception("All goals should be realized.");
