@@ -8,23 +8,34 @@ using System.Text;
 
 namespace Agent.Strategies
 {
+    public class MyField : Field
+    {
+        int a;
+    }
     public class SampleStrategy : Strategy
     {
+        private MyField[,] customBoard;
+        override public Field[,] Board { get { return customBoard; } }
         public Stack<MessageType> History { get; private set; }
-        public SampleStrategy(int width, int height) : base(width, height)
+
+        public SampleStrategy(int width, int height) : base()
         {
             History = new Stack<MessageType>();
+            customBoard = new MyField[width, height];
+            for (int i = 0; i < width; i++)
+                for (int j = 0; j < height; j++)
+                    Board[i, j] = new MyField();
         }
 
         public override Message MakeDecision(AgentInfo agent)
         {
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
 
-            if (agent.HasPiece && agent.InGoalArea())
+            if (agent.HasPiece && FindUndiscoveredGoalCoordinates(agent) == (agent.Position.X, agent.Position.Y))
             {
                 return PutPiece();
             }
-            else if (agent.HasPiece && !agent.InGoalArea())
+            else if (agent.HasPiece)
             {
                 return MoveToGoals(agent);
             }
@@ -72,31 +83,74 @@ namespace Agent.Strategies
                 req.Direction = "E";
             return new Message<MoveRequest>(req);
         }
+
         private Message PutPiece()
         {
             return new Message<PutPieceRequest>(new PutPieceRequest());
         }
+
         private Message BackToBoard(AgentInfo agent)
         {
             var req = new MoveRequest();
             req.Direction = agent.GoalDirection == "N" ? "S" : "N";
             return new Message<MoveRequest>(req);
         }
+
         private Message PickPiece()
         {
             return new Message<PickPieceRequest>(new PickPieceRequest());
         }
-        private Message MoveToGoals(AgentInfo agent)
-        {
-            var req = new MoveRequest();
-            req.Direction = agent.GoalDirection;
-            return new Message<MoveRequest>(req);
-        }
+
         private Message MakeDiscovery()
         {
             return new Message<DiscoveryRequest>(new DiscoveryRequest());
         }
 
+        private Message MoveToGoals(AgentInfo agent)
+        {
+            var req = new MoveRequest();
+            (int, int) closestUndiscoveredGoal = FindUndiscoveredGoalCoordinates(agent);
+            (int, int) vectorToGoal = (closestUndiscoveredGoal.Item1 - agent.Position.X, closestUndiscoveredGoal.Item2 - agent.Position.Y);
+
+            req.Direction = ChooseDirection(vectorToGoal);
+            return new Message<MoveRequest>(req);
+        }
+
+        private string ChooseDirection((int, int) vector)
+        {
+            if (vector.Item1 < 0)
+                return "W";
+            if (vector.Item1 > 0)
+                return "E";
+            if (vector.Item2 < 0)
+                return "S";
+            if (vector.Item2 > 0)
+                return "N";
+            throw new Exception("Shouldnt be executed");
+        }
+
+        private (int, int) FindUndiscoveredGoalCoordinates(AgentInfo agentInfo)
+        {
+            Point position = agentInfo.Position;
+            int lastRowOfGoals;
+            if (agentInfo.GoalDirection == "N")
+            {
+                lastRowOfGoals = agentInfo.GoalArea.start;
+                for (int i = lastRowOfGoals; i <= agentInfo.GoalArea.end; ++i)
+                    for (int j = 0; j < Board.GetLength(0); j++)
+                        if (Board[j,i].IsDiscoveredGoal == false)
+                            return (j, i);
+            }
+            else
+            {
+                lastRowOfGoals = agentInfo.GoalArea.end;
+                for (int i = lastRowOfGoals; i >= 0; --i)
+                    for (int j = 0; j < Board.GetLength(0); j++)
+                        if (Board[j,i].IsDiscoveredGoal == false)
+                            return (j, i);
+            }
+            throw new Exception("All goals should be realized.");
+        }
     }
     //public enum StrategyDirections
     //{
