@@ -12,6 +12,7 @@ using CommunicationLibrary.Error;
 using CommunicationLibrary.Request;
 using Serilog;
 using CommunicationServerNamespace.Helpers;
+using CommunicationLibrary.Exceptions;
 
 namespace CommunicationServerNamespace
 {
@@ -32,7 +33,7 @@ namespace CommunicationServerNamespace
             tcpListener.Start();
             TcpClient client = tcpListener.AcceptTcpClient();
             _gameMasterConnection = new Descriptor(client);
-            _gameMasterConnection.StartReceiving(GetGMMessage);
+            _gameMasterConnection.StartReceiving(GetGMMessage, HandleConnectionError);
             Console.WriteLine("GM end");
         }
 
@@ -49,7 +50,7 @@ namespace CommunicationServerNamespace
             Console.WriteLine("I've got such message: " + message.GetPayload());
             Log.Information("GetGMMessege: {@m}", message);
             AgentDescriptor agent = _agentsConnections.Find(x => x.Id == message.AgentId);
-            agent.SendMessage(message);
+            SendMessageWithErrorHandling(agent, message);
         }
 
         public void ConnectAgents()
@@ -64,7 +65,7 @@ namespace CommunicationServerNamespace
                 TcpClient agentClient = tcpListener.AcceptTcpClient();
                 AgentDescriptor agent = new AgentDescriptor(agentClient);
                 _agentsConnections.Add(agent);
-                agent.StartReceiving(GetAgentMessage);
+                agent.StartReceiving(GetAgentMessage, HandleConnectionError);
                 Console.WriteLine("Agent connected: " + ++i);
                 Log.Information("New agent connected.");
             }
@@ -77,9 +78,22 @@ namespace CommunicationServerNamespace
             {
                 Console.WriteLine("I've got such message: " + message.GetPayload());
                 Log.Information("GetAgentMessage: {@m}", message);
-                _gameMasterConnection.SendMessage(message);
+                SendMessageWithErrorHandling(_gameMasterConnection, message);
             }
         }
+
+        private void SendMessageWithErrorHandling(Descriptor descriptor, Message message)
+        {
+            try
+            {
+                descriptor.SendMessage(message);
+            }
+            catch(Exception e)
+            {
+                HandleConnectionError(e);
+            }
+        }
+
         private void HandleEndGame(Message message)
         {
             foreach (var agent in _agentsConnections)
@@ -87,6 +101,37 @@ namespace CommunicationServerNamespace
                 agent.SendMessage(message);
                 _agentsConnections.ForEach(x => x.Dispose());
             }
+        }
+
+        private void HandleConnectionError(Exception connectionError)
+        {
+            if(connectionError is DisconnectedException)
+            {
+                if (connectionError.Data.Contains("agentId"))
+                    Log.Error("Agent {id} disconnected, closing server", (int)connectionError.Data["agentId"]);
+                else
+                    Log.Error("Game Master disconnected, closing server");
+                DisconnectAll();
+            }
+            else if(connectionError is ParsingException)
+            {
+                if (connectionError.Data.Contains("agentId"))
+                    Log.Warning("Failed to parse message from agent {id} ", (int)connectionError.Data["agentId"]);
+                else
+                    Log.Warning("Failed to parse message from GM");
+                Log.Warning("Incorrect message: {message}", ((ParsingException)connectionError).IncorrectMessage);
+            }
+            else
+            {
+                Log.Warning("Message handler threw an exception {exception} ", connectionError.ToString());
+            }
+        }
+
+        private void DisconnectAll()
+        {
+            foreach (var connection in _agentsConnections)
+                connection.Dispose();
+            _gameMasterConnection.Dispose();
         }
     }
 }
