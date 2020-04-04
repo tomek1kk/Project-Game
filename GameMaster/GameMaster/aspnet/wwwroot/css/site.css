@@ -29,35 +29,38 @@ body {
 }
 table {
     table-layout: fixed;
-    width: 100%;
 }
 #gameBoard td, #gameBoard tr {
     border: 1px solid black;
     color: white;
-    height: 30px;
 }
 
 #gameBoard .empty {
     background-color: white;
 }
 #gameBoard .redPlayer {
-    background-color: red;
+    background-image: url("../assets/red-player.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .bluePlayer {
-    background-color: blue;
+    background-image: url("../assets/blue-player.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .redPlayerWithPiece {
-    background-color: red;
+    background-image: url("../assets/red-player-with-piece.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .bluePlayerWithPiece {
-    background-color: blue;
+    background-image: url("../assets/blue-player-with-piece.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .piece {
-    background-color: seagreen;
+    background-image: url("../assets/piece.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .goal {
-    background-color: bisque;
-    color: black;
+    background-image: url("../assets/goal.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .discoveredNonGoal {
     background-color: white;

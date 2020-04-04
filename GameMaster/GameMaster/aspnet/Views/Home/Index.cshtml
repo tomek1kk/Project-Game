@@ -5,11 +5,9 @@
 <div class="text-center">
     <h1 class="display-4">Project Game</h1>
     <button class="btn-primary" onclick="StartGame()">Start game</button>
-    <div class="row d-flex">
-        <div class="col-sm-3"></div>
-        <table class="col-sm-6"><tbody id="gameBoard"></tbody></table>
-        <div class="col-sm-3"></div>
-    </div>
+    <table align="center">
+        <tbody id="gameBoard"></tbody>
+    </table>
 </div>
 
 @section scripts {
@@ -18,7 +16,10 @@
         var rows;
         var goalAreaHeight;
         var boardFields;
+        let fieldSize;
         var timeout = 500; //timeout in ms between refreshes
+
+
         function ConstructBoard() {
             $("#gameBoard tr").remove();
             var table = $("#gameBoard");
@@ -26,6 +27,8 @@
                 var row = $('<tr>');
                 for (var j = 0; j < columns; j++) {
                     var column = $('<td>');
+                    column.width(fieldSize);
+                    column.height(fieldSize);
                     row.append(column);
                     boardFields[i][j].handle = column;
                 }
@@ -39,7 +42,7 @@
                     boardFields[i][j].handle.addClass(boardFields[i][j].type.class);
                     if (i < goalAreaHeight)
                         boardFields[i][j].handle.addClass("redGoalArea");
-                    else if(i >= rows - goalAreaHeight)
+                    else if (i >= rows - goalAreaHeight)
                         boardFields[i][j].handle.addClass("blueGoalArea");
                 }
             }
@@ -62,6 +65,8 @@
                             { type: FieldTypesIndexed[boardModel.fields[i][j]], handle: null };
                     }
                 }
+
+                fieldSize = $(".text-center").width() * 0.8 / columns;
                 ConstructBoard();
                 ColorBoard();
                 setTimeout(FetchBoard, timeout);
