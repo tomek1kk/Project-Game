@@ -102,7 +102,11 @@ namespace Agent.MessageHandling
             PenaltyNotWaitedError penaltyNotWaitedError = (PenaltyNotWaitedError)message.GetPayload();
             var date = DateTime.Now;
             if (date < penaltyNotWaitedError.WaitUntill)
-                Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
+                new Task(() =>
+                {
+                    Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
+                    _tokenSource.Cancel(false);
+                }).Start();
         }
     }
 }
