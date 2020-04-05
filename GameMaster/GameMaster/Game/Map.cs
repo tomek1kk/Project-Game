@@ -28,6 +28,8 @@ namespace GameMaster.Game
             get { return (x >= 0 && x < _width && y >= 0 && y < _heigth) ? _fieldsArray[x, _heigth - 1 - y] : null; }
             private set { if (x >= 0 && x < _width && y >= 0 && y < _heigth) _fieldsArray[x, _heigth - 1 - y] = value; }
         }
+        public bool GameEnded { get => _redPoints == _numberOfGoals || _bluePoints == _numberOfGoals; }
+        public Team Winner { get => _redPoints == _numberOfGoals ? Team.Red : Team.Blue; }
 
         public Map
             (List<(int x, int y)> goalFields = null,
