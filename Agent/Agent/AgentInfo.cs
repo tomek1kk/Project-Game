@@ -69,7 +69,19 @@ namespace Agent
                 case MessageType.PutPieceResponse | MessageType.DestroyPieceRequest:
                     HasPiece = false;
                     break;
-
+                case MessageType.MoveError:
+                    var position = ((MoveError)received.GetPayload()).Position;
+                    Position = new Point(position.X.Value, position.Y.Value);
+                    break;
+                case MessageType.PutPieceError:
+                    if (((PutPieceError)received.GetPayload()).ErrorSubtype == "AgentNotHolding")
+                        HasPiece = false;
+                    break;
+                case MessageType.NotDefinedError:
+                    var notDefinedError = ((NotDefinedError)received.GetPayload());
+                    Position = new Point(notDefinedError.Position.X.Value, notDefinedError.Position.Y.Value);
+                    HasPiece = notDefinedError.HoldingPiece.Value;
+                    break;
                     //discovery??
             }
             Strategy.UpdateMap(received, Position);

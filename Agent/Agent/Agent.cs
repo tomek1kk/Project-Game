@@ -21,15 +21,15 @@ namespace Agent
 {
     public class Agent : IDisposable
     {
-        public AgentConfiguration _configuration { get; set; }
         private SenderReceiverQueueAdapter _communicator;
         private TcpClient _client;
-        public AgentInfo agentInfo;
+        public AgentConfiguration Configuration { get; set; }
+        public AgentInfo AgentInfo;
 
         public Agent(AgentConfiguration configuration)
         {
-            this._configuration = configuration;
-            _client = new TcpClient(_configuration.CsIp, _configuration.CsPort);
+            this.Configuration = configuration;
+            _client = new TcpClient(Configuration.CsIp, Configuration.CsPort);
             NetworkStream stream = _client.GetStream();
             this._communicator = new SenderReceiverQueueAdapter(new StreamMessageSenderReceiver(stream, new Parser()));
         }
@@ -38,7 +38,7 @@ namespace Agent
         {
             if (TryJoinGame())
             {
-                MessageHandler m = new MessageHandler(_communicator, agentInfo);
+                MessageHandler m = new MessageHandler(_communicator, AgentInfo);
                 m.HandleMessages();
             }
         }
@@ -46,7 +46,7 @@ namespace Agent
         {
             //not tested
 
-            Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = _configuration.TeamId } };
+            Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = Configuration.TeamId } };
             _communicator.Send(joinGameRequest);
 
             Log.Debug("Sending join game request: {@Request}", joinGameRequest);
@@ -76,8 +76,8 @@ namespace Agent
 
         public void SetAgentInfo(GameStarted gameInfo)
         {
-            var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(_configuration.Strategy);
-            this.agentInfo = new AgentInfo(strategy, gameInfo);
+            var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(Configuration.Strategy);
+            this.AgentInfo = new AgentInfo(strategy, gameInfo);
         }
 
         public void Dispose()
