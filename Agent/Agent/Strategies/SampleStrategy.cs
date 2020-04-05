@@ -10,7 +10,6 @@ namespace Agent.Strategies
 {
     public class MyField : Field
     {
-        int a;
     }
     public class SampleStrategy : Strategy
     {
@@ -129,8 +128,8 @@ namespace Agent.Strategies
         private Message MoveToGoals(AgentInfo agent)
         {
             var req = new MoveRequest();
-            (int, int) closestUndiscoveredGoal = FindUndiscoveredGoalCoordinates(agent);
-            (int, int) vectorToGoal = (closestUndiscoveredGoal.Item1 - agent.Position.X, closestUndiscoveredGoal.Item2 - agent.Position.Y);
+            (int X, int Y) closestUndiscoveredGoal = FindUndiscoveredGoalCoordinates(agent);
+            (int, int) vectorToGoal = (closestUndiscoveredGoal.X - agent.Position.X, closestUndiscoveredGoal.Y - agent.Position.Y);
 
             req.Direction = ChooseDirection(vectorToGoal);
             return new Message<MoveRequest>(req);
