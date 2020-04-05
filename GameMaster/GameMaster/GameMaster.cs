@@ -1,19 +1,11 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Error;
-using CommunicationLibrary.Request;
-using CommunicationLibrary.Response;
 using GameMaster.Configuration;
 using GameMaster.GUI;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
-using GameMaster.MessageHandlers;
-using CommunicationLibrary.Information;
 using Serilog;
 
 namespace GameMaster
@@ -116,7 +108,6 @@ namespace GameMaster
             {
                 _gameEnder.endGameNotHandled = false;
                 Log.Information("ErrorGameEnd");
-                _gameEnder.ErrorGameEndHandler(_map, _communicator);
             }
             lock(_gameEnder)
             {

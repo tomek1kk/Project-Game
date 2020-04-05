@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using GameMaster.GUI;
 using GameMaster.Configuration;
-using CommunicationLibrary.Response;
-using CommunicationLibrary.Model;
 
 namespace GameMaster.Game
 {
