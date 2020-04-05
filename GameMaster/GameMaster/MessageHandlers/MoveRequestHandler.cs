@@ -31,6 +31,7 @@ namespace GameMaster.MessageHandlers
 
         protected override bool CheckRequest(Map map)
         {
+            _moveError = false;
             int x = map.GetPlayerById(_agentId).Position.X;
             int y = map.GetPlayerById(_agentId).Position.Y;
             switch (_direction)
