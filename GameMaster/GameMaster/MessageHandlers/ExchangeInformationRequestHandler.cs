@@ -10,6 +10,7 @@ namespace GameMaster.MessageHandlers
 {
     public class ExchangeInformationRequestHandler : MessageHandler
     {
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);

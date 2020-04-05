@@ -17,6 +17,7 @@ namespace GameMaster.MessageHandlers
         private bool _sham;
         private bool _hasPiece;
 
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -39,7 +40,6 @@ namespace GameMaster.MessageHandlers
             {
                 return new Message<NotDefinedError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
                         Position = (Position)map.GetPlayerById(_agentId).Position,
@@ -49,7 +49,6 @@ namespace GameMaster.MessageHandlers
             }
             return new Message<CheckHoldedPieceResponse>()
             {
-                AgentId = _agentId,
                 MessagePayload = new CheckHoldedPieceResponse()
                 {
                     Sham = _sham
