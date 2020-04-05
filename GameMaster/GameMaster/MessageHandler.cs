@@ -34,7 +34,8 @@ namespace GameMaster.Game
                 Execute(map);
             SetTimeout(configuration, map);
             var response = GetResponse(map);
-            response.AgentId = _agentId;
+            if (response.AgentId == null)
+                response.AgentId = _agentId;
             Log.Debug("Prepared response: {@Response}", response);
             return response;
         }

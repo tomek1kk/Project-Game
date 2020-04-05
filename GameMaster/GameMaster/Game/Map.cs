@@ -13,6 +13,7 @@ namespace GameMaster.Game
     {
         private AbstractField[,] _fieldsArray;
         private Dictionary<int, Player> _players;
+        private List <(int, int)> _exchangeInformationList;
         private int _goalAreaHeight;
         private int _heigth;
         private int _width;
@@ -63,6 +64,7 @@ namespace GameMaster.Game
                 this[players[i].x, players[i].y].MoveHere(player);
                 _players.Add(player.AgentId, player);
             }
+            _exchangeInformationList = new List<(int, int)>();
         }
         public Map(GMConfiguration config)
         {
@@ -80,6 +82,7 @@ namespace GameMaster.Game
                     this[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
+            _exchangeInformationList = new List<(int, int)>();
         }
 
         public int ClosestPieceForField(AbstractField field)
@@ -96,7 +99,6 @@ namespace GameMaster.Game
             FieldType[,] fieldsForGUI = new FieldType[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
-                    //fieldsForGUI[i, j] = FieldType.Sham;
                     fieldsForGUI[i, j] = _fieldsArray[i, j].GetFieldTypeForGUI();
             return new BoardModel()
             {
@@ -226,6 +228,22 @@ namespace GameMaster.Game
         private static int Manhattan(AbstractField field, int x, int y)
         {
             return Math.Abs(field.X - x) + Math.Abs(field.Y - y);
+        }
+        public void SaveInformationExchange(int requester, int respondent)
+        {
+            _exchangeInformationList.Add((requester, respondent));
+        }
+        public bool ValidateAndRemoveInformationExchange(int requester, int respondent)
+        {
+            for (int i = 0; i < _exchangeInformationList.Count; i++)
+            {
+                if(_exchangeInformationList[i] == (requester, respondent))
+                {
+                    _exchangeInformationList.RemoveAt(i);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
