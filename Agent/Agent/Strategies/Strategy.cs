@@ -137,9 +137,7 @@ namespace Agent.Strategies
         }
         virtual protected void PenaltyNotWaitedErrorResponseHandler(PenaltyNotWaitedError penaltyNotWaitedError)
         {
-            var date = DateTime.Now;
-            if (date < penaltyNotWaitedError.WaitUntill)
-                Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
+
         }
     }
 }

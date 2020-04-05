@@ -35,6 +35,7 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
+            //TODO:
             //Temporary, because currently there is no PickPiece penalty
             ParsePenalty(MessageType.PickPieceResponse, penalties.DestroyPiece);
         }
@@ -86,16 +87,22 @@ namespace Agent.MessageHandling
                 }
                 ).Start();
             }
-            else if(received.MessageId.IsError())
+            else if (received.MessageId.IsError())
             {
-                //temporary, for agent to not hang up on error and to not spam game master when
-                //error is repeated
-                Thread.Sleep(100);
+                HandleErrorMessage(received);
                 _tokenSource.Cancel();
             }
-            //TODO: create code responding to 
-            // PenaltyNotWaitedError and reacting better to other errors
             _agentInfo.UpdateFromMessage(received);
+        }
+
+        private void HandleErrorMessage(Message message)
+        {
+            if (message.MessageId != MessageType.PenaltyNotWaitedError)
+                return;
+            PenaltyNotWaitedError penaltyNotWaitedError = (PenaltyNotWaitedError)message.GetPayload();
+            var date = DateTime.Now;
+            if (date < penaltyNotWaitedError.WaitUntill)
+                Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
         }
     }
 }
