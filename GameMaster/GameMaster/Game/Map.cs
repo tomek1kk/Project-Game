@@ -60,7 +60,7 @@ namespace GameMaster.Game
                 this[shamPieces[i].x, shamPieces[i].y].PutGeneratedPiece(new ShamPiece());
             for (int i = 0; players != null && i < players.Count; i++)
             {
-                Player player = new Player(players[i].team, players[i].id);
+                Player player = new Player(players[i].team, players[i].id, false);
                 this[players[i].x, players[i].y].MoveHere(player);
                 _players.Add(player.AgentId, player);
             }
@@ -162,9 +162,19 @@ namespace GameMaster.Game
                 return false;
             var rand = new Random();
             int idx = freeFields[rand.Next(freeFields.Count)];
-            Player player = new Player(team, agentId);
+
+            Player player = new Player(team, agentId, TeamHasNoPlayers(team));
             this[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
+            return true;
+        }
+        public bool TeamHasNoPlayers(Team team)
+        {
+            foreach(var tuple in _players)
+            {
+                if (tuple.Value.Team == team)
+                    return false;
+            }
             return true;
         }
         public Player GetPlayerById(int agentId)
