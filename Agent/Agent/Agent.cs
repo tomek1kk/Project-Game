@@ -38,23 +38,7 @@ namespace Agent
                 HandleJoinTimeError);
         }
 
-        private void HandleJoinTimeError(Exception ex)
-        {
-            if (ex is DisconnectedException)
-            {
-                Log.Error("Disconnected. Closing");
-                _joiningGame.Cancel();
-            }
-            else if (ex is ParsingException)
-            {
-                Log.Error("Parse error while joining. Not recoverable. Closing");
-                Log.Error("{incorrectMessage}", (ex as ParsingException).IncorrectMessage);
-            }
-            else
-            {
-                Log.Error("Error in queue callback");
-            }
-        }
+        
 
         public void StartListening()
         {
@@ -66,7 +50,6 @@ namespace Agent
         }
         public bool TryJoinGame()
         {
-
             Task<bool> t = new Task<bool>(() => HandleGameJoining());
             t.Start();
             try
@@ -83,38 +66,68 @@ namespace Agent
 
         private bool HandleGameJoining()
         {
-            Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = Configuration.TeamId } };
-            _communicator.Send(joinGameRequest);
+            try
+            {
+                Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = Configuration.TeamId } };
+                _communicator.Send(joinGameRequest);
 
-            Log.Debug("Sending join game request: {@Request}", joinGameRequest);
-            Message m = _communicator.Take();
-            if (m.MessageId != MessageType.JoinGameResponse)
+                Log.Debug("Sending join game request: {@Request}", joinGameRequest);
+                Message m = _communicator.Take();
+                if (m.MessageId != MessageType.JoinGameResponse)
+                {
+                    Log.Error("No responce for join game request");
+                    return false;
+                }
+                var joinGameResponse = (JoinGameResponse)m.GetPayload();
+                if (!(joinGameResponse.Accepted ?? false))
+                {
+                    Log.Information("Join game request declined");
+                    return false;
+                }
+                m = _communicator.Take();
+                if (m.MessageId != MessageType.GameStarted)
+                {
+                    Log.Error("No information about starting game");
+                    return false;
+                }
+                var gameStarted = (GameStarted)m.GetPayload();
+                SetAgentInfo(gameStarted);
+                Log.Information("GAME STARTED");
+                return true;
+            }
+            catch(DisconnectedException)
             {
-                Log.Error("No responce for join game request");
+                Log.Error("Disconnected, closing");
                 return false;
             }
-            var joinGameResponse = (JoinGameResponse)m.GetPayload();
-            if (!(joinGameResponse.Accepted ?? false))
-            {
-                Log.Information("Join game request declined");
-                return false;
-            }
-            m = _communicator.Take();
-            if (m.MessageId != MessageType.GameStarted)
-            {
-                Log.Error("No information about starting game");
-                return false;
-            }
-            var gameStarted = (GameStarted)m.GetPayload();
-            SetAgentInfo(gameStarted);
-            Log.Information("GAME STARTED");
-            return true;
         }
 
         public void SetAgentInfo(GameStarted gameInfo)
         {
             var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(Configuration.Strategy);
             this.AgentInfo = new AgentInfo(strategy, gameInfo);
+        }
+
+        private void HandleJoinTimeError(Exception ex)
+        {
+            lock (this)
+            {
+                if (_joiningGame.IsCancellationRequested) return;
+                if (ex is DisconnectedException)
+                {
+                    Log.Error("Disconnected, closing");
+                    _joiningGame.Cancel();
+                }
+                else if (ex is ParsingException)
+                {
+                    Log.Error("Parse error while joining. Not recoverable. Closing");
+                    Log.Error("{incorrectMessage}", (ex as ParsingException).IncorrectMessage);
+                }
+                else
+                {
+                    Log.Error("Error in queue callback");
+                }
+            }
         }
 
         public void Dispose()
