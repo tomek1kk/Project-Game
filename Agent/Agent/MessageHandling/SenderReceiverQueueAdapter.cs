@@ -12,14 +12,23 @@ namespace Agent.MessageHandling
     {
         private BlockingCollection<Message> _queue = new BlockingCollection<Message>();
         private IMessageSenderReceiver _adaptedSenderReceiver;
-        public SenderReceiverQueueAdapter(IMessageSenderReceiver adaptedSenderReceiver)
+        private Action<Exception> _errorCallback;
+        public SenderReceiverQueueAdapter(IMessageSenderReceiver adaptedSenderReceiver, Action<Exception> errorCallback)
         {
             _adaptedSenderReceiver = adaptedSenderReceiver;
-            _adaptedSenderReceiver.StartReceiving(message => _queue.Add(message));
+            _errorCallback = errorCallback;
+            _adaptedSenderReceiver.StartReceiving(
+                message => _queue.Add(message),
+                exception=>_errorCallback?.Invoke(exception));
         }
         public Message Take()
         {
             return _queue.Take();
+        }
+
+        public void SetErrorCallback(Action<Exception> errorCallback)
+        {
+            _errorCallback = errorCallback;
         }
 
         public Message TryTake(CancellationToken cancellationToken, int millisecondsTimeout)

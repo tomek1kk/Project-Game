@@ -16,6 +16,8 @@ using CommunicationLibrary.Response;
 using CommunicationLibrary.Information;
 using Agent.Strategies;
 using Serilog;
+using CommunicationLibrary.Exceptions;
+using System.Threading.Tasks;
 
 namespace Agent
 {
@@ -25,13 +27,33 @@ namespace Agent
         private TcpClient _client;
         public AgentConfiguration Configuration { get; set; }
         public AgentInfo AgentInfo;
+        private CancellationTokenSource _joiningGame = new CancellationTokenSource();
 
         public Agent(AgentConfiguration configuration)
         {
             this.Configuration = configuration;
             _client = new TcpClient(Configuration.CsIp, Configuration.CsPort);
             NetworkStream stream = _client.GetStream();
-            this._communicator = new SenderReceiverQueueAdapter(new StreamMessageSenderReceiver(stream, new Parser()));
+            this._communicator = new SenderReceiverQueueAdapter(new StreamMessageSenderReceiver(stream, new Parser()),
+                HandleJoinTimeError);
+        }
+
+        private void HandleJoinTimeError(Exception ex)
+        {
+            if (ex is DisconnectedException)
+            {
+                Log.Error("Disconnected. Closing");
+                _joiningGame.Cancel();
+            }
+            else if (ex is ParsingException)
+            {
+                Log.Error("Parse error while joining. Not recoverable. Closing");
+                Log.Error("{incorrectMessage}", (ex as ParsingException).IncorrectMessage);
+            }
+            else
+            {
+                Log.Error("Error in queue callback");
+            }
         }
 
         public void StartListening()
@@ -44,8 +66,22 @@ namespace Agent
         }
         public bool TryJoinGame()
         {
-            //not tested
 
+            Task<bool> t = new Task<bool>(() => HandleGameJoining());
+            try
+            {
+                t.Wait(_joiningGame.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+            return t.Result;
+            
+        }
+
+        private bool HandleGameJoining()
+        {
             Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = Configuration.TeamId } };
             _communicator.Send(joinGameRequest);
 
