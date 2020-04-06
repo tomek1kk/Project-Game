@@ -71,16 +71,16 @@ table {
     color: black;
 }
 #gameBoard .sham {
-    background-color: saddlebrown;
-    color: black;
+    background-image: url("../assets/sham.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .redPlayerWithSham {
-    background-color: darkred;
-    color: black;
+    background-image: url("../assets/red-player-sham.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .bluePlayerWithSham {
-    background-color: darkblue;
-    color: black;
+    background-image: url("../assets/blue-player-sham.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .redGoalArea {
     border-color: crimson;
