@@ -68,6 +68,7 @@ namespace Agent
         {
 
             Task<bool> t = new Task<bool>(() => HandleGameJoining());
+            t.Start();
             try
             {
                 t.Wait(_joiningGame.Token);
