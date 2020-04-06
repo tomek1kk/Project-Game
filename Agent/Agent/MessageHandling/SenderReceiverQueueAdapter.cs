@@ -13,7 +13,7 @@ namespace Agent.MessageHandling
         private BlockingCollection<Message> _queue = new BlockingCollection<Message>();
         private IMessageSenderReceiver _adaptedSenderReceiver;
         private Action<Exception> _errorCallback;
-        public SenderReceiverQueueAdapter(IMessageSenderReceiver adaptedSenderReceiver, Action<Exception> errorCallback)
+        public SenderReceiverQueueAdapter(IMessageSenderReceiver adaptedSenderReceiver, Action<Exception> errorCallback = null)
         {
             _adaptedSenderReceiver = adaptedSenderReceiver;
             _errorCallback = errorCallback;
