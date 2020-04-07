@@ -63,12 +63,12 @@ table {
     background-size: 100% 100%;
 }
 #gameBoard .discoveredNonGoal {
-    background-color: white;
-    color: black;
+    background-image: url("../assets/discovered-non-goal.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .discoveredGoal {
-    background-color: bisque;
-    color: black;
+    background-image: url("../assets/discovered-goal.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .sham {
     background-image: url("../assets/sham.jpg");
