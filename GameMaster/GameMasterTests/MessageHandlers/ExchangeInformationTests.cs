@@ -112,10 +112,10 @@ namespace GameMasterTests.MessageHandlers.Tests
                 }
             };
             var exchangeInformationHandler = new ExchangeInformationResponseHandler();
-            Message<ExchangeInformationResponse> expectedResult = new Message<ExchangeInformationResponse>()
+            Message<ExchangeInformationGMResponse> expectedResult = new Message<ExchangeInformationGMResponse>()
             {
                 AgentId = 1,
-                MessagePayload = new ExchangeInformationResponse()
+                MessagePayload = new ExchangeInformationGMResponse()
                 {
                     RespondToID = 1
                 }

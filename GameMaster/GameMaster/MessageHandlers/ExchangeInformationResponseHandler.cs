@@ -51,10 +51,16 @@ namespace GameMaster.MessageHandlers
                     }
                 };
             }
-            return new Message<ExchangeInformationResponse>()
+            return new Message<ExchangeInformationGMResponse>()
             {
                 AgentId = _requester,
-                MessagePayload = _message
+                MessagePayload = new ExchangeInformationGMResponse()
+                {
+                    RespondToID = _message.RespondToID,
+                    Distances = _message.Distances,
+                    RedTeamGoalAreaInformations = _message.RedTeamGoalAreaInformations,
+                    BlueTeamGoalAreaInformations = _message.BlueTeamGoalAreaInformations
+                }
             };
         }
 
