@@ -34,8 +34,7 @@ namespace CommunicationLibrary
         PutPieceError = 903,
         PenaltyNotWaitedError = 904,
         NotDefinedError = 905,
-
-
+        ExchangeInformationGMResponse = 111,
     }
     public static class MessageTypeExtensions
     {
@@ -66,7 +65,9 @@ namespace CommunicationLibrary
             { MessageType.GameStarted, typeof(GameStarted) },
             { MessageType.GameEnded, typeof(GameEnded) },
             { MessageType.PenaltyNotWaitedError, typeof(PenaltyNotWaitedError)  },
-            { MessageType.RedirectedExchangeInformationRequest, typeof(RedirectedExchangeInformationRequest) }
+            { MessageType.RedirectedExchangeInformationRequest, typeof(RedirectedExchangeInformationRequest) },
+            { MessageType.ExchangeInformationGMResponse, typeof(ExchangeInformationGMResponse) }
+
         };
 
         public static bool IsError(this MessageType type) => ErrorMessages.Contains(type);

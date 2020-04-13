@@ -236,6 +236,29 @@ namespace CommunicationLibrary.Tests
         }
 
         [TestMethod]
+        public void TestParseExchangeInformationGMResponse()
+        {
+            // Arrange
+            string expected = "{\"MessagePayload\":{\"RespondToID\":10,\"Distances\":[10,20,30,50],\"RedTeamGoalAreaInformations\":[\"r1\",\"r2 \"],\"BlueTeamGoalAreaInformations\":[\"i1\",\"i2\"]},\"MessageId\":111,\"AgentId\":null}";
+            var message = new Message<ExchangeInformationGMResponse>()
+            {
+                MessagePayload = new ExchangeInformationGMResponse()
+                {
+                    BlueTeamGoalAreaInformations = new List<string>() { "i1", "i2" },
+                    RedTeamGoalAreaInformations = new List<string>() { "r1", "r2 " },
+                    RespondToID = 10,
+                    Distances = new List<int>() { 10, 20, 30, 50 }
+                }
+            };
+
+            // Act
+            var result = parser.AsString(message);
+
+            // Assert
+            result.Should().BeEquivalentTo(expected);
+        }
+
+        [TestMethod]
         public void TestParseJoinGameResponse()
         {
             // Arrange
