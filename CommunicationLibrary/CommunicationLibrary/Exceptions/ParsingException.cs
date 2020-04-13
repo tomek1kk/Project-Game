@@ -6,12 +6,14 @@ namespace CommunicationLibrary.Exceptions
 {
     public class ParsingException : Exception
     {
-
-        public ParsingException() : base("Parsing failed")
+        public string IncorrectMessage { get; }
+        public ParsingException(string incorrectMessage) : base("Parsing failed")
         {
+            IncorrectMessage = incorrectMessage;
         }
-        public ParsingException(Exception e) : base("Parsing failed", e)
+        public ParsingException(string incorrectMessage, Exception e) : base("Parsing failed", e)
         {
+            IncorrectMessage = incorrectMessage;
         }
     }
 }

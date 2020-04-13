@@ -16,6 +16,8 @@ using CommunicationLibrary.Response;
 using CommunicationLibrary.Information;
 using Agent.Strategies;
 using Serilog;
+using CommunicationLibrary.Exceptions;
+using System.Threading.Tasks;
 
 namespace Agent
 {
@@ -25,14 +27,18 @@ namespace Agent
         private TcpClient _client;
         public AgentConfiguration Configuration { get; set; }
         public AgentInfo AgentInfo;
+        private CancellationTokenSource _joiningGame = new CancellationTokenSource();
 
         public Agent(AgentConfiguration configuration)
         {
             this.Configuration = configuration;
             _client = new TcpClient(Configuration.CsIp, Configuration.CsPort);
             NetworkStream stream = _client.GetStream();
-            this._communicator = new SenderReceiverQueueAdapter(new StreamMessageSenderReceiver(stream, new Parser()));
+            this._communicator = new SenderReceiverQueueAdapter(new StreamMessageSenderReceiver(stream, new Parser()),
+                HandleJoinTimeError);
         }
+
+        
 
         public void StartListening()
         {
@@ -44,40 +50,84 @@ namespace Agent
         }
         public bool TryJoinGame()
         {
-            //not tested
+            Task<bool> t = new Task<bool>(() => HandleGameJoining());
+            t.Start();
+            try
+            {
+                t.Wait(_joiningGame.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                return false;
+            }
+            return t.Result;
+            
+        }
 
-            Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = Configuration.TeamId } };
-            _communicator.Send(joinGameRequest);
+        private bool HandleGameJoining()
+        {
+            try
+            {
+                Message joinGameRequest = new Message<JoinGameRequest>() { MessagePayload = new JoinGameRequest { TeamId = Configuration.TeamId } };
+                _communicator.Send(joinGameRequest);
 
-            Log.Debug("Sending join game request: {@Request}", joinGameRequest);
-            Message m = _communicator.Take();
-            if (m.MessageId != MessageType.JoinGameResponse)
+                Log.Debug("Sending join game request: {@Request}", joinGameRequest);
+                Message m = _communicator.Take();
+                if (m.MessageId != MessageType.JoinGameResponse)
+                {
+                    Log.Error("No responce for join game request");
+                    return false;
+                }
+                var joinGameResponse = (JoinGameResponse)m.GetPayload();
+                if (!(joinGameResponse.Accepted ?? false))
+                {
+                    Log.Information("Join game request declined");
+                    return false;
+                }
+                m = _communicator.Take();
+                if (m.MessageId != MessageType.GameStarted)
+                {
+                    Log.Error("No information about starting game");
+                    return false;
+                }
+                var gameStarted = (GameStarted)m.GetPayload();
+                SetAgentInfo(gameStarted);
+                Log.Information("GAME STARTED");
+                return true;
+            }
+            catch(DisconnectedException)
             {
-                Log.Error("No responce for join game request");
+                Log.Error("Disconnected, closing");
                 return false;
             }
-            var joinGameResponse = (JoinGameResponse)m.GetPayload();
-            if (!(joinGameResponse.Accepted ?? false))
-            {
-                Log.Information("Join game request declined");
-                return false;
-            }
-            m = _communicator.Take();
-            if (m.MessageId != MessageType.GameStarted)
-            {
-                Log.Error("No information about starting game");
-                return false;
-            }
-            var gameStarted = (GameStarted)m.GetPayload();
-            SetAgentInfo(gameStarted);
-            Log.Information("GAME STARTED");
-            return true;
         }
 
         public void SetAgentInfo(GameStarted gameInfo)
         {
             var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(Configuration.Strategy);
             this.AgentInfo = new AgentInfo(strategy, gameInfo);
+        }
+
+        private void HandleJoinTimeError(Exception ex)
+        {
+            lock (this)
+            {
+                if (_joiningGame.IsCancellationRequested) return;
+                if (ex is DisconnectedException)
+                {
+                    Log.Error("Disconnected, closing");
+                    _joiningGame.Cancel();
+                }
+                else if (ex is ParsingException)
+                {
+                    Log.Error("Parse error while joining. Not recoverable. Closing");
+                    Log.Error("{incorrectMessage}", (ex as ParsingException).IncorrectMessage);
+                }
+                else
+                {
+                    Log.Error("Error in queue callback");
+                }
+            }
         }
 
         public void Dispose()
