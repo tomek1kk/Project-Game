@@ -15,18 +15,20 @@ namespace CommunicationServerNamespace
             .CreateLogger();
 
             Log.Information("Start communication server.");
-            CommunicationServer communicationServer = new CommunicationServer();
+            using (CommunicationServer communicationServer = new CommunicationServer())
+            {
+                Log.Information("Connect Game Master:");
+                communicationServer.ConnectGameMaster();
 
-            Log.Information("Connect Game Master:");
-            communicationServer.ConnectGameMaster();
+                Log.Information("Connect Agents:");
+                communicationServer.ConnectAgents();
 
-            Log.Information("Connect Agents:");
-            communicationServer.ConnectAgents();
+                Log.Information("Wait for game over");
+                communicationServer.WaitForGameOver();
 
-            Log.Information("Wait for game over");
-            communicationServer.WaitForGameOver();
+                Console.WriteLine("Koniec CS");
+            }
 
-            Console.WriteLine("Koniec CS");
         }
     }
 }

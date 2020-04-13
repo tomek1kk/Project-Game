@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace CommunicationServerNamespace
 {
-    public class CommunicationServer
+    public class CommunicationServer : IDisposable
     {
         private List<AgentDescriptor> _agentsConnections = new List<AgentDescriptor>();
         private Descriptor _gameMasterConnection;
@@ -119,51 +119,49 @@ namespace CommunicationServerNamespace
             {
                 agent.SendMessage(message);
             }
-            DisconnectAll();
+            StopWorking();
         }
 
         private void HandleConnectionError(Exception connectionError)
         {
-            if (connectionError is DisconnectedException)
+            lock (this.IpAddress)
             {
-                if (connectionError.Data.Contains("agentId"))
-                    Log.Error("Agent {id} disconnected, closing server", (int)connectionError.Data["agentId"]);
+                if (_gameOver.Task.IsCompleted) return;
+                if (connectionError is DisconnectedException)
+                {
+                    if (connectionError.Data.Contains("agentId"))
+                        Log.Error("Agent {id} disconnected, closing server", (int)connectionError.Data["agentId"]);
+                    else
+                        Log.Error("Game Master disconnected, closing server");
+                    StopWorking();
+                }
+                else if (connectionError is ParsingException)
+                {
+                    if (connectionError.Data.Contains("agentId"))
+                        Log.Warning("Failed to parse message from agent {id} ", (int)connectionError.Data["agentId"]);
+                    else
+                        Log.Warning("Failed to parse message from GM");
+                    Log.Warning("Incorrect message: {message}", ((ParsingException)connectionError).IncorrectMessage);
+                }
                 else
-                    Log.Error("Game Master disconnected, closing server");
-                DisconnectAll();
-            }
-            else if (connectionError is ParsingException)
-            {
-                if (connectionError.Data.Contains("agentId"))
-                    Log.Warning("Failed to parse message from agent {id} ", (int)connectionError.Data["agentId"]);
-                else
-                    Log.Warning("Failed to parse message from GM");
-                Log.Warning("Incorrect message: {message}", ((ParsingException)connectionError).IncorrectMessage);
-            }
-            else
-            {
-                Log.Warning("Message handler threw an exception {exception} ", connectionError.ToString());
+                {
+                    Log.Warning("Message handler threw an exception {exception} ", connectionError.ToString());
+                }
             }
         }
 
-        private void DisconnectAll()
+        private void StopWorking()
         {
-            //disconnecting sender receivers has to be done on a separate thread
-            //because this method is called in sender receiver receiving thread
-            //so sender receiver thread will try to join to itself and cause a deadlock
-            Task.Run(() =>
-            {
-                if (Monitor.TryEnter(this.IpAddress))
-                {
-                    _connectAgents.Cancel();
-                    foreach (var connection in _agentsConnections)
-                        connection.Dispose();
-                    _gameMasterConnection.Dispose();
-                    _gameOver.TrySetResult(true);
-                    Monitor.Exit(this.IpAddress);
-                }
-            });
-            
+            _gameOver.TrySetResult(true);
+            _connectAgents.Cancel();
+        }
+
+        public void Dispose()
+        {
+            foreach (var connection in _agentsConnections)
+                connection.Dispose();
+            _gameMasterConnection.Dispose();
+            _gameOver.TrySetResult(true);
         }
     }
 }
