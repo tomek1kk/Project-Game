@@ -54,8 +54,9 @@ namespace Agent.MessageHandling
             {
                 _underPenalty = false;
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
+                Message request = _agentInfo.Strategy.MakeDecision(_agentInfo);
                 Log.Debug("Made decision {@Decision}", actionRequest);
-                SendToGM(actionRequest);
+                SendToGM(request);
 
                 if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();

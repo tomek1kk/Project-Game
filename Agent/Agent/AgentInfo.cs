@@ -8,7 +8,9 @@ using CommunicationLibrary;
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Information;
 using CommunicationLibrary.Model;
+using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
+using System.Linq;
 
 namespace Agent
 {
@@ -27,7 +29,7 @@ namespace Agent
         }
 
         public int LeaderId => _gameStartedMessage.LeaderId;
-        public IEnumerable<int> AlliesIds => _gameStartedMessage.AlliesIds;
+        public List<int> AlliesIds => _gameStartedMessage.AlliesIds.ToList();
         public int GoalAreaSize => _gameStartedMessage.GoalAreaSize;
         public Point Position { get; private set; }
         public bool IsLeader { get; private set; }
@@ -57,6 +59,9 @@ namespace Agent
         {
             switch (received.MessageId)
             {
+                case MessageType.ExchangeInformationResponse:
+                    RequestResponse((ExchangeInformationResponse)received.GetPayload());
+                    break;
                 case MessageType.CheckHoldedPieceResponse:
                     CheckHoldedPieceHandler((CheckHoldedPieceResponse)received.GetPayload());
                     break;
@@ -99,6 +104,24 @@ namespace Agent
         private void MoveResponseHandler(MoveResponse moveResponse)
         {
             Position = new Point(moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value);
+        }
+
+        public Message BegForInfo()
+        {
+            var req = new ExchangeInformationRequest();
+            Random r = new Random();
+            req.AskedAgentId = r.Next(AlliesIds.Count);
+            return new Message<ExchangeInformationRequest>(req);
+        }
+        private void GiveInfo(int AgentId)
+        {
+           
+        }
+
+        public void RequestResponse(ExchangeInformationResponse response)
+        {
+
+            
         }
     }
 }
