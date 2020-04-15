@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using Agent.AgentBoard;
+using Agent.Board;
 using CommunicationLibrary;
 using CommunicationLibrary.Request;
+using CommunicationLibrary.Response;
 
 namespace Agent.Strategies
 {
@@ -10,6 +11,7 @@ namespace Agent.Strategies
     {
         Message MakeDecision(AgentInfo agent);
         void UpdateMap(Message message, Point position);
+        void GetInfo(ExchangeInformationGMResponse response);
     }
 }
 

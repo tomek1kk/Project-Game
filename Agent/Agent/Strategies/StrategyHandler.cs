@@ -12,11 +12,11 @@ namespace Agent.Strategies
     public class StrategyHandler
     {
         private readonly Dictionary<StrategyType, Strategy> handlers;
-        public StrategyHandler(int width, int height)
+        public StrategyHandler(int width, int height, String teamId, int goalAreaSize)
         {
             handlers = new Dictionary<StrategyType, Strategy>()
             {
-                { StrategyType.SampleStrategy, new SampleStrategy(width, height)}
+                { StrategyType.SampleStrategy, new SampleStrategy(width, height, teamId, goalAreaSize)}
             };
         }
         public Strategy GetStrategy(StrategyType t) => handlers[t];

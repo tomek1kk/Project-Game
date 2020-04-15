@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Agent.AgentBoard
+namespace Agent.Board
 {
     public class Field
     {

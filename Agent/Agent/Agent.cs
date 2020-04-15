@@ -10,7 +10,7 @@ using System.Net.Sockets;
 using System.Text.Json;
 using System.Threading;
 using FibonacciHeap;
-using Agent.AgentBoard;
+using Agent.Board;
 using Agent.MessageHandling;
 using CommunicationLibrary.Response;
 using CommunicationLibrary.Information;
@@ -104,7 +104,8 @@ namespace Agent
 
         public void SetAgentInfo(GameStarted gameInfo)
         {
-            var strategy = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value).GetStrategy(Configuration.Strategy);
+            var sh = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value, gameInfo.TeamId, gameInfo.GoalAreaSize);
+            var strategy = sh.GetStrategy(Configuration.Strategy);
             this.AgentInfo = new AgentInfo(strategy, gameInfo);
         }
 
