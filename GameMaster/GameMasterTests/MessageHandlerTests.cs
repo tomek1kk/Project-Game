@@ -21,6 +21,10 @@ namespace GameMasterTests
         {
             public int AgentId => _agentId;
 
+            protected override void ClearHandler()
+            {
+                return;
+            }
             protected override void CheckAgentPenaltyIfNeeded(Map map)
             {
                 return;

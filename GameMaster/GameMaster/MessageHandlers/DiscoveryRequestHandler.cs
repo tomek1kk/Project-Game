@@ -19,6 +19,7 @@ namespace GameMaster.MessageHandlers
         private int? _distanceW;
         private int? _distanceNW;
 
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -46,7 +47,6 @@ namespace GameMaster.MessageHandlers
         {
             return new Message<DiscoveryResponse>()
             {
-                AgentId = _agentId,
                 MessagePayload = new DiscoveryResponse()
                 {
                     DistanceFromCurrent = _distanceFromCurrent,

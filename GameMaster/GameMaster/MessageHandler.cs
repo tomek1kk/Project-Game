@@ -18,6 +18,7 @@ namespace GameMaster.Game
         {
             Log.Information("Processing message from agent {Agent}", _agentId);
             Log.Debug("Received message content: {@Message}", message);
+            ClearHandler();
             BaseReadMessage(message);
             CheckAgentPenaltyIfNeeded(map);
             if (_hasTimePenalty)
@@ -26,7 +27,8 @@ namespace GameMaster.Game
                 Execute(map);
             SetTimeout(configuration, map);
             var response = GetResponse(map);
-            response.AgentId = _agentId;
+            if (response.AgentId == null)
+                response.AgentId = _agentId;
             Log.Debug("Prepared response: {@Response}", response);
             return response;
         }
@@ -36,6 +38,7 @@ namespace GameMaster.Game
         protected abstract void ReadMessage(MessagePayload payload);
         protected abstract void SetTimeout(GMConfiguration config, Map map);
         protected abstract void CheckAgentPenaltyIfNeeded(Map map);
+        protected abstract void ClearHandler();
         private Message GetPenaltyError(Map map)
         {
             return new Message<PenaltyNotWaitedError>()

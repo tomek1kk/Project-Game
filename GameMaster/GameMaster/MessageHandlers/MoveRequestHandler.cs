@@ -12,11 +12,16 @@ namespace GameMaster.MessageHandlers
     public class MoveRequestHandler : MessageHandler
     {
         private string _direction;
-        private bool _errorMessage = false;
-        private bool _moveError = false;
+        private bool _errorMessage;
+        private bool _moveError;
         private int _newX;
         private int _newY;
 
+        protected override void ClearHandler()
+        {
+            _errorMessage = false;
+            _moveError = false;
+        }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -72,7 +77,6 @@ namespace GameMaster.MessageHandlers
             if (_errorMessage)
                 return new Message<NotDefinedError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
                         Position = (Position)map.GetPlayerById(_agentId).Position,
@@ -82,7 +86,6 @@ namespace GameMaster.MessageHandlers
             else if (_moveError)
                 return new Message<MoveError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new MoveError()
                     {
                         Position = (Position)map.GetPlayerById(_agentId).Position

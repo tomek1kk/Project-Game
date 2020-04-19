@@ -21,7 +21,7 @@ namespace GameMaster
         private JoinGameRequestHandler joinGameRequestHandler = new JoinGameRequestHandler();
         private PickPieceRequestHandler pickPieceRequestHandler = new PickPieceRequestHandler();
         private PutPieceRequestHandler putPieceRequestHandler = new PutPieceRequestHandler();
-        private RedirectExchangeInformationRequestHandler redirectExchangeInformationRequestHandler = new RedirectExchangeInformationRequestHandler();
+        private ExchangeInformationResponseHandler exchangeInformationResponseHandler = new ExchangeInformationResponseHandler();
 
         public ProxyMessageHandler()
         {
@@ -35,7 +35,7 @@ namespace GameMaster
                 { MessageType.JoinGameRequest, joinGameRequestHandler },
                 { MessageType.PickPieceRequest, pickPieceRequestHandler },
                 { MessageType.PutPieceRequest, putPieceRequestHandler },
-                { MessageType.RedirectedExchangeInformationRequest, redirectExchangeInformationRequestHandler }
+                { MessageType.ExchangeInformationResponse, exchangeInformationResponseHandler }
             };
         }
 

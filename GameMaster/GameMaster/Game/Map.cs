@@ -10,6 +10,7 @@ namespace GameMaster.Game
     {
         private AbstractField[,] _fieldsArray;
         private Dictionary<int, Player> _players;
+        private List <(int, int)> _exchangeInformationList;
         private int _goalAreaHeight;
         private int _heigth;
         private int _width;
@@ -58,10 +59,11 @@ namespace GameMaster.Game
                 this[shamPieces[i].x, shamPieces[i].y].PutGeneratedPiece(new ShamPiece());
             for (int i = 0; players != null && i < players.Count; i++)
             {
-                Player player = new Player(players[i].team, players[i].id);
+                Player player = new Player(players[i].team, players[i].id, false);
                 this[players[i].x, players[i].y].MoveHere(player);
                 _players.Add(player.AgentId, player);
             }
+            _exchangeInformationList = new List<(int, int)>();
         }
         public Map(GMConfiguration config)
         {
@@ -79,6 +81,7 @@ namespace GameMaster.Game
                     this[i, j] = new Field(i, j);
             AddGoalFields();
             AddPieces();
+            _exchangeInformationList = new List<(int, int)>();
         }
 
         public int ClosestPieceForField(AbstractField field)
@@ -95,7 +98,6 @@ namespace GameMaster.Game
             FieldType[,] fieldsForGUI = new FieldType[_width, _heigth];
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
-                    //fieldsForGUI[i, j] = FieldType.Sham;
                     fieldsForGUI[i, j] = _fieldsArray[i, j].GetFieldTypeForGUI();
             return new BoardModel()
             {
@@ -159,9 +161,19 @@ namespace GameMaster.Game
                 return false;
             var rand = new Random();
             int idx = freeFields[rand.Next(freeFields.Count)];
-            Player player = new Player(team, agentId);
+
+            Player player = new Player(team, agentId, TeamHasNoPlayers(team));
             this[idx % _width, idx / _width].MoveHere(player);
             _players.Add(agentId, player);
+            return true;
+        }
+        public bool TeamHasNoPlayers(Team team)
+        {
+            foreach(var tuple in _players)
+            {
+                if (tuple.Value.Team == team)
+                    return false;
+            }
             return true;
         }
         public Player GetPlayerById(int agentId)
@@ -225,6 +237,22 @@ namespace GameMaster.Game
         private static int Manhattan(AbstractField field, int x, int y)
         {
             return Math.Abs(field.X - x) + Math.Abs(field.Y - y);
+        }
+        public void SaveInformationExchange(int requester, int respondent)
+        {
+            _exchangeInformationList.Add((requester, respondent));
+        }
+        public bool ValidateAndRemoveInformationExchange(int requester, int respondent)
+        {
+            for (int i = 0; i < _exchangeInformationList.Count; i++)
+            {
+                if(_exchangeInformationList[i] == (requester, respondent))
+                {
+                    _exchangeInformationList.RemoveAt(i);
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

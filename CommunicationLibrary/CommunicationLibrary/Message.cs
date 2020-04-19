@@ -63,7 +63,7 @@ namespace CommunicationLibrary
             { typeof(GameEnded), MessageType.GameEnded },
             { typeof(PenaltyNotWaitedError), MessageType.PenaltyNotWaitedError },
             { typeof(RedirectedExchangeInformationRequest), MessageType.RedirectedExchangeInformationRequest },
-            
+            { typeof(ExchangeInformationGMResponse), MessageType.ExchangeInformationGMResponse },
         };
 
     }

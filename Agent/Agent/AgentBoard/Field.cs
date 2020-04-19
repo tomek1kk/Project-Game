@@ -3,30 +3,6 @@ namespace Agent.AgentBoard
 {
     public class Field
     {
-        private bool visited;
-        public DateTime LastUpdateVisited { get; private set; }
-        public bool Visited
-        {
-            get => visited;
-            set
-            {
-                visited = value;
-                LastUpdateVisited = DateTime.Now;
-            }
-        }
-
-        private bool fieldTaken;
-        public DateTime LastUpdateFieldTaken { get; private set; }
-        public bool FieldTaken
-        {
-            get => fieldTaken;
-            set
-            {
-                fieldTaken = value;
-                LastUpdateFieldTaken = DateTime.Now;
-            }
-        }
-
         private int distToPiece;
         public DateTime LastUpdateDistToPiece { get; private set; }
         public int DistToPiece
@@ -39,11 +15,11 @@ namespace Agent.AgentBoard
             }
         }
 
+        public bool IsDiscoveredGoal { get; set; } = false;
+
         public Field()
         {
-            FieldTaken = false;
             DistToPiece = int.MaxValue;
-            Visited = false;
         }
     }
 }

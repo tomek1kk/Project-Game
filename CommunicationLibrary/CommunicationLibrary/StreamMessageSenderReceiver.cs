@@ -80,7 +80,7 @@ namespace CommunicationLibrary
             }
             catch (Exception e)
             {
-                throw new ParsingException(e);
+                throw new ParsingException(messageString, e);
             }
         }
 

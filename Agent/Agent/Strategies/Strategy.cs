@@ -7,12 +7,15 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Threading;
 
 namespace Agent.Strategies
 {
     public abstract class Strategy : IStrategy
     {
-        public Field[,] Board { get; private set; }
+        virtual public Field[,] Board { get; private set; }
+
+        public Strategy() { }
         public Strategy(int width, int height)
         {
             Board = new Field[width, height];
@@ -20,6 +23,7 @@ namespace Agent.Strategies
                 for (int j = 0; j < height; j++)
                     Board[i, j] = new Field();
         }
+
 
         public abstract Message MakeDecision(AgentInfo agent);
         public virtual void UpdateMap(Message message, Point position)
@@ -45,7 +49,7 @@ namespace Agent.Strategies
                     PickPieceResponseHandler((PickPieceResponse)message.GetPayload(), position);
                     break;
                 case MessageType.PutPieceResponse:
-                    PutPieceResponseHandler((PutPieceResponse)message.GetPayload());
+                    PutPieceResponseHandler((PutPieceResponse)message.GetPayload(), position);
                     break;
                 case MessageType.MoveError:
                     MoveErrorResponseHandler((MoveError)message.GetPayload());
@@ -81,7 +85,8 @@ namespace Agent.Strategies
         virtual protected void DestroyPieceResponseHandler(DestroyPieceResponse moveError) { }
         virtual protected void ExchangeInformationResponseHandler(ExchangeInformationResponse exchangeInformationResponse)
         {
-            //dont know how to interpret Enumerable<int> in response.
+            //TODO
+            //dont know how to interpret Enumerable<int> in response. 
         }
         virtual protected void MoveResponseHandler(MoveResponse moveResponse)
         {
@@ -99,7 +104,7 @@ namespace Agent.Strategies
             if (position.Y != 0)
                 Board[position.X, position.Y - 1].DistToPiece = int.MaxValue;
 
-            if (position.Y != Board.GetLength(1)-1 && position.X != Board.GetLength(0)-1)
+            if (position.Y != Board.GetLength(1) - 1 && position.X != Board.GetLength(0) - 1)
                 Board[position.X + 1, position.Y + 1].DistToPiece = int.MaxValue;
 
             if (position.X != 0)
@@ -115,9 +120,24 @@ namespace Agent.Strategies
                 Board[position.X + 1, position.Y - 1].DistToPiece = int.MaxValue;
         }
         virtual protected void PutPieceErrorResponseHandler(PutPieceError putPieceError) { }
-        virtual protected void PutPieceResponseHandler(PutPieceResponse pickPieceRespone) { }
-        virtual protected void PenaltyNotWaitedErrorResponseHandler(PenaltyNotWaitedError pickPieceRespone) { }
+        virtual protected void PutPieceResponseHandler(PutPieceResponse putPieceRespone, Point position)
+        {
+            switch (putPieceRespone.PutResult)
+            {
+                case PutResultEnum.NormalOnGoalField:
+                case PutResultEnum.NormalOnNonGoalField:
+                    Board[position.X, position.Y].IsDiscoveredGoal = true;
+                    break;
+                case PutResultEnum.TaskField:
+                case PutResultEnum.ShamOnGoalArea:
+                    //TaskField- odłożynie na pole które nie jeste goalem (środek planszy)
+                    //ShamOnGoalArea-nie wiemy czy pole pod było prawdzym goalem czy nie
+                    break;
+            }
+        }
+        virtual protected void PenaltyNotWaitedErrorResponseHandler(PenaltyNotWaitedError penaltyNotWaitedError)
+        {
 
-
+        }
     }
 }

@@ -55,10 +55,10 @@ namespace GameMasterTests.Game
             // Arrange
             Dictionary<int, Player> players = new Dictionary<int, Player>()
             {
-                { 1, new Player(Team.Blue, 1) { Position = new Field(10, 10) } },
-                { 2, new Player(Team.Blue, 2) { Position = new Field(10, 10) } },
-                { 3, new Player(Team.Red, 3) { Position = new Field(10, 10) } },
-                { 4, new Player(Team.Red, 4) { Position = new Field(10, 10) } },
+                { 1, new Player(Team.Blue, 1, false) { Position = new Field(10, 10) } },
+                { 2, new Player(Team.Blue, 2, false) { Position = new Field(10, 10) } },
+                { 3, new Player(Team.Red, 3, false) { Position = new Field(10, 10) } },
+                { 4, new Player(Team.Red, 4, false) { Position = new Field(10, 10) } },
             };
             GameStarter gameStarter = new GameStarter(communicator, configuration);
 
@@ -198,8 +198,8 @@ namespace GameMasterTests.Game
             // Arrange
             Dictionary<int, Player> players = new Dictionary<int, Player>()
             {
-                { 1, new Player(Team.Blue, 1) { Position = new Field(10, 10) } },
-                { 2, new Player(Team.Blue, 2) { Position = new Field(10, 10) } }
+                { 1, new Player(Team.Blue, 1, false) { Position = new Field(10, 10) } },
+                { 2, new Player(Team.Blue, 2, false) { Position = new Field(10, 10) } }
             };
             GameStarter gameStarter = new GameStarter(communicator, configuration);
 
@@ -277,7 +277,7 @@ namespace GameMasterTests.Game
             // Arrange
             Dictionary<int, Player> players = new Dictionary<int, Player>()
             {
-                { 1, new Player(Team.Blue, 1) { Position = new Field(10, 10) } }
+                { 1, new Player(Team.Blue, 1, false) { Position = new Field(10, 10) } }
             };
             GameStarter gameStarter = new GameStarter(communicator, configuration);
 

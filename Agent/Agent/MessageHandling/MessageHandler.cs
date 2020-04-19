@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
+using CommunicationLibrary.Exceptions;
 
 namespace Agent.MessageHandling
 {
@@ -18,10 +19,12 @@ namespace Agent.MessageHandling
         CancellationTokenSource _tokenSource = null;
         Dictionary<MessageType, int> _responsePenalties = new Dictionary<MessageType, int>(); //in miliseconds
         bool _gameOver;
+        bool _underPenalty = false;
         public MessageHandler(SenderReceiverQueueAdapter gmConnection, AgentInfo agentInfo)
         {
             _gmConnection = gmConnection;
             _agentInfo = agentInfo;
+            _gmConnection.SetErrorCallback(HandleConnectionError);
             ParsePenalties();
         }
 
@@ -35,6 +38,7 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
+            //TODO:
             //Temporary, because currently there is no PickPiece penalty
             ParsePenalty(MessageType.PickPieceResponse, penalties.DestroyPiece);
         }
@@ -48,9 +52,10 @@ namespace Agent.MessageHandling
         {
             while (!_gameOver)
             {
+                _underPenalty = false;
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
-                _gmConnection.Send(actionRequest);
                 Log.Debug("Made decision {@Decision}", actionRequest);
+                SendToGM(actionRequest);
 
                 if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();
@@ -69,6 +74,20 @@ namespace Agent.MessageHandling
             Log.Information("GAME OVER");
         }
 
+        private void SendToGM(Message actionRequest)
+        {
+            try
+            {
+                _gmConnection.Send(actionRequest);
+            }
+            catch(DisconnectedException)
+            {
+                Log.Error("Disconnected. Closing");
+                _gameOver = true;
+            }
+
+        }
+
         private void HandleReceived(Message received)
         {
             if (received.MessageId == MessageType.GameEnded)
@@ -80,22 +99,65 @@ namespace Agent.MessageHandling
             {
                 new Task(() =>
                 {
-                    Log.Debug("Agnet sleeps {@Time}", _responsePenalties[received.MessageId]);
+                    Log.Debug("Agent sleeps {@Time}", _responsePenalties[received.MessageId]);
+                    _underPenalty = true;
                     Thread.Sleep(_responsePenalties[received.MessageId]);
                     _tokenSource.Cancel(false);
                 }
                 ).Start();
             }
-            else if(received.MessageId.IsError())
+            else if (received.MessageId.IsError())
             {
-                //temporary, for agent to not hang up on error and to not spam game master when
-                //error is repeated
-                Thread.Sleep(100);
+                HandleErrorMessage(received);
                 _tokenSource.Cancel();
             }
-            //TODO: create code responding to 
-            // PenaltyNotWaitedError and reacting better to other errors
             _agentInfo.UpdateFromMessage(received);
+        }
+
+        private void HandleErrorMessage(Message message)
+        {
+            if (message.MessageId != MessageType.PenaltyNotWaitedError)
+                return;
+            PenaltyNotWaitedError penaltyNotWaitedError = (PenaltyNotWaitedError)message.GetPayload();
+            var date = DateTime.Now;
+            if (date < penaltyNotWaitedError.WaitUntill)
+                new Task(() =>
+                {
+                    _underPenalty = true;
+                    Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
+                    _tokenSource.Cancel(false);
+                }).Start();
+        }
+
+        private void HandleConnectionError(Exception ex)
+        {
+            lock(this)
+            {
+                if (_gameOver) return;
+                if (ex is DisconnectedException)
+                {
+                    Log.Error("Disconnected. Closing");
+                    _gameOver = true;
+                    _tokenSource.Cancel();
+                }
+                else if (ex is ParsingException)
+                {
+                    Log.Warning("Parse error while exchanging messages.");
+                    Log.Warning("{incorrectMessage}", (ex as ParsingException).IncorrectMessage);
+                    if (!_underPenalty)
+                    {
+                        //if agent is not under penalty then
+                        //incorrectly parsed message could determine next penalty,
+                        //in that case we have to send next action and deal with PenaltyNotWaitedError
+                        //or the agent will never send next action request
+                        _tokenSource.Cancel();
+                    }
+                }
+                else
+                {
+                    Log.Error("Error in queue callback");
+                }
+            }
         }
     }
 }
