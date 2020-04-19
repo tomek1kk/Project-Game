@@ -41,6 +41,7 @@ namespace CommunicationServerNamespace
             TcpClient client = _gmListener.AcceptTcpClient();
             _gameMasterConnection = new Descriptor(client);
             _gameMasterConnection.StartReceiving(GetGMMessage, HandleConnectionError);
+            _gmListener.Stop();
             Console.WriteLine("GM end");
         }
 

@@ -18,17 +18,10 @@ namespace CommunicationServerIntegrationTests
         {
             using (CommunicationServer communicationServer = new CommunicationServer())
             { 
-                //var GMConnectTask = new Task(() => communicationServer.StartConnectingGameMaster());
-                //GMConnectTask.Start();
-                //    GMConnectTask.Wait();
-                //    TcpClient gameMasterSide = new TcpClient();
                 communicationServer.StartConnectingGameMaster();
             TcpClient gameMasterSide = new TcpClient();
             gameMasterSide.Connect("127.0.0.1", 8081);
             communicationServer.AcceptGameMaster();
-
-
-
 
             var AgentConnectTask = new Task(() => communicationServer.ConnectAgents());
             AgentConnectTask.Start();
@@ -36,25 +29,32 @@ namespace CommunicationServerIntegrationTests
             TcpClient agentSide = new TcpClient("127.0.0.1", 8080);
 
             IMessageSenderReceiver senderReceiverGameMaster = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
-            var message = new Message<DiscoveryRequest>()
+            var message = new Message<GameStarted>()
             {
                 AgentId = 1,
-                MessagePayload = new DiscoveryRequest()
+                MessagePayload = new GameStarted()
             };
 
-            var expectedMessageId = MessageType.DiscoveryRequest;
+            var expectedMessageId = MessageType.GameStarted;
             Message receivedMessage = null;
             IMessageSenderReceiver senderReceiverAgent = new StreamMessageSenderReceiver(agentSide.GetStream(), new Parser());
-            senderReceiverAgent.StartReceiving(m => { receivedMessage = m; });
+                Semaphore semaphore = new Semaphore(0, 100);
+                
+                senderReceiverAgent.StartReceiving(m => {
+                    semaphore.Release();
+                     receivedMessage = m; }, 
+                     (e) => {
+                         int k = 5;
+                     });
 
             senderReceiverGameMaster.Send(message);
 
             AgentConnectTask.Wait();
-            communicationServer.WaitForGameOver();
 
-            for (int i = 0; receivedMessage == null && i < 10; i++)
-                Thread.Sleep(100);
-            Assert.IsFalse(receivedMessage == null);
+            //for (int i = 0; receivedMessage == null && i < 10; i++)
+            //    Thread.Sleep(100);
+                semaphore.WaitOne();
+                Assert.IsFalse(receivedMessage == null);
             Assert.AreEqual(receivedMessage.MessageId, expectedMessageId);
             gameMasterSide.Close();
             agentSide.Close();
@@ -70,12 +70,8 @@ namespace CommunicationServerIntegrationTests
                 communicationServer.StartConnectingGameMaster();
                 TcpClient gameMasterSide = new TcpClient();
                 gameMasterSide.Connect("127.0.0.1", 8081);
+                IMessageSenderReceiver senderReceiverGameMaster = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
                 communicationServer.AcceptGameMaster();
-                //var GMConnectTask = new Task(() => communicationServer.ConnectGameMaster());
-                //GMConnectTask.Start();
-                ////Thread.Sleep(200);
-                //TcpClient gameMasterSide = new TcpClient("127.0.0.1", 8081);
-                //GMConnectTask.Wait();
 
                 var AgentConnectTask = new Task(() => communicationServer.ConnectAgents());
                 AgentConnectTask.Start();
@@ -90,9 +86,17 @@ namespace CommunicationServerIntegrationTests
                 };
                 senderReceiverAgent.Send(message);
 
+                var gameStartMessage = new Message<GameStarted>()
+                {
+                    AgentId = 1,
+                    MessagePayload = new GameStarted()
+                };
+                senderReceiverGameMaster.Send(gameStartMessage);
+                AgentConnectTask.Wait();
+
                 var expectedMessageId = MessageType.DiscoveryRequest;
                 Message receivedMessage = null;
-                IMessageSenderReceiver senderReceiverGameMaster = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
+                
                 senderReceiverGameMaster.StartReceiving(m => { receivedMessage = m; });
 
                 for (int i = 0; receivedMessage == null && i < 10; i++)
@@ -101,9 +105,9 @@ namespace CommunicationServerIntegrationTests
                 Assert.AreEqual(receivedMessage.MessageId, expectedMessageId);
 
                 gameMasterSide.Close();
+                agentSide.Close();
                 senderReceiverGameMaster.Dispose();
                 senderReceiverAgent.Dispose();
-                agentSide.Close();
             }
         }
     }
