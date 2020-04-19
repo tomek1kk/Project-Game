@@ -20,7 +20,7 @@ namespace Agent.Board
 
             GoalDirection = teamId == "Red" ? "N" : "S";
             GoalAreaSize = goalAreaSize;
-            GoalArea = teamId == "Blue" ? (0, GoalAreaSize - 1) : (Board.GetLength(0) - GoalAreaSize, Board.GetLength(1) - 1);
+            GoalArea = teamId == "Blue" ? (0, GoalAreaSize - 1) : (Board.GetLength(1) - GoalAreaSize, Board.GetLength(1) - 1);
         }
 
         public bool InGoalArea(Point Position)
