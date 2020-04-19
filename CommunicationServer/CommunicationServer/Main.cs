@@ -17,8 +17,11 @@ namespace CommunicationServerNamespace
             Log.Information("Start communication server.");
             using (CommunicationServer communicationServer = new CommunicationServer())
             {
-                Log.Information("Connect Game Master:");
-                communicationServer.ConnectGameMaster();
+                Log.Information("Start connecting Game Master:");
+                communicationServer.StartConnectingGameMaster();
+
+                Log.Information("Accepting Game Master:");
+                communicationServer.AcceptGameMaster();
 
                 Log.Information("Connect Agents:");
                 communicationServer.ConnectAgents();

@@ -24,17 +24,21 @@ namespace CommunicationServerNamespace
         public string IpAddress { get; private set; } = "127.0.0.1";
         public int PortCSforGM { get; private set; } = 8081;
         public int PortCSforAgents { get; private set; } = 8080;
+        private TcpListener _gmListener;
 
         private CancellationTokenSource _connectAgents = new CancellationTokenSource();
         private TaskCompletionSource<bool> _gameOver = new TaskCompletionSource<bool>();
 
-        public void ConnectGameMaster()
+        public void StartConnectingGameMaster()
         {
             Console.WriteLine("GM connect");
             IPAddress ipAddress = IPAddress.Parse(IpAddress);
-            TcpListener tcpListener = new TcpListener(ipAddress, PortCSforGM);
-            tcpListener.Start();
-            TcpClient client = tcpListener.AcceptTcpClient();
+            _gmListener = new TcpListener(ipAddress, PortCSforGM);
+            _gmListener.Start();
+        }
+        public void AcceptGameMaster()
+        {
+            TcpClient client = _gmListener.AcceptTcpClient();
             _gameMasterConnection = new Descriptor(client);
             _gameMasterConnection.StartReceiving(GetGMMessage, HandleConnectionError);
             Console.WriteLine("GM end");
@@ -46,7 +50,7 @@ namespace CommunicationServerNamespace
             if (message.IsEndGame())
             {
                 HandleEndGame(message);
-                _gameMasterConnection.Dispose();
+                //_gameMasterConnection.Dispose();
                 return;
             }
 
