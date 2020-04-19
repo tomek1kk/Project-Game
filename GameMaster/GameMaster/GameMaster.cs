@@ -32,37 +32,39 @@ namespace GameMaster
         public void Start()
         {
             _client = new TcpClient("127.0.0.1", 8081);
-            using (_communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser()))
+            _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
+            Log.Information("StreamMessageSenderReceiver started");
+
+            _map = new Map(_gmConfiguration);
+            Log.Information("Map created");
+
+            InitGui();
+            Log.Information("GUI started");
+
+            _communicator.StartReceiving(GetCSMessage, EndGame);
+            Log.Information("Started received messages");
+
+        }
+        public void WaitForEnd()
+        {
+            while (true)
             {
-                Log.Information("StreamMessageSenderReceiver started");
-
-                _map = new Map(_gmConfiguration);
-                Log.Information("Map created");
-
-                InitGui();
-                Log.Information("GUI started");
-
-                _communicator.StartReceiving(GetCSMessage, EndGame);
-                Log.Information("Started received messages");
-                while(true)
+                lock (_gameEnder)
                 {
-                    lock (_gameEnder)
+                    if (_gameEnder.lockCondition)
                     {
-                        if (_gameEnder.lockCondition)
-                        {
-                            Log.Information("lock_condition true, game ends");
-                            break;
-                        }
+                        Log.Information("lock_condition true, game ends");
+                        break;
                     }
-                    Thread.Sleep(100);
                 }
-                _guiMantainer.StopGui();
-                Log.Information("GUI stopped");
+                Thread.Sleep(100);
             }
+            _guiMantainer.StopGui();
+            Log.Information("GUI stopped");
         }
         private void GetCSMessage(Message message)
         {
-            lock(_messageHandler)
+            lock (_messageHandler)
             {
                 if (_map.GameEnded)
                     return;
@@ -109,7 +111,7 @@ namespace GameMaster
                 _gameEnder.endGameNotHandled = false;
                 Log.Information("ErrorGameEnd");
             }
-            lock(_gameEnder)
+            lock (_gameEnder)
             {
                 _gameEnder.lockCondition = true;
             }
@@ -122,7 +124,7 @@ namespace GameMaster
             //_guiMantainer.StartGui(_guiDataProvider);
 
             //prototype of GameMaster Map
-            _guiMantainer.StartGui(_map, new CallbackGuiActionsExcecutor(()=>StartGame()));
+            _guiMantainer.StartGui(_map, new CallbackGuiActionsExcecutor(() => StartGame()));
         }
 
         public void Dispose()
