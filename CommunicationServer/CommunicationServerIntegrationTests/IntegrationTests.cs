@@ -53,7 +53,6 @@ namespace CommunicationServerIntegrationTests
                 },
                      (e) =>
                      {
-                         int k = 5;
                      });
 
                 senderReceiverGameMaster.Send(message);
