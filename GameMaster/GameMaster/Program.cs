@@ -17,7 +17,9 @@ namespace GameMaster
             GMConfiguration config = GMConfiguration.ReadConfiguration(args);
             GameMaster gameMaster = new GameMaster(new GuiMantainer(),config, new ProxyMessageHandler());
             gameMaster.Start();
+            gameMaster.WaitForEnd();
             Log.CloseAndFlush();
+            gameMaster.Dispose();
         }
 
     }
