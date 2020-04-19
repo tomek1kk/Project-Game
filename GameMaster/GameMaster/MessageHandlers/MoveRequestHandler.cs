@@ -6,9 +6,6 @@ using CommunicationLibrary.Response;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
@@ -36,6 +33,7 @@ namespace GameMaster.MessageHandlers
 
         protected override bool CheckRequest(Map map)
         {
+            _moveError = false;
             int x = map.GetPlayerById(_agentId).Position.X;
             int y = map.GetPlayerById(_agentId).Position.Y;
             switch (_direction)

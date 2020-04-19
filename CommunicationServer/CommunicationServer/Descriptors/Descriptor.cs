@@ -23,9 +23,10 @@ namespace CommunicationServerNamespace
             Id = id++;
         }
 
-        public virtual void StartReceiving(Action<Message> action)
+        public virtual void StartReceiving(Action<Message> actionCallback, Action<Exception> errorCallback)
         {
-            _streamMessageSenderReceiver.StartReceiving(action);
+             _streamMessageSenderReceiver.StartReceiving(actionCallback, errorCallback);
+
         }
 
         public virtual void SendMessage(Message message)

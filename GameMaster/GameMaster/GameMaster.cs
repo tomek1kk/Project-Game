@@ -1,19 +1,11 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Error;
-using CommunicationLibrary.Request;
-using CommunicationLibrary.Response;
 using GameMaster.Configuration;
 using GameMaster.GUI;
 using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
-using GameMaster.MessageHandlers;
-using CommunicationLibrary.Information;
 using Serilog;
 
 namespace GameMaster
@@ -26,7 +18,8 @@ namespace GameMaster
         private StreamMessageSenderReceiver _communicator;
         private TcpClient _client;
         private bool _gameStarted = false;
-        Map _map;
+        private Map _map;
+        private GameEnder _gameEnder;
 
 
         public GameMaster(IGuiMantainer guiMantainer, GMConfiguration config, IMessageHandler messageHandler)
@@ -34,12 +27,10 @@ namespace GameMaster
             _guiMantainer = guiMantainer;
             _gmConfiguration = config;
             _messageHandler = messageHandler;
+            _gameEnder = new GameEnder();
         }
         public void Start()
         {
-            
-            //TODO: rest of starting game master
-
             _client = new TcpClient("127.0.0.1", 8081);
             using (_communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser()))
             {
@@ -51,29 +42,51 @@ namespace GameMaster
                 InitGui();
                 Log.Information("GUI started");
 
-                _communicator.StartReceiving(GetCSMessage);
+                _communicator.StartReceiving(GetCSMessage, EndGame);
                 Log.Information("Started received messages");
-
-                Thread.Sleep(100000000);
+                while(true)
+                {
+                    lock (_gameEnder)
+                    {
+                        if (_gameEnder.lockCondition)
+                        {
+                            Log.Information("lock_condition true, game ends");
+                            break;
+                        }
+                    }
+                    Thread.Sleep(100);
+                }
                 _guiMantainer.StopGui();
                 Log.Information("GUI stopped");
             }
         }
         private void GetCSMessage(Message message)
         {
-            Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: "+message.AgentId);
-            if (message.GetPayload().ValidateMessage() == false || message.AgentId == null || (_gameStarted == false && message.MessageId != MessageType.JoinGameRequest))
+            lock(_messageHandler)
             {
-                _communicator.Send(new Message<NotDefinedError>()
+                if (_map.GameEnded)
+                    return;
+                Console.WriteLine(message.MessageId + "  " + message.GetPayload() + "agent id :: " + message.AgentId);
+                if (message.GetPayload().ValidateMessage() == false || message.AgentId == null || (_gameStarted == false && message.MessageId != MessageType.JoinGameRequest))
                 {
-                    AgentId = message.AgentId,
-                    MessagePayload = new NotDefinedError()
-                });
-                return;
+                    _communicator.Send(new Message<NotDefinedError>()
+                    {
+                        AgentId = message.AgentId,
+                        MessagePayload = new NotDefinedError()
+                    });
+                    return;
+                }
+
+                var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
+                if (_map.GameEnded)
+                {
+                    EndGame(new Exception("Dummy exception"));
+                }
+                else
+                {
+                    _communicator.Send(response);
+                }
             }
-            
-            var response = _messageHandler.ProcessRequest(_map, message, _gmConfiguration);
-            _communicator.Send(response);
         }
 
         public void StartGame()
@@ -83,10 +96,23 @@ namespace GameMaster
             _gameStarted = true;
         }
 
-        public void GenerateGui()
+        public void EndGame(Exception e)
         {
-            //TODO: use manual gui data provider to set apropriate fields
-            //called every time game board is updated
+            if (_map.GameEnded && _gameEnder.endGameNotHandled)
+            {
+                _gameEnder.endGameNotHandled = false;
+                Log.Information("GameEnd");
+                _gameEnder.GameEndHandler(_map, _communicator);
+            }
+            else if (_gameEnder.endGameNotHandled)
+            {
+                _gameEnder.endGameNotHandled = false;
+                Log.Information("ErrorGameEnd");
+            }
+            lock(_gameEnder)
+            {
+                _gameEnder.lockCondition = true;
+            }
         }
         private void InitGui()
         {
