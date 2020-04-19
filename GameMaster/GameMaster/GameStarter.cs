@@ -3,10 +3,8 @@ using CommunicationLibrary.Information;
 using CommunicationLibrary.Model;
 using GameMaster.Configuration;
 using GameMaster.Game;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster
 {
@@ -58,7 +56,7 @@ namespace GameMaster
                             X = player.Value.X,
                             Y = player.Value.Y
                         },
-                        ShamPieceProbability = 0, // TODO
+                        ShamPieceProbability = _configuration.ShamPieceProbability,
                         TeamId = player.Value.Team.ToString()
                     }
                 };

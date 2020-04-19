@@ -1,18 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using GameMaster.AspNet;
-using GameMaster.GUI;
-using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+﻿using GameMaster.GUI;
 using GameMaster.Configuration;
-using GameMaster.Game;
 using Serilog;
 
 namespace GameMaster

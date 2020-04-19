@@ -5,9 +5,6 @@ using CommunicationLibrary.Error;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
@@ -65,15 +62,15 @@ namespace GameMaster.MessageHandlers
         private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position, Map map)
         {
             position.Discover();
-            map.ScorePoint(position, _agentId);
             if (position.IsGoalField)
-                PutNonShamOnGoal(piece, position);
+                PutNonShamOnGoal(piece, position, map);
             else
                 PutNormalOnNonGoal(piece, position);
         }
 
-        private void PutNonShamOnGoal(AbstractPiece piece, AbstractField position)
+        private void PutNonShamOnGoal(AbstractPiece piece, AbstractField position, Map map)
         {
+            map.ScorePoint(position, _agentId);
             _returnedEnum = PutResultEnum.NormalOnGoalField;
             position.Put(piece);
         }
