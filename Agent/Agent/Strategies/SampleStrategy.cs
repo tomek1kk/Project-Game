@@ -13,7 +13,7 @@ namespace Agent.Strategies
     {
     }
     public class SampleStrategy : Strategy
-    {        
+    {
         public Stack<MessageType> History { get; private set; }
 
         public SampleStrategy(int width, int height, string teamId, int goalAreaSize) : base(width, height, teamId, goalAreaSize)
@@ -23,7 +23,7 @@ namespace Agent.Strategies
 
         public override Message MakeDecision(AgentInfo agent)
         {
-            if (agent.ExchangeInfoRequests[0].Leader.Value)
+            if (agent.ExchangeInfoRequests.Count > 0 && agent.ExchangeInfoRequests[0].Leader.Value)
             {
                 GiveInfo(agent.ExchangeInfoRequests[0].AskingId.Value);
             }
@@ -58,7 +58,8 @@ namespace Agent.Strategies
         }
         public override void UpdateMap(Message message, Point position)
         {
-            History.Push(message.MessageId);
+            if (message.MessageId != MessageType.PenaltyNotWaitedError)
+                History.Push(message.MessageId);
             base.UpdateMap(message, position);
         }
 
@@ -75,7 +76,7 @@ namespace Agent.Strategies
             return new Message<ExchangeInformationGMResponse>(resp);
         }
 
-       
+
 
         private Message RandomMove()
         {
@@ -97,14 +98,14 @@ namespace Agent.Strategies
         private Message FindPiece(AgentInfo agent)
         {
             var req = new MoveRequest();
-            int N = agent.Position.Y !=  Board.Board.GetLength(1) - 1
-                ?  Board.Board[agent.Position.X, agent.Position.Y + 1].DistToPiece : Int32.MaxValue;
+            int N = agent.Position.Y != Board.Board.GetLength(1) - 1
+                ? Board.Board[agent.Position.X, agent.Position.Y + 1].DistToPiece : Int32.MaxValue;
             int S = agent.Position.Y != 0
-                ?  Board.Board[agent.Position.X, agent.Position.Y - 1].DistToPiece : Int32.MaxValue;
-            int E = agent.Position.X !=  Board.Board.GetLength(0) - 1
-                ?  Board.Board[agent.Position.X + 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
+                ? Board.Board[agent.Position.X, agent.Position.Y - 1].DistToPiece : Int32.MaxValue;
+            int E = agent.Position.X != Board.Board.GetLength(0) - 1
+                ? Board.Board[agent.Position.X + 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
             int W = agent.Position.X != 0
-                ?  Board.Board[agent.Position.X - 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
+                ? Board.Board[agent.Position.X - 1, agent.Position.Y].DistToPiece : Int32.MaxValue;
 
             int min = Math.Min(Math.Min(Math.Min(S, N), E), W);
             if (min == N)
@@ -152,18 +153,18 @@ namespace Agent.Strategies
 
         private string ChooseDirection((int, int) vector)
         {
-            if (vector.Item1 < 0)
-                return "W";
-            if (vector.Item1 > 0)
-                return "E";
             if (vector.Item2 < 0)
                 return "S";
             if (vector.Item2 > 0)
                 return "N";
+            if (vector.Item1 < 0)
+                return "W";
+            if (vector.Item1 > 0)
+                return "E";
             throw new Exception("Shouldnt be executed");
         }
 
-        
+
 
     }
     //public enum StrategyDirections

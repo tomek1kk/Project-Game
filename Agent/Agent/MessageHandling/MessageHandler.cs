@@ -125,7 +125,7 @@ namespace Agent.MessageHandling
                 new Task(() =>
                 {
                     _underPenalty = true;
-                    Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
+                    Thread.Sleep(penaltyNotWaitedError.WaitUntill - date);
                     _tokenSource.Cancel(false);
                 }).Start();
         }
