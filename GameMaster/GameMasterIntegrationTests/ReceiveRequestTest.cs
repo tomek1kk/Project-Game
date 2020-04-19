@@ -60,9 +60,9 @@ namespace GameMasterIntegrationTests
                 MessagePayload = new DiscoveryRequest()
             };
             senderReceiver.Send(message);
-            senderReceiver.StartReceiving(message =>
+            senderReceiver.StartReceiving(m =>
             {
-                Assert.AreEqual(message.MessageId, MessageType.DiscoveryResponse);
+                Assert.AreEqual(m.MessageId, MessageType.DiscoveryResponse);
             });
 
 
