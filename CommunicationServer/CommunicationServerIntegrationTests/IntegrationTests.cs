@@ -14,8 +14,9 @@ namespace CommunicationServerIntegrationTests
     public class Integration
     {
         [TestMethod]
-        public void FromGMToAgent()
+        public void ToAgentFromGM()
         {
+
             using (CommunicationServer communicationServer = new CommunicationServer())
             { 
                 communicationServer.StartConnectingGameMaster();
@@ -51,8 +52,6 @@ namespace CommunicationServerIntegrationTests
 
             AgentConnectTask.Wait();
 
-            //for (int i = 0; receivedMessage == null && i < 10; i++)
-            //    Thread.Sleep(100);
                 semaphore.WaitOne();
                 Assert.IsFalse(receivedMessage == null);
             Assert.AreEqual(receivedMessage.MessageId, expectedMessageId);
@@ -61,9 +60,11 @@ namespace CommunicationServerIntegrationTests
                 senderReceiverGameMaster.Dispose();
                 senderReceiverAgent.Dispose();
             }
+            //System.GC.Collect();
+            //System.GC.WaitForPendingFinalizers();
         }
         [TestMethod]
-        public void FromAgentToGM()
+        public void ToGMFromAgent()
         {
             using (CommunicationServer communicationServer = new CommunicationServer())
             {
@@ -109,6 +110,8 @@ namespace CommunicationServerIntegrationTests
                 senderReceiverGameMaster.Dispose();
                 senderReceiverAgent.Dispose();
             }
+            //System.GC.Collect();
+            //System.GC.WaitForPendingFinalizers();
         }
     }
 }
