@@ -73,6 +73,17 @@ namespace Agent.MessageHandling
                     }
                 ).Start();
                 }
+                while (!_gameOver && !_tokenSource.IsCancellationRequested)
+                {
+                    Message received = _gmConnection.TryTake(_tokenSource.Token, 50);
+                    if (received != null)
+                    {
+                        Log.Debug("Recieved message {@Message}", received);
+                        HandleReceived(received);
+                    }
+                    else
+                        Log.Debug("Recieved null message {@Message}", received);
+                }
             }
             Log.Information("GAME OVER");
         }

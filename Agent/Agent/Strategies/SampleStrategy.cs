@@ -99,7 +99,7 @@ namespace Agent.Strategies
         private Message RandomMove()
         {
             Random rnd = new Random();
-            switch (rnd.Next(0, 3))
+            switch (rnd.Next(0, 6))
             {
                 case 0:
                     return new Message<MoveRequest>(new MoveRequest() { Direction = "N" });
