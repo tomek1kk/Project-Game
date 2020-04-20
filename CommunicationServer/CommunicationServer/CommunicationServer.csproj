@@ -18,4 +18,10 @@
     </Reference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Configuration\defaultConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -14,11 +14,16 @@ namespace CommunicationServerNamespace
             .WriteTo.File("logs\\logs.txt", rollingInterval: RollingInterval.Day)
             .CreateLogger();
 
+            Configuration config = Configuration.ReadConfiguration(args);
+
             Log.Information("Start communication server.");
-            using (CommunicationServer communicationServer = new CommunicationServer())
+            using (CommunicationServer communicationServer = new CommunicationServer(config))
             {
-                Log.Information("Connect Game Master:");
-                communicationServer.ConnectGameMaster();
+                Log.Information("Start connecting Game Master:");
+                communicationServer.StartConnectingGameMaster();
+
+                Log.Information("Accepting Game Master:");
+                communicationServer.AcceptGameMaster();
 
                 Log.Information("Connect Agents:");
                 communicationServer.ConnectAgents();
