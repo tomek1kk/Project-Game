@@ -30,9 +30,6 @@ namespace Agent.Strategies
                 case MessageType.DiscoveryResponse:
                     DiscoveryResponseHandler((DiscoveryResponse)message.GetPayload(), position);
                     break;
-                case MessageType.ExchangeInformationResponse:
-                    ExchangeInformationResponseHandler((ExchangeInformationResponse)message.GetPayload());
-                    break; 
                 case MessageType.ExchangeInformationGMResponse:
                     ExchangeInformationResponseHandler((ExchangeInformationGMResponse)message.GetPayload());
                     break;
@@ -65,24 +62,6 @@ namespace Agent.Strategies
                     break;
             }
         }
-        public virtual void GetInfo(ExchangeInformationResponse response)
-        {
-            if (Board.GoalDirection == "N")
-                Board.UpdateGoalInfo(response.RedTeamGoalAreaInformations);
-            else
-                Board.UpdateGoalInfo(response.BlueTeamGoalAreaInformations);
-
-            Board.UpdateDistances(response.Distances, updateDistanse);
-        }
-        public virtual void GetInfo(ExchangeInformationGMResponse response)
-        {
-            if (Board.GoalDirection == "N")
-                Board.UpdateGoalInfo(response.RedTeamGoalAreaInformations);
-            else
-                Board.UpdateGoalInfo(response.BlueTeamGoalAreaInformations);
-
-            Board.UpdateDistances(response.Distances, updateDistanse);
-        }
         public Func<int, int, int, int, int> updateDistanse = (dist, lastUpdate, curDist, curLastUpdate) =>
         {
             return lastUpdate > curLastUpdate ? curDist : dist;
@@ -101,17 +80,14 @@ namespace Agent.Strategies
             if (discoveryResponse.DistanceSE.HasValue) Board.Board[position.X + 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSE.Value;
         }
         virtual protected void DestroyPieceResponseHandler(DestroyPieceResponse moveError) { }
-        virtual protected void ExchangeInformationResponseHandler(ExchangeInformationResponse exchangeInformationResponse)
-        {
-            //TODO
-            //dont know how to interpret Enumerable<int> in response. 
-            GetInfo(exchangeInformationResponse);
-        }
         virtual protected void ExchangeInformationResponseHandler(ExchangeInformationGMResponse exchangeInformationResponse)
         {
-            //TODO
-            //dont know how to interpret Enumerable<int> in response. 
-            GetInfo(exchangeInformationResponse);
+            if (Board.GoalDirection == "N")
+                Board.UpdateGoalInfo(exchangeInformationResponse.RedTeamGoalAreaInformations);
+            else
+                Board.UpdateGoalInfo(exchangeInformationResponse.BlueTeamGoalAreaInformations);
+
+            Board.UpdateDistances(exchangeInformationResponse.Distances, updateDistanse);
         }
         virtual protected void MoveResponseHandler(MoveResponse moveResponse)
         {
