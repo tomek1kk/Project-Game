@@ -64,7 +64,7 @@ namespace Agent.Strategies
         }
         public virtual void GetInfo(ExchangeInformationGMResponse response)
         {
-            if (Board.GoalDirection == "Red")
+            if (Board.GoalDirection == "N")
                 Board.UpdateGoalInfo(response.RedTeamGoalAreaInformations);
             else
                 Board.UpdateGoalInfo(response.BlueTeamGoalAreaInformations);

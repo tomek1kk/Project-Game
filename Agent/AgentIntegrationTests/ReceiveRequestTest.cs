@@ -51,7 +51,6 @@ namespace AgentIntegrationTests
                "\"teamID\": \"red\"," +
                "\"strategy\": 1}");
             string[] args = new string[1] { "./TMPpath.txt" };
-
             AgentConfiguration configuration = AgentConfiguration.ReadConfiguration(args);
 
             TcpListener serverSideListener = new TcpListener(IPAddress.Any, configuration.CsPort);
@@ -76,7 +75,8 @@ namespace AgentIntegrationTests
                 switch (message.MessageId)
                 {
                     case MessageType.JoinGameRequest:
-                        senderReceiver.Send(new Message<JoinGameResponse>());
+
+                        senderReceiver.Send(new Message<JoinGameResponse>(new JoinGameResponse() { AgentID = 1 , Accepted = true}));
                         senderReceiver.Send(new Message<GameStarted>(defaultGameStartedMessage));
                         joinGameMessage = message;
                         break;
@@ -85,7 +85,6 @@ namespace AgentIntegrationTests
                         semaphore.Release();
                         break;
                 }
-                
             });
 
             semaphore.WaitOne();

@@ -27,7 +27,12 @@ namespace Agent.Strategies
             {
                 GiveInfo(agent.ExchangeInfoRequests[0].AskingId.Value);
             }
-
+            if (History.Count % 10 == 0)
+            {
+                var eq = new ExchangeInformationRequest();
+                eq.AskedAgentId = agent.IsLeader ? agent.AlliesIds.FindLast(a => a!= agent.LeaderId):agent.LeaderId;
+                return new Message<ExchangeInformationRequest>(eq);   
+            }
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
             if (last == MessageType.MoveError)
             {
