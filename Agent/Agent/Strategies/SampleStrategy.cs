@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
+using System.Linq;
 
 namespace Agent.Strategies
 {
@@ -23,17 +24,23 @@ namespace Agent.Strategies
 
         public override Message MakeDecision(AgentInfo agent)
         {
-            if (agent.ExchangeInfoRequests.Count > 0 && agent.ExchangeInfoRequests[0].Leader.Value)
+
+            var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
+            if (agent.ExchangeInfoRequests.Count() != 0)/* && agent.ExchangeInfoRequests[0].Leader.Value)*/
             {
-                GiveInfo(agent.ExchangeInfoRequests[0].AskingId.Value);
+                var tmp = agent.ExchangeInfoRequests[0];
+                agent.ExchangeInfoRequests.RemoveAt(0);
+                return GiveInfo(tmp.AskingId.Value);
             }
             if (History.Count % 10 == 0)
             {
                 var eq = new ExchangeInformationRequest();
-                eq.AskedAgentId = agent.IsLeader ? agent.AlliesIds.FindLast(a => a!= agent.LeaderId):agent.LeaderId;
-                return new Message<ExchangeInformationRequest>(eq);   
+                Random rnd = new Random();
+                var allies = agent.AlliesIds.Where(x => x != agent.LeaderId);
+                eq.AskedAgentId = agent.IsLeader ? allies.ElementAt(rnd.Next() % allies.Count()) : agent.LeaderId;
+                return new Message<ExchangeInformationRequest>(eq);
             }
-            var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
+
             if (last == MessageType.MoveError)
             {
                 return RandomMove();
@@ -70,15 +77,21 @@ namespace Agent.Strategies
 
         private Message GiveInfo(int AgentId)
         {
-            var resp = new ExchangeInformationGMResponse();
-            if (Board.GoalDirection == "Red")
-                resp.RedTeamGoalAreaInformations = Board.GetGoalInfo();
-            else
-                resp.BlueTeamGoalAreaInformations = Board.GetGoalInfo();
-
+            var resp = new ExchangeInformationResponse();
+            try
+            {
+                if (Board.GoalDirection == "N")
+                    resp.RedTeamGoalAreaInformations = Board.GetGoalInfo();
+                else
+                    resp.BlueTeamGoalAreaInformations = Board.GetGoalInfo();
+            }
+            catch
+            {
+                string s = "DUPA";
+            }
             resp.Distances = Board.GetDistances();
             resp.RespondToID = AgentId; // GM id?
-            return new Message<ExchangeInformationGMResponse>(resp);
+            return new Message<ExchangeInformationResponse>(resp);
         }
 
 

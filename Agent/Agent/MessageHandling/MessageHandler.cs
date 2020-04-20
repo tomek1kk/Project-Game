@@ -36,6 +36,7 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.DestroyPieceResponse, penalties.DestroyPiece);
             ParsePenalty(MessageType.DiscoveryResponse, penalties.Discovery);
             ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
+            ParsePenalty(MessageType.RedirectedExchangeInformationRequest, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
             //TODO:
@@ -54,22 +55,23 @@ namespace Agent.MessageHandling
             {
                 _underPenalty = false;
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
-                Message request = _agentInfo.Strategy.MakeDecision(_agentInfo);
                 Log.Debug("Made decision {@Decision}", actionRequest);
-                SendToGM(request);
+                SendToGM(actionRequest);
+
 
                 if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();
-                while (!_gameOver && !_tokenSource.IsCancellationRequested)
+
+                if (actionRequest.MessageId == MessageType.ExchangeInformationResponse)
                 {
-                    Message received = _gmConnection.TryTake(_tokenSource.Token, 50);
-                    if (received != null)
+                    new Task(() =>
                     {
-                        Log.Debug("Recieved message {@Message}", received);
-                        HandleReceived(received);
+                        Log.Debug("Agent sleeps {@Time}", _responsePenalties[MessageType.ExchangeInformationResponse]);
+                        _underPenalty = true;
+                        Thread.Sleep(_responsePenalties[MessageType.ExchangeInformationResponse]);
+                        _tokenSource.Cancel(false);
                     }
-                    else
-                        Log.Debug("Recieved null message {@Message}", received);
+                ).Start();
                 }
             }
             Log.Information("GAME OVER");

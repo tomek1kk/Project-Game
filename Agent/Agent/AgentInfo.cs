@@ -33,7 +33,7 @@ namespace Agent
         public bool IsLeader { get; private set; }
         public bool HasPiece { get; private set; }
         public IStrategy Strategy { get; private set; }
-        public List<RedirectedExchangeInformationRequest> ExchangeInfoRequests => new List<RedirectedExchangeInformationRequest>();
+        public List<RedirectedExchangeInformationRequest> ExchangeInfoRequests { get; set; } = new List<RedirectedExchangeInformationRequest>();
         public AgentInfo(IStrategy strategy, GameStarted gameStarted)
         {
             Strategy = strategy;
@@ -107,10 +107,10 @@ namespace Agent
 
         public void RequestResponse(RedirectedExchangeInformationRequest requesest)
         {
-            if (requesest.Leader.Value && requesest.TeamId == _gameStartedMessage.TeamId)
+            if (requesest.Leader.Value && requesest.TeamId.ToLower() == _gameStartedMessage.TeamId.ToLower())
                 ExchangeInfoRequests.Insert(0, requesest);
             else
-                ExchangeInfoRequests.Add(requesest);   
-        }       
+                ExchangeInfoRequests.Add(requesest);
+        }
     }
 }

@@ -29,20 +29,22 @@ namespace Agent.Board
         }
         public IEnumerable<string> GetGoalInfo()
         {
-            if (GoalDirection == "N")
-            {
-                for (int i = GoalArea.start; i <= GoalArea.end; ++i)
-                    for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j, i].IsDiscoveredGoal == false)
-                            yield return Board[i, j].IsDiscoveredGoal ? "G" : "IDK";
-            }
-            else
-            {
-                for (int i = GoalArea.end; i >= 0; --i)
-                    for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j, i].IsDiscoveredGoal == false)
-                            yield return Board[i, j].IsDiscoveredGoal ? "G" : "IDK";
-            }
+
+                if (GoalDirection == "N")
+                {
+                    for (int i = GoalArea.start; i <= GoalArea.end; ++i)
+                        for (int j = 0; j < Board.GetLength(0); j++)
+                            if (Board[j, i].IsDiscoveredGoal == false)
+                                yield return Board[j, i].IsDiscoveredGoal ? "G" : "IDK";
+                }
+                else
+                {
+                    for (int i = GoalArea.end ; i >= 0; --i)
+                        for (int j = 0; j < Board.GetLength(0); j++)
+                            if (Board[j, i].IsDiscoveredGoal == false)
+                                yield return Board[j, i].IsDiscoveredGoal ? "G" : "IDK";
+                }
+
         }
         public void UpdateGoalInfo(IEnumerable<string> info)
         {

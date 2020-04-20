@@ -32,6 +32,9 @@ namespace Agent.Strategies
                     break;
                 case MessageType.ExchangeInformationResponse:
                     ExchangeInformationResponseHandler((ExchangeInformationResponse)message.GetPayload());
+                    break; 
+                case MessageType.ExchangeInformationGMResponse:
+                    ExchangeInformationResponseHandler((ExchangeInformationGMResponse)message.GetPayload());
                     break;
                 case MessageType.DestroyPieceResponse:
                     DestroyPieceResponseHandler((DestroyPieceResponse)message.GetPayload());
@@ -61,6 +64,15 @@ namespace Agent.Strategies
                     NotDefinedResponseHandler((NotDefinedError)message.GetPayload());
                     break;
             }
+        }
+        public virtual void GetInfo(ExchangeInformationResponse response)
+        {
+            if (Board.GoalDirection == "N")
+                Board.UpdateGoalInfo(response.RedTeamGoalAreaInformations);
+            else
+                Board.UpdateGoalInfo(response.BlueTeamGoalAreaInformations);
+
+            Board.UpdateDistances(response.Distances, updateDistanse);
         }
         public virtual void GetInfo(ExchangeInformationGMResponse response)
         {
@@ -93,6 +105,13 @@ namespace Agent.Strategies
         {
             //TODO
             //dont know how to interpret Enumerable<int> in response. 
+            GetInfo(exchangeInformationResponse);
+        }
+        virtual protected void ExchangeInformationResponseHandler(ExchangeInformationGMResponse exchangeInformationResponse)
+        {
+            //TODO
+            //dont know how to interpret Enumerable<int> in response. 
+            GetInfo(exchangeInformationResponse);
         }
         virtual protected void MoveResponseHandler(MoveResponse moveResponse)
         {
