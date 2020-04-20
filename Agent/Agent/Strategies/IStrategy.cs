@@ -11,7 +11,6 @@ namespace Agent.Strategies
     {
         Message MakeDecision(AgentInfo agent);
         void UpdateMap(Message message, Point position);
-        void GetInfo(ExchangeInformationGMResponse response);
     }
 }
 

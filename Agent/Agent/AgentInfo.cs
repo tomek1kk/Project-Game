@@ -50,9 +50,6 @@ namespace Agent
                 case MessageType.RedirectedExchangeInformationRequest:
                     RequestResponse((RedirectedExchangeInformationRequest)received.GetPayload());
                     break;
-                case MessageType.ExchangeInformationGMResponse:
-                    Strategy.GetInfo((ExchangeInformationGMResponse)received.GetPayload());
-                    break;
                 case MessageType.CheckHoldedPieceResponse:
                     CheckHoldedPieceHandler((CheckHoldedPieceResponse)received.GetPayload());
                     break;

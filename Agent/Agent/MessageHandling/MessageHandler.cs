@@ -35,7 +35,7 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.CheckHoldedPieceResponse, penalties.CheckForSham);
             ParsePenalty(MessageType.DestroyPieceResponse, penalties.DestroyPiece);
             ParsePenalty(MessageType.DiscoveryResponse, penalties.Discovery);
-            ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
+            ParsePenalty(MessageType.ExchangeInformationGMResponse, penalties.InformationExchange);
             ParsePenalty(MessageType.RedirectedExchangeInformationRequest, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
@@ -66,9 +66,9 @@ namespace Agent.MessageHandling
                 {
                     new Task(() =>
                     {
-                        Log.Debug("Agent sleeps {@Time}", _responsePenalties[MessageType.ExchangeInformationResponse]);
+                        Log.Debug("Agent sleeps {@Time}", _responsePenalties[MessageType.ExchangeInformationGMResponse]);
                         _underPenalty = true;
-                        Thread.Sleep(_responsePenalties[MessageType.ExchangeInformationResponse]);
+                        Thread.Sleep(_responsePenalties[MessageType.ExchangeInformationGMResponse]);
                         _tokenSource.Cancel(false);
                     }
                 ).Start();
