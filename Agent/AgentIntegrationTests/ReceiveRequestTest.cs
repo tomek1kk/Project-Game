@@ -67,7 +67,7 @@ namespace AgentIntegrationTests
             serverSideListener.Stop();
             IMessageSenderReceiver senderReceiver = new StreamMessageSenderReceiver(serverSide.GetStream(), new Parser());
             Message joinGameMessage = null;
-            Message discoveryreuqest = null;
+            Message exchangeInfoRequest = null;
 
             Semaphore semaphore = new Semaphore(0, 100);
             senderReceiver.StartReceiving(message =>
@@ -81,7 +81,7 @@ namespace AgentIntegrationTests
                         joinGameMessage = message;
                         break;
                     default:
-                        discoveryreuqest = message;
+                        exchangeInfoRequest = message;
                         semaphore.Release();
                         break;
                 }
@@ -89,7 +89,7 @@ namespace AgentIntegrationTests
 
             semaphore.WaitOne();
             Assert.AreEqual(joinGameMessage.MessageId, MessageType.JoinGameRequest);
-            Assert.AreEqual(discoveryreuqest.MessageId, MessageType.DiscoveryRequest);
+            Assert.AreEqual(exchangeInfoRequest.MessageId, MessageType.ExchangeInformationRequest);
         }
     }
 }
