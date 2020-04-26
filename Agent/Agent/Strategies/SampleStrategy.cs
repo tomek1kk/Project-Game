@@ -7,7 +7,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Linq;
-using Serilog;
 
 namespace Agent.Strategies
 {
@@ -168,7 +167,6 @@ namespace Agent.Strategies
             (int, int) vectorToGoal = (closestUndiscoveredGoal.X - agent.Position.X, closestUndiscoveredGoal.Y - agent.Position.Y);
 
             req.Direction = ChooseDirection(vectorToGoal);
-            Log.Information("moving to goal in direction {direction}", req.Direction);
             return new Message<MoveRequest>(req);
         }
 
