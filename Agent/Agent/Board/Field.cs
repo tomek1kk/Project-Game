@@ -21,8 +21,6 @@ namespace Agent.Board
             }
         }
 
-        public bool IsDiscoveredGoal { get; set; } = false;
-
         public GoalInfo goalInfo { get; set; } = GoalInfo.IDK;
 
         public Field()

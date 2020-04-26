@@ -94,14 +94,6 @@ namespace Agent
             Position = new Point(moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value);
         }
 
-        public Message BegForInfo()
-        {
-            var req = new ExchangeInformationRequest();
-            Random r = new Random();
-            req.AskedAgentId = r.Next(AlliesIds.Count);
-            return new Message<ExchangeInformationRequest>(req);
-        }
-
         public void RequestResponse(RedirectedExchangeInformationRequest requesest)
         {
             if (requesest.Leader.Value && requesest.TeamId.ToLower() == _gameStartedMessage.TeamId.ToLower())

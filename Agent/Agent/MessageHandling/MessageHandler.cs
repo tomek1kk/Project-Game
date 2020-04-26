@@ -36,7 +36,6 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.DestroyPieceResponse, penalties.DestroyPiece);
             ParsePenalty(MessageType.DiscoveryResponse, penalties.Discovery);
             ParsePenalty(MessageType.ExchangeInformationGMResponse, penalties.InformationExchange);
-            ParsePenalty(MessageType.RedirectedExchangeInformationRequest, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
             //TODO:
