@@ -126,8 +126,10 @@ namespace Agent.Strategies
             switch (putPieceRespone.PutResult)
             {
                 case PutResultEnum.NormalOnGoalField:
+                    Board.Board[position.X, position.Y].goalInfo = GoalInfo.DiscoveredGoal;
+                    break;
                 case PutResultEnum.NormalOnNonGoalField:
-                    Board.Board[position.X, position.Y].IsDiscoveredGoal = true;
+                    Board.Board[position.X, position.Y].goalInfo = GoalInfo.DiscoveredNotGoal;
                     break;
                 case PutResultEnum.TaskField:
                 case PutResultEnum.ShamOnGoalArea:

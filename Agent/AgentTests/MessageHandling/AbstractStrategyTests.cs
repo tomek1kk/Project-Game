@@ -86,7 +86,7 @@ namespace AgentTests.MessageHandling
             //when
             strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
             //then
-            Assert.AreEqual(true, strategy.Board.Board[position.X, position.Y].IsDiscoveredGoal);
+            Assert.AreEqual(Agent.Board.GoalInfo.DiscoveredGoal, strategy.Board.Board[position.X, position.Y].goalInfo);
         }
         [TestMethod]
         public void TestPutPieceNormalOnNonGoalFieldStrategyAction()
@@ -97,7 +97,7 @@ namespace AgentTests.MessageHandling
             //when
             strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
             //then
-            Assert.AreEqual(true, strategy.Board.Board[position.X, position.Y].IsDiscoveredGoal);
+            Assert.AreEqual(Agent.Board.GoalInfo.DiscoveredNotGoal, strategy.Board.Board[position.X, position.Y].goalInfo);
         }
         [TestMethod]
         public void TestPutPieceShamOnGoalAreaFieldStrategyAction()
@@ -108,7 +108,7 @@ namespace AgentTests.MessageHandling
             //when
             strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
             //then
-            Assert.AreEqual(false, strategy.Board.Board[position.X, position.Y].IsDiscoveredGoal);
+            Assert.AreEqual(Agent.Board.GoalInfo.IDK, strategy.Board.Board[position.X, position.Y].goalInfo);
         }
         [TestMethod]
         public void TestPutPieceTaskFieldStrategyAction()
@@ -119,7 +119,7 @@ namespace AgentTests.MessageHandling
             //when
             strategy.UpdateMap(new Message<PutPieceResponse>(putPieceResponse), position);
             //then
-            Assert.AreEqual(false, strategy.Board.Board[position.X, position.Y].IsDiscoveredGoal);
+            Assert.AreEqual(Agent.Board.GoalInfo.IDK, strategy.Board.Board[position.X, position.Y].goalInfo);
         }
     }
 }

@@ -34,16 +34,20 @@ namespace Agent.Board
                 {
                     for (int i = GoalArea.start; i <= GoalArea.end; ++i)
                         for (int j = 0; j < Board.GetLength(0); j++)
-                            if (Board[j, i].IsDiscoveredGoal == false)
-                                yield return Board[j, i].IsDiscoveredGoal ? "G" : "IDK";
-                }
+                            if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
+                                yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "NG";
+                            else
+                                yield return "IDK";
+            }
                 else
                 {
                     for (int i = GoalArea.end ; i >= 0; --i)
                         for (int j = 0; j < Board.GetLength(0); j++)
-                            if (Board[j, i].IsDiscoveredGoal == false)
-                                yield return Board[j, i].IsDiscoveredGoal ? "G" : "IDK";
-                }
+                            if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
+                                yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "NG";
+                            else
+                                yield return "IDK";
+            }
 
         }
         public void UpdateGoalInfo(IEnumerable<string> info)
@@ -53,16 +57,16 @@ namespace Agent.Board
             {
                 for (int i = GoalArea.start; i <= GoalArea.end; ++i)
                     for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
-                        if (iterator.Current == "G")
-                            Board[i, j].IsDiscoveredGoal = true;
+                        if (iterator.Current == "G" || iterator.Current == "NG")
+                            Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
 
             }
             else
             {
                 for (int i = GoalArea.end; i >= 0; --i)
                     for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
-                        if (iterator.Current == "G")
-                            Board[i, j].IsDiscoveredGoal = true;
+                        if (iterator.Current == "G" || iterator.Current == "NG")
+                            Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
             }           
         }
         public IEnumerable<int> GetDistances()
@@ -96,7 +100,7 @@ namespace Agent.Board
                 lastRowOfGoals = GoalArea.start;
                 for (int i = lastRowOfGoals; i <= GoalArea.end; ++i)
                     for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j, i].IsDiscoveredGoal == false)
+                        if(Board[j, i].goalInfo == GoalInfo.IDK)
                             return (j, i);
             }
             else
@@ -104,7 +108,7 @@ namespace Agent.Board
                 lastRowOfGoals = GoalArea.end;
                 for (int i = lastRowOfGoals; i >= 0; --i)
                     for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j, i].IsDiscoveredGoal == false)
+                        if (Board[j, i].goalInfo == GoalInfo.IDK)
                             return (j, i);
             }
             throw new Exception("All goals should be realized.");
