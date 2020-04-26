@@ -15,7 +15,6 @@ namespace Agent.Strategies
     }
     public class SampleStrategy : Strategy
     {
-        int _decisionCount = -1;
         public Stack<MessageType> History { get; private set; }
 
         public SampleStrategy(int width, int height, string teamId, int goalAreaSize) : base(width, height, teamId, goalAreaSize)
@@ -25,7 +24,6 @@ namespace Agent.Strategies
 
         public override Message MakeDecision(AgentInfo agent)
         {
-            _decisionCount++;
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
             if (agent.ExchangeInfoRequests.Count() != 0)/* && agent.ExchangeInfoRequests[0].Leader.Value)*/
             {
@@ -33,7 +31,7 @@ namespace Agent.Strategies
                 agent.ExchangeInfoRequests.RemoveAt(0);
                 return GiveInfo(tmp.AskingId.Value);
             }
-            if (_decisionCount % 10 == 0)
+            if (History.Count % 10 == 0)
             {
                 var eq = new ExchangeInformationRequest();
                 Random rnd = new Random();
@@ -88,7 +86,6 @@ namespace Agent.Strategies
             }
             catch
             {
-                string s = "DUPA";
             }
             resp.Distances = Board.GetDistances();
             resp.RespondToID = AgentId; // GM id?
