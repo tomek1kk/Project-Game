@@ -24,7 +24,6 @@ namespace Agent.Strategies
 
         public override Message MakeDecision(AgentInfo agent)
         {
-
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
             if (agent.ExchangeInfoRequests.Count() != 0)/* && agent.ExchangeInfoRequests[0].Leader.Value)*/
             {
@@ -87,7 +86,6 @@ namespace Agent.Strategies
             }
             catch
             {
-                string s = "DUPA";
             }
             resp.Distances = Board.GetDistances();
             resp.RespondToID = AgentId; // GM id?
