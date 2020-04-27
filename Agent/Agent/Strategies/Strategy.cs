@@ -1,4 +1,4 @@
-﻿using Agent.AgentBoard;
+﻿using Agent.Board;
 using CommunicationLibrary;
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Model;
@@ -13,18 +13,12 @@ namespace Agent.Strategies
 {
     public abstract class Strategy : IStrategy
     {
-        virtual public Field[,] Board { get; private set; }
-
+        virtual public AgentBoard Board { get; private set; }
         public Strategy() { }
-        public Strategy(int width, int height)
+        public Strategy(int width, int height, string teamId, int goalAreaSize)
         {
-            Board = new Field[width, height];
-            for (int i = 0; i < width; i++)
-                for (int j = 0; j < height; j++)
-                    Board[i, j] = new Field();
+            Board = new AgentBoard(width, height, teamId, goalAreaSize);
         }
-
-
         public abstract Message MakeDecision(AgentInfo agent);
         public virtual void UpdateMap(Message message, Point position)
         {
@@ -36,8 +30,8 @@ namespace Agent.Strategies
                 case MessageType.DiscoveryResponse:
                     DiscoveryResponseHandler((DiscoveryResponse)message.GetPayload(), position);
                     break;
-                case MessageType.ExchangeInformationResponse:
-                    ExchangeInformationResponseHandler((ExchangeInformationResponse)message.GetPayload());
+                case MessageType.ExchangeInformationGMResponse:
+                    ExchangeInformationResponseHandler((ExchangeInformationGMResponse)message.GetPayload());
                     break;
                 case MessageType.DestroyPieceResponse:
                     DestroyPieceResponseHandler((DestroyPieceResponse)message.GetPayload());
@@ -68,56 +62,63 @@ namespace Agent.Strategies
                     break;
             }
         }
-
+        public Func<int, int, int, int, int> updateDistanse = (dist, lastUpdate, curDist, curLastUpdate) =>
+        {
+            return lastUpdate > curLastUpdate ? curDist : dist;
+        };
         virtual protected void CheckHoldedPieceResponseHandler(CheckHoldedPieceResponse checkHoldedPieceResponse) { }
         virtual protected void DiscoveryResponseHandler(DiscoveryResponse discoveryResponse, Point position)
         {
-            if (discoveryResponse.DistanceNW.HasValue) Board[position.X - 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNW.Value;
-            if (discoveryResponse.DistanceN.HasValue) Board[position.X, position.Y + 1].DistToPiece = discoveryResponse.DistanceN.Value;
-            if (discoveryResponse.DistanceNE.HasValue) Board[position.X + 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNE.Value;
-            if (discoveryResponse.DistanceW.HasValue) Board[position.X - 1, position.Y].DistToPiece = discoveryResponse.DistanceW.Value;
-            if (discoveryResponse.DistanceFromCurrent.HasValue) Board[position.X, position.Y].DistToPiece = discoveryResponse.DistanceFromCurrent.Value;
-            if (discoveryResponse.DistanceE.HasValue) Board[position.X + 1, position.Y].DistToPiece = discoveryResponse.DistanceE.Value;
-            if (discoveryResponse.DistanceSW.HasValue) Board[position.X - 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSW.Value;
-            if (discoveryResponse.DistanceS.HasValue) Board[position.X, position.Y - 1].DistToPiece = discoveryResponse.DistanceS.Value;
-            if (discoveryResponse.DistanceSE.HasValue) Board[position.X + 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSE.Value;
+            if (discoveryResponse.DistanceNW.HasValue) Board.Board[position.X - 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNW.Value;
+            if (discoveryResponse.DistanceN.HasValue) Board.Board[position.X, position.Y + 1].DistToPiece = discoveryResponse.DistanceN.Value;
+            if (discoveryResponse.DistanceNE.HasValue) Board.Board[position.X + 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNE.Value;
+            if (discoveryResponse.DistanceW.HasValue) Board.Board[position.X - 1, position.Y].DistToPiece = discoveryResponse.DistanceW.Value;
+            if (discoveryResponse.DistanceFromCurrent.HasValue) Board.Board[position.X, position.Y].DistToPiece = discoveryResponse.DistanceFromCurrent.Value;
+            if (discoveryResponse.DistanceE.HasValue) Board.Board[position.X + 1, position.Y].DistToPiece = discoveryResponse.DistanceE.Value;
+            if (discoveryResponse.DistanceSW.HasValue) Board.Board[position.X - 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSW.Value;
+            if (discoveryResponse.DistanceS.HasValue) Board.Board[position.X, position.Y - 1].DistToPiece = discoveryResponse.DistanceS.Value;
+            if (discoveryResponse.DistanceSE.HasValue) Board.Board[position.X + 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSE.Value;
         }
         virtual protected void DestroyPieceResponseHandler(DestroyPieceResponse moveError) { }
-        virtual protected void ExchangeInformationResponseHandler(ExchangeInformationResponse exchangeInformationResponse)
+        virtual protected void ExchangeInformationResponseHandler(ExchangeInformationGMResponse exchangeInformationResponse)
         {
-            //TODO
-            //dont know how to interpret Enumerable<int> in response. 
+            if (Board.GoalDirection == "N")
+                Board.UpdateGoalInfo(exchangeInformationResponse.RedTeamGoalAreaInformations);
+            else
+                Board.UpdateGoalInfo(exchangeInformationResponse.BlueTeamGoalAreaInformations);
+
+            Board.UpdateDistances(exchangeInformationResponse.Distances, updateDistanse);
         }
         virtual protected void MoveResponseHandler(MoveResponse moveResponse)
         {
-            Board[moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value].DistToPiece = moveResponse.ClosestPiece.Value;
+            Board.Board[moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value].DistToPiece = moveResponse.ClosestPiece.Value;
         }
         virtual protected void NotDefinedResponseHandler(NotDefinedError notDefinedError) { }
         virtual protected void MoveErrorResponseHandler(MoveError moveError) { }
         virtual protected void PickPieceErrorResponseHandler(PickPieceError pieceError) { }
         virtual protected void PickPieceResponseHandler(PickPieceResponse pickPieceRespone, Point position)
         {
-            Board[position.X, position.Y].DistToPiece = int.MaxValue;
-            if (position.Y != Board.GetLength(1) - 1)
-                Board[position.X, position.Y + 1].DistToPiece = int.MaxValue;
+            Board.Board[position.X, position.Y].DistToPiece = int.MaxValue;
+            if (position.Y != Board.Board.GetLength(1) - 1)
+                Board.Board[position.X, position.Y + 1].DistToPiece = int.MaxValue;
 
             if (position.Y != 0)
-                Board[position.X, position.Y - 1].DistToPiece = int.MaxValue;
+                Board.Board[position.X, position.Y - 1].DistToPiece = int.MaxValue;
 
-            if (position.Y != Board.GetLength(1) - 1 && position.X != Board.GetLength(0) - 1)
-                Board[position.X + 1, position.Y + 1].DistToPiece = int.MaxValue;
+            if (position.Y != Board.Board.GetLength(1) - 1 && position.X != Board.Board.GetLength(0) - 1)
+                Board.Board[position.X + 1, position.Y + 1].DistToPiece = int.MaxValue;
 
             if (position.X != 0)
-                Board[position.X - 1, position.Y].DistToPiece = int.MaxValue;
+                Board.Board[position.X - 1, position.Y].DistToPiece = int.MaxValue;
 
-            if (position.X != Board.GetLength(0) - 1)
-                Board[position.X + 1, position.Y].DistToPiece = int.MaxValue;
+            if (position.X != Board.Board.GetLength(0) - 1)
+                Board.Board[position.X + 1, position.Y].DistToPiece = int.MaxValue;
 
             if (position.Y != 0 && position.X != 0)
-                Board[position.X - 1, position.Y - 1].DistToPiece = int.MaxValue;
+                Board.Board[position.X - 1, position.Y - 1].DistToPiece = int.MaxValue;
 
-            if (position.Y != 0 && position.X != Board.GetLength(0) - 1)
-                Board[position.X + 1, position.Y - 1].DistToPiece = int.MaxValue;
+            if (position.Y != 0 && position.X != Board.Board.GetLength(0) - 1)
+                Board.Board[position.X + 1, position.Y - 1].DistToPiece = int.MaxValue;
         }
         virtual protected void PutPieceErrorResponseHandler(PutPieceError putPieceError) { }
         virtual protected void PutPieceResponseHandler(PutPieceResponse putPieceRespone, Point position)
@@ -125,8 +126,10 @@ namespace Agent.Strategies
             switch (putPieceRespone.PutResult)
             {
                 case PutResultEnum.NormalOnGoalField:
+                    Board.Board[position.X, position.Y].goalInfo = GoalInfo.DiscoveredGoal;
+                    break;
                 case PutResultEnum.NormalOnNonGoalField:
-                    Board[position.X, position.Y].IsDiscoveredGoal = true;
+                    Board.Board[position.X, position.Y].goalInfo = GoalInfo.DiscoveredNotGoal;
                     break;
                 case PutResultEnum.TaskField:
                 case PutResultEnum.ShamOnGoalArea:

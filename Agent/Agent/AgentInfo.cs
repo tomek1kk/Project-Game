@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
-using Agent.AgentBoard;
+using Agent.Board;
 using Agent.Exceptions;
 using Agent.Strategies;
 using CommunicationLibrary;
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Information;
 using CommunicationLibrary.Model;
+using CommunicationLibrary.Request;
 using CommunicationLibrary.Response;
+using System.Linq;
 
 namespace Agent
 {
@@ -25,17 +27,13 @@ namespace Agent
                 IsLeader = value.LeaderId == value.AgentId;
             }
         }
-
         public int LeaderId => _gameStartedMessage.LeaderId;
-        public IEnumerable<int> AlliesIds => _gameStartedMessage.AlliesIds;
-        public int GoalAreaSize => _gameStartedMessage.GoalAreaSize;
+        public List<int> AlliesIds => _gameStartedMessage.AlliesIds.ToList();
         public Point Position { get; private set; }
         public bool IsLeader { get; private set; }
         public bool HasPiece { get; private set; }
-        public string GoalDirection => _gameStartedMessage.TeamId == "Red" ? "N" : "S";
-        public (int start, int end) GoalArea { get; private set; }
-
         public IStrategy Strategy { get; private set; }
+        public List<RedirectedExchangeInformationRequest> ExchangeInfoRequests { get; set; } = new List<RedirectedExchangeInformationRequest>();
         public AgentInfo(IStrategy strategy, GameStarted gameStarted)
         {
             Strategy = strategy;
@@ -44,19 +42,14 @@ namespace Agent
                 throw new AgentInfoNotValidException("GameStarted bad config.");
 
             GameStartedMessage = gameStarted;
-            GoalArea = gameStarted.TeamId == "Blue"
-                ? (0, gameStarted.GoalAreaSize - 1)
-                : (gameStarted.BoardSize.Y.Value - gameStarted.GoalAreaSize, gameStarted.BoardSize.Y.Value - 1);
-
-        }
-        public bool InGoalArea()
-        {
-            return Position.Y >= GoalArea.start && Position.Y <= GoalArea.end;
         }
         public void UpdateFromMessage(Message received)
         {
             switch (received.MessageId)
             {
+                case MessageType.RedirectedExchangeInformationRequest:
+                    RequestResponse((RedirectedExchangeInformationRequest)received.GetPayload());
+                    break;
                 case MessageType.CheckHoldedPieceResponse:
                     CheckHoldedPieceHandler((CheckHoldedPieceResponse)received.GetPayload());
                     break;
@@ -99,6 +92,14 @@ namespace Agent
         private void MoveResponseHandler(MoveResponse moveResponse)
         {
             Position = new Point(moveResponse.CurrentPosition.X.Value, moveResponse.CurrentPosition.Y.Value);
+        }
+
+        public void RequestResponse(RedirectedExchangeInformationRequest requesest)
+        {
+            if (requesest.Leader.Value && requesest.TeamId.ToLower() == _gameStartedMessage.TeamId.ToLower())
+                ExchangeInfoRequests.Insert(0, requesest);
+            else
+                ExchangeInfoRequests.Add(requesest);
         }
     }
 }

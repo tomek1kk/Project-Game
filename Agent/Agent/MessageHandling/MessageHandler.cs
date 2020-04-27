@@ -18,6 +18,7 @@ namespace Agent.MessageHandling
         AgentInfo _agentInfo;
         CancellationTokenSource _tokenSource = null;
         Dictionary<MessageType, int> _responsePenalties = new Dictionary<MessageType, int>(); //in miliseconds
+        int _exchangePenalty;
         bool _gameOver;
         bool _underPenalty = false;
         public MessageHandler(SenderReceiverQueueAdapter gmConnection, AgentInfo agentInfo)
@@ -35,9 +36,9 @@ namespace Agent.MessageHandling
             ParsePenalty(MessageType.CheckHoldedPieceResponse, penalties.CheckForSham);
             ParsePenalty(MessageType.DestroyPieceResponse, penalties.DestroyPiece);
             ParsePenalty(MessageType.DiscoveryResponse, penalties.Discovery);
-            ParsePenalty(MessageType.ExchangeInformationResponse, penalties.InformationExchange);
             ParsePenalty(MessageType.MoveResponse, penalties.Move);
             ParsePenalty(MessageType.PutPieceResponse, penalties.PutPiece);
+            _exchangePenalty = Int32.Parse(penalties.InformationExchange);
             //TODO:
             //Temporary, because currently there is no PickPiece penalty
             ParsePenalty(MessageType.PickPieceResponse, penalties.DestroyPiece);
@@ -57,8 +58,22 @@ namespace Agent.MessageHandling
                 Log.Debug("Made decision {@Decision}", actionRequest);
                 SendToGM(actionRequest);
 
+
                 if (_tokenSource != null) _tokenSource.Dispose();
                 _tokenSource = new CancellationTokenSource();
+
+                if (actionRequest.MessageId == MessageType.ExchangeInformationResponse
+                    || actionRequest.MessageId == MessageType.ExchangeInformationRequest)
+                {
+                    new Task(() =>
+                    {
+                        Log.Debug("Agent sleeps {@Time}", _exchangePenalty);
+                        _underPenalty = true;
+                        Thread.Sleep(_exchangePenalty);
+                        _tokenSource.Cancel(false);
+                    }
+                ).Start();
+                }
                 while (!_gameOver && !_tokenSource.IsCancellationRequested)
                 {
                     Message received = _gmConnection.TryTake(_tokenSource.Token, 50);
@@ -67,8 +82,6 @@ namespace Agent.MessageHandling
                         Log.Debug("Recieved message {@Message}", received);
                         HandleReceived(received);
                     }
-                    else
-                        Log.Debug("Recieved null message {@Message}", received);
                 }
             }
             Log.Information("GAME OVER");
@@ -124,7 +137,7 @@ namespace Agent.MessageHandling
                 new Task(() =>
                 {
                     _underPenalty = true;
-                    Thread.Sleep(penaltyNotWaitedError.WaitUntill - DateTime.Now);
+                    Thread.Sleep(penaltyNotWaitedError.WaitUntill - date);
                     _tokenSource.Cancel(false);
                 }).Start();
         }

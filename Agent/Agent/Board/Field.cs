@@ -1,6 +1,12 @@
 ﻿using System;
-namespace Agent.AgentBoard
+namespace Agent.Board
 {
+    public enum GoalInfo
+    {
+        IDK,
+        DiscoveredNotGoal,
+        DiscoveredGoal
+    }
     public class Field
     {
         private int distToPiece;
@@ -15,7 +21,7 @@ namespace Agent.AgentBoard
             }
         }
 
-        public bool IsDiscoveredGoal { get; set; } = false;
+        public GoalInfo goalInfo { get; set; } = GoalInfo.IDK;
 
         public Field()
         {
