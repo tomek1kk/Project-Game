@@ -2,6 +2,7 @@
 using CommunicationLibrary.Error;
 using CommunicationLibrary.Model;
 using CommunicationLibrary.Request;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,9 +13,11 @@ namespace Agent.MessageHandling
     {
         Dictionary<MessageType, int> _responsePenalties = new Dictionary<MessageType, int>(); //in miliseconds
         int _exchangePenalty;
-        private bool _unblockTimeUnknown = true;
         private DateTime _blockedUntil;
-        public bool UnderPenalty => _unblockTimeUnknown || DateTime.Now < _blockedUntil;
+        public bool UnderPenalty => UnblockTimeUnknown || DateTime.Now < _blockedUntil;
+
+        public bool UnblockTimeUnknown { get; private set; } = true;
+
         public Penalizer(Penalties penalties)
         {
             ParsePenalties(penalties);
@@ -41,14 +44,21 @@ namespace Agent.MessageHandling
             DateTime newBlockedUntil = DateTime.MinValue;
 
             if (_responsePenalties.ContainsKey(receivedMessage.MessageId))
+            {
                 newBlockedUntil = DateTime.Now.AddMilliseconds(_responsePenalties[receivedMessage.MessageId]);
+                Log.Debug("Penalty on receive {penalty}", _responsePenalties[receivedMessage.MessageId]);
+            }
             else if (receivedMessage.MessageId == MessageType.PenaltyNotWaitedError)
+            {
                 newBlockedUntil = ((PenaltyNotWaitedError)receivedMessage.GetPayload()).WaitUntill;
+                Log.Debug("Penalty not waited, waiting until {unblock_time}", newBlockedUntil);
+            }
 
             if(DateTime.Compare(_blockedUntil, newBlockedUntil) < 0)
             {
                 _blockedUntil = newBlockedUntil;
-                _unblockTimeUnknown = false;
+                Log.Debug("Updating penalty {unblock_time}", _blockedUntil);
+                UnblockTimeUnknown = false;
             }
         }
 
@@ -59,17 +69,18 @@ namespace Agent.MessageHandling
                 || sentMessage.MessageId == MessageType.ExchangeInformationResponse)
             {
                 _blockedUntil = DateTime.Now.AddMilliseconds(_exchangePenalty);
-                _unblockTimeUnknown = false;
+                UnblockTimeUnknown = false;
+                Log.Debug("Penalty on send {penalty}, {unblock_time}", _exchangePenalty, _blockedUntil);
             }
             else
             {
-                _unblockTimeUnknown = true;
+                UnblockTimeUnknown = true;
             }
         }
 
         public void ClearPenalty()
         {
-            _unblockTimeUnknown = false;
+            UnblockTimeUnknown = false;
             _blockedUntil = DateTime.MinValue;
         }
     }
