@@ -59,7 +59,8 @@ namespace Agent
                 case MessageType.PickPieceResponse:
                     HasPiece = true;
                     break;
-                case MessageType.PutPieceResponse | MessageType.DestroyPieceRequest:
+                case MessageType.PutPieceResponse:
+                case MessageType.DestroyPieceRequest:
                     HasPiece = false;
                     break;
                 case MessageType.MoveError:
@@ -75,7 +76,6 @@ namespace Agent
                     Position = new Point(notDefinedError.Position.X.Value, notDefinedError.Position.Y.Value);
                     HasPiece = notDefinedError.HoldingPiece.Value;
                     break;
-                    //discovery??
             }
             Strategy.UpdateMap(received, Position);
         }

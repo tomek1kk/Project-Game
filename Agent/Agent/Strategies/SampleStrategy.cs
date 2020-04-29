@@ -17,6 +17,8 @@ namespace Agent.Strategies
     {
         public Stack<MessageType> History { get; private set; }
 
+        private bool _justRequestedExchange = false;
+
         public SampleStrategy(int width, int height, string teamId, int goalAreaSize) : base(width, height, teamId, goalAreaSize)
         {
             History = new Stack<MessageType>();
@@ -31,14 +33,19 @@ namespace Agent.Strategies
                 agent.ExchangeInfoRequests.RemoveAt(0);
                 return GiveInfo(tmp.AskingId.Value);
             }
-            if (History.Count % 10 == 0)
+            //if we depend only on History.Count for chosing when to exchange info then
+            //until asked agent sends response to previous exchange request
+            //asking agent will keep sending ExchangeInformationRequests
+            if (!_justRequestedExchange && History.Count % 10 == 0)
             {
+                _justRequestedExchange = true;
                 var eq = new ExchangeInformationRequest();
                 Random rnd = new Random();
                 var allies = agent.AlliesIds.Where(x => x != agent.LeaderId);
                 eq.AskedAgentId = agent.IsLeader ? allies.ElementAt(rnd.Next() % allies.Count()) : agent.LeaderId;
                 return new Message<ExchangeInformationRequest>(eq);
             }
+            else if(History.Count % 10 != 0) { _justRequestedExchange = false; }
 
             if (last == MessageType.MoveError)
             {
