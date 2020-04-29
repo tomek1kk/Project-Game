@@ -12,8 +12,9 @@ namespace Agent.MessageHandling
     {
         Dictionary<MessageType, int> _responsePenalties = new Dictionary<MessageType, int>(); //in miliseconds
         int _exchangePenalty;
-        public bool UnderPenalty => DateTime.Now < _blockedUntil;
+        private bool _unblockTimeUnknown = true;
         private DateTime _blockedUntil;
+        public bool UnderPenalty => _unblockTimeUnknown || DateTime.Now < _blockedUntil;
         public Penalizer(Penalties penalties)
         {
             ParsePenalties(penalties);
@@ -44,23 +45,32 @@ namespace Agent.MessageHandling
             else if (receivedMessage.MessageId == MessageType.PenaltyNotWaitedError)
                 newBlockedUntil = ((PenaltyNotWaitedError)receivedMessage.GetPayload()).WaitUntill;
 
-            _blockedUntil = 
-                DateTime.Compare(_blockedUntil, newBlockedUntil) > 0
-                ? _blockedUntil
-                : newBlockedUntil;
+            if(DateTime.Compare(_blockedUntil, newBlockedUntil) < 0)
+            {
+                _blockedUntil = newBlockedUntil;
+                _unblockTimeUnknown = false;
+            }
         }
 
         public void PenalizeOnSend(Message sentMessage)
         {
-            DateTime newBlockedUntil = DateTime.MinValue;
+            //assumes that if message is being sent then there is no penalty
             if (sentMessage.MessageId == MessageType.ExchangeInformationRequest
                 || sentMessage.MessageId == MessageType.ExchangeInformationResponse)
-                newBlockedUntil = DateTime.Now.AddMilliseconds(_exchangePenalty);
+            {
+                _blockedUntil = DateTime.Now.AddMilliseconds(_exchangePenalty);
+                _unblockTimeUnknown = false;
+            }
+            else
+            {
+                _unblockTimeUnknown = true;
+            }
+        }
 
-            _blockedUntil =
-                DateTime.Compare(_blockedUntil, newBlockedUntil) > 0
-                ? _blockedUntil
-                : newBlockedUntil;
+        public void ClearPenalty()
+        {
+            _unblockTimeUnknown = false;
+            _blockedUntil = DateTime.MinValue;
         }
     }
 }

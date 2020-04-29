@@ -341,7 +341,7 @@ namespace Agent.MessageHandling.Tests
         }
 
         [TestMethod()]
-        public void TestReceiveAndSendFreeAfterBigger()
+        public void TestSendAndReceiveFreeAfterBigger()
         {
             //given
             var penalizer = new Penalizer(_samplePenalties);
@@ -355,7 +355,7 @@ namespace Agent.MessageHandling.Tests
 
 
             //when
-            penalizer.PenalizeOnReceive(exchangeRequest);
+            penalizer.PenalizeOnSend(exchangeRequest);
             penalizer.PenalizeOnReceive(moveMessage);
 
             //then
@@ -364,7 +364,7 @@ namespace Agent.MessageHandling.Tests
         }
 
         [TestMethod()]
-        public void TestReceiveAndSendStillBlockedAfterSmaller()
+        public void TestSendAndReceiveStillBlockedAfterSmaller()
         {
             //given
             var penalizer = new Penalizer(_samplePenalties);
@@ -378,12 +378,69 @@ namespace Agent.MessageHandling.Tests
 
 
             //when
-            penalizer.PenalizeOnReceive(exchangeRequest);
+            penalizer.PenalizeOnSend(exchangeRequest);
             penalizer.PenalizeOnReceive(moveMessage);
 
             //then
             Thread.Sleep(waitTime);
             Assert.IsTrue(penalizer.UnderPenalty);
+        }
+
+        [TestMethod()]
+        public void TestBlockedAfterStandardRequest()
+        {
+            //given
+            var penalizer = new Penalizer(_samplePenalties);
+            var discoveryRequest = new Message<DiscoveryRequest>(
+                new DiscoveryRequest());
+            int waitTime = Int32.Parse(_samplePenalties.Discovery);
+
+
+            //when
+            penalizer.PenalizeOnSend(discoveryRequest);
+
+            //then
+            Thread.Sleep(waitTime);
+            Assert.IsTrue(penalizer.UnderPenalty);
+        }
+
+        [TestMethod()]
+        public void TestFreeAfterStandardRequestResponseAndTimeout()
+        {
+            //given
+            var penalizer = new Penalizer(_samplePenalties);
+            var discoveryRequest = new Message<DiscoveryRequest>(
+                new DiscoveryRequest());
+            var discoveryResponse = new Message<DiscoveryResponse>(
+                new DiscoveryResponse());
+            int waitTime = Int32.Parse(_samplePenalties.Discovery);
+
+
+            //when
+            penalizer.PenalizeOnSend(discoveryRequest);
+            Thread.Sleep(waitTime);
+            penalizer.PenalizeOnReceive(discoveryResponse);
+
+            //then
+            Thread.Sleep(waitTime);
+            Assert.IsFalse(penalizer.UnderPenalty);
+        }
+
+        [TestMethod()]
+        public void TestClearRemovesPenalty()
+        {
+            //given
+            var penalizer = new Penalizer(_samplePenalties);
+            var discoveryRequest = new Message<DiscoveryRequest>(
+                new DiscoveryRequest());
+
+
+            //when
+            penalizer.PenalizeOnSend(discoveryRequest);
+            penalizer.ClearPenalty();
+
+            //then
+            Assert.IsFalse(penalizer.UnderPenalty);
         }
     }
 }
