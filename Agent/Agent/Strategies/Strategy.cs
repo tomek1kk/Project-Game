@@ -49,7 +49,7 @@ namespace Agent.Strategies
                     MoveErrorResponseHandler((MoveError)message.GetPayload());
                     break;
                 case MessageType.PickPieceError:
-                    PickPieceErrorResponseHandler((PickPieceError)message.GetPayload());
+                    PickPieceErrorResponseHandler((PickPieceError)message.GetPayload(), position);
                     break;
                 case MessageType.PutPieceError:
                     PutPieceErrorResponseHandler((PutPieceError)message.GetPayload());
@@ -95,7 +95,10 @@ namespace Agent.Strategies
         }
         virtual protected void NotDefinedResponseHandler(NotDefinedError notDefinedError) { }
         virtual protected void MoveErrorResponseHandler(MoveError moveError) { }
-        virtual protected void PickPieceErrorResponseHandler(PickPieceError pieceError) { }
+        virtual protected void PickPieceErrorResponseHandler(PickPieceError pieceError, Point position)
+        {
+            Board.Board[position.X, position.Y].DistToPiece = Int32.MaxValue;
+        }
         virtual protected void PickPieceResponseHandler(PickPieceResponse pickPieceRespone, Point position)
         {
             Board.Board[position.X, position.Y].DistToPiece = int.MaxValue;

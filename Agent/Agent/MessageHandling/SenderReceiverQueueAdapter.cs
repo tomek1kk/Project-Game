@@ -31,18 +31,11 @@ namespace Agent.MessageHandling
             _errorCallback = errorCallback;
         }
 
-        public Message TryTake(CancellationToken cancellationToken, int millisecondsTimeout)
+        public Message TryTake(int millisecondsTimeout)
         {
-            try
-            {
-                //queue.take(cancellationToken) doesn't cancel for some reason
-                _queue.TryTake(out Message result, millisecondsTimeout, cancellationToken);
+            if(_queue.TryTake(out Message result, millisecondsTimeout))
                 return result;
-            }
-            catch(OperationCanceledException)
-            {
-                return null;
-            }
+            return null;
         }
         public void Send(Message message)
         {
