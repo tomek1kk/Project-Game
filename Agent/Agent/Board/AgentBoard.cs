@@ -108,39 +108,39 @@ namespace Agent.Board
         }
         private (int x, int y) SearchNearestGoalOnRed((int x, int y) nearestGoalArea)
         {
-            Queue<(int x, int y)> stack = new Queue<(int x, int y)>();
-            stack.Enqueue(nearestGoalArea);
-            while (stack.Count != 0)
+            Queue<(int x, int y)> queue = new Queue<(int x, int y)>();
+            queue.Enqueue(nearestGoalArea);
+            while (queue.Count != 0)
             {
-                var current = stack.Dequeue();
+                var current = queue.Dequeue();
                 if (current.x < 0 || current.x >= Board.GetLength(0) || current.y > GoalArea.end )
                     continue;
                 if (Board[current.x, current.y].goalInfo == GoalInfo.IDK)
                     return current;
-                stack.Enqueue((current.x, current.y + 1));
-                stack.Enqueue((current.x - 1, current.y));
-                stack.Enqueue((current.x + 1, current.y));
-                stack.Enqueue((current.x - 1, current.y + 1));
-                stack.Enqueue((current.x + 1, current.y + 1));
+                queue.Enqueue((current.x, current.y + 1));
+                queue.Enqueue((current.x - 1, current.y));
+                queue.Enqueue((current.x + 1, current.y));
+                queue.Enqueue((current.x - 1, current.y + 1));
+                queue.Enqueue((current.x + 1, current.y + 1));
             }
             throw new Exception("All goals are discovered");
         }
         private (int x, int y) SearchNearestGoalOnBlue((int x, int y) nearestGoalArea)
         {
-            Queue<(int x, int y)> stack = new Queue<(int x, int y)>();
-            stack.Enqueue(nearestGoalArea);
-            while (stack.Count != 0)
+            Queue<(int x, int y)> queue = new Queue<(int x, int y)>();
+            queue.Enqueue(nearestGoalArea);
+            while (queue.Count != 0)
             {
-                var current = stack.Dequeue();
+                var current = queue.Dequeue();
                 if (current.x < 0 || current.x >= Board.GetLength(0)  || current.y < 0)
                     continue;
                 if (Board[current.x, current.y].goalInfo == GoalInfo.IDK)
                     return current;
-                stack.Enqueue((current.x, current.y - 1));
-                stack.Enqueue((current.x - 1, current.y));
-                stack.Enqueue((current.x + 1, current.y));
-                stack.Enqueue((current.x - 1, current.y - 1));
-                stack.Enqueue((current.x + 1, current.y - 1));
+                queue.Enqueue((current.x, current.y - 1));
+                queue.Enqueue((current.x - 1, current.y));
+                queue.Enqueue((current.x + 1, current.y));
+                queue.Enqueue((current.x - 1, current.y - 1));
+                queue.Enqueue((current.x + 1, current.y - 1));
             }
             throw new Exception("All goals are discovered");
         }
