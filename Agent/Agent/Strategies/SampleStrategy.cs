@@ -45,13 +45,13 @@ namespace Agent.Strategies
                 eq.AskedAgentId = agent.IsLeader ? allies.ElementAt(rnd.Next() % allies.Count()) : agent.LeaderId;
                 return new Message<ExchangeInformationRequest>(eq);
             }
-            else if(History.Count % 10 != 0) { _justRequestedExchange = false; }
+            else if (History.Count % 10 != 0) { _justRequestedExchange = false; }
 
             if (last == MessageType.MoveError)
             {
                 return RandomMove();
             }
-            else if (agent.HasPiece && Board.FindUndiscoveredGoalCoordinates() == (agent.Position.X, agent.Position.Y))
+            else if (agent.HasPiece && Board.FindUndiscoveredGoalCoordinates(agent.Position) == (agent.Position.X, agent.Position.Y))
             {
                 return PutPiece();
             }
@@ -104,18 +104,34 @@ namespace Agent.Strategies
         private Message RandomMove()
         {
             Random rnd = new Random();
-            switch (rnd.Next(0, 6))
-            {
-                case 0:
-                    return new Message<MoveRequest>(new MoveRequest() { Direction = "N" });
-                case 1:
-                    return new Message<MoveRequest>(new MoveRequest() { Direction = "S" });
-                case 2:
-                    return new Message<MoveRequest>(new MoveRequest() { Direction = "W" });
-                default:
-                    return new Message<MoveRequest>(new MoveRequest() { Direction = "E" });
-            }
-
+            if (Board.GoalDirection == "N")
+                switch (rnd.Next(0, 6))
+                {
+                    case 0:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "N" });
+                    case 1:
+                    case 2:
+                    case 3:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "S" });
+                    case 4:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "W" });
+                    default:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "E" });
+                }
+            else
+                switch (rnd.Next(0, 6))
+                {
+                    case 0:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "S" });
+                    case 1:
+                    case 2:
+                    case 3:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "N" });
+                    case 4:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "W" });
+                    default:
+                        return new Message<MoveRequest>(new MoveRequest() { Direction = "E" });
+                }
         }
 
         private Message FindPiece(AgentInfo agent)
@@ -167,7 +183,7 @@ namespace Agent.Strategies
         private Message MoveToGoals(AgentInfo agent)
         {
             var req = new MoveRequest();
-            (int X, int Y) closestUndiscoveredGoal = Board.FindUndiscoveredGoalCoordinates();
+            (int X, int Y) closestUndiscoveredGoal = Board.FindUndiscoveredGoalCoordinates(agent.Position);
             (int, int) vectorToGoal = (closestUndiscoveredGoal.X - agent.Position.X, closestUndiscoveredGoal.Y - agent.Position.Y);
 
             req.Direction = ChooseDirection(vectorToGoal);
@@ -186,9 +202,6 @@ namespace Agent.Strategies
                 return "E";
             throw new Exception("Shouldnt be executed");
         }
-
-
-
     }
     //public enum StrategyDirections
     //{
