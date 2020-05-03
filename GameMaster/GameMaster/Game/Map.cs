@@ -28,6 +28,8 @@ namespace GameMaster.Game
         }
         public bool GameEnded { get => _redPoints == _numberOfGoals || _bluePoints == _numberOfGoals; }
         public Team Winner { get => _redPoints == _numberOfGoals ? Team.Red : Team.Blue; }
+        public bool GameStarted { get; set; }
+        public string ErrorMessage { get; set; } = "";
 
         public Map
             (List<(int x, int y)> goalFields = null,
@@ -99,12 +101,19 @@ namespace GameMaster.Game
             for (int i = 0; i < _width; i++)
                 for (int j = 0; j < _heigth; j++)
                     fieldsForGUI[i, j] = _fieldsArray[i, j].GetFieldTypeForGUI();
+            string message = "";
+            if (GameEnded)
+                message = $"Game over: {Winner} team won";
+            else if (!String.IsNullOrEmpty(ErrorMessage))
+                message = $"Game over: {ErrorMessage}";
             return new BoardModel()
             {
                 Width = _width,
                 Height = _heigth,
                 GoalAreaHeight = _goalAreaHeight,
-                Fields = fieldsForGUI
+                Fields = fieldsForGUI,
+                StartButtonDisabled = GameStarted,
+                Message = message
             };
         }
         /// <summary>

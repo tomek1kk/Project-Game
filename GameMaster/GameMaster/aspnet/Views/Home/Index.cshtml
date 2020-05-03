@@ -4,7 +4,8 @@
 
 <div class="text-center">
     <h1 class="display-4">Project Game</h1>
-    <button class="btn-primary" onclick="StartGame()">Start game</button>
+    <h2 id="message"></h2>
+    <button id="startGame" class="btn-primary" onclick="StartGame()">Start game</button>
     <table align="center">
         <tbody id="gameBoard"></tbody>
     </table>
@@ -18,6 +19,7 @@
         var boardFields;
         let fieldSize;
         var timeout = 250; //timeout in ms between refreshes
+        let gameOverAlertShown = false;
 
 
         function ConstructBoard() {
@@ -52,6 +54,14 @@
             $.ajax({
                 url: uri
             }).done(function (boardModel) {
+                $('#startGame').prop('disabled', boardModel.startButtonDisabled);
+                let message = boardModel.message;
+                if (message) {
+                    if(!gameOverAlertShown)
+                        alert(message);
+                    gameOverAlertShown = true;
+                    $('#message').text(message);
+                }
                 columns = boardModel.width;
                 rows = boardModel.height;
                 goalAreaHeight = boardModel.goalAreaHeight;
