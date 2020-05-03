@@ -14,6 +14,7 @@ using Serilog;
 using CommunicationServerNamespace.Helpers;
 using CommunicationLibrary.Exceptions;
 using System.Threading.Tasks;
+using CommunicationLibrary.Response;
 
 namespace CommunicationServerNamespace
 {
@@ -54,6 +55,14 @@ namespace CommunicationServerNamespace
 
         private void GetGMMessage(Message message)
         {
+            if(message.MessageId == MessageType.JoinGameResponse)
+            {
+                JoinGameResponse resp = (JoinGameResponse)message.GetPayload();
+                if(resp.Accepted == false)
+                {
+                    _agentsConnections.Remove(_agentsConnections.Find(a => a.Id == message.AgentId));
+                }
+            }
             if (message.IsGameStarted()) _connectAgents.Cancel();
             if (message.IsEndGame())
             {

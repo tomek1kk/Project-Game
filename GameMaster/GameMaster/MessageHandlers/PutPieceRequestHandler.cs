@@ -76,7 +76,10 @@ namespace GameMaster.MessageHandlers
         }
 
         private void PutNormalOnNonGoal(AbstractPiece piece, AbstractField position)
-          => _returnedEnum = PutResultEnum.NormalOnNonGoalField;
+        {
+            _returnedEnum = PutResultEnum.NormalOnNonGoalField;
+            position.Put(piece);
+        }
 
         protected override Message GetResponse(Map map)
         {

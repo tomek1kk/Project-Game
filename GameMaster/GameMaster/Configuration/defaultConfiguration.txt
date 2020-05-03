@@ -1,6 +1,6 @@
 ﻿{
-	"boardX": 10,
-	"boardY": 20,
+	"boardX": 13,
+	"boardY": 23,
 	"CsIP": "127.0.0.1",
 	"CsPort": 8080,
 	"teamID": 3,
@@ -15,5 +15,5 @@
 	"numberOfGoals": 5,
 	"numberOfPieces": 10,
 	"shamPieceProbability": 20,
-	"numberOfPlayers": 10
+	"numberOfPlayers": 16
 }

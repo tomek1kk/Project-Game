@@ -9,7 +9,7 @@ namespace GameMaster
         public static void Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .MinimumLevel.Debug()
+                .MinimumLevel.Information()
                 .WriteTo.Console()
                 .WriteTo.File("Logs\\GameMasterLog-.txt", rollingInterval: RollingInterval.Day)
                 .CreateLogger();
