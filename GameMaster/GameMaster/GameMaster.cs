@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Threading;
 using GameMaster.Game;
 using Serilog;
+using CommunicationLibrary.Exceptions;
 
 namespace GameMaster
 {
@@ -59,6 +60,7 @@ namespace GameMaster
                 }
                 Thread.Sleep(100);
             }
+            Thread.Sleep(20000);
             _guiMantainer.StopGui();
             Log.Information("GUI stopped");
         }
@@ -96,10 +98,15 @@ namespace GameMaster
             GameStarter gameStarter = new GameStarter(_communicator, _gmConfiguration);
             gameStarter.StartGame(_map.Players);
             _gameStarted = true;
+            _map.GameStarted = true;
         }
 
         public void EndGame(Exception e)
         {
+            if(e is DisconnectedException)
+            {
+                _map.ErrorMessage = "One of modules disconnected";
+            }
             if (_map.GameEnded && _gameEnder.endGameNotHandled)
             {
                 _gameEnder.endGameNotHandled = false;

@@ -11,5 +11,7 @@ namespace GameMaster.GUI
         public int Height { get; set; }
         public int GoalAreaHeight { get; set; }
         public FieldType[,] Fields { get; set; }
+        public string Message { get; set; }
+        public bool StartButtonDisabled { get; set; }
     }
 }
