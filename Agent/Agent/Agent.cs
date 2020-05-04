@@ -73,6 +73,7 @@ namespace Agent
 
                 Log.Debug("Sending join game request: {@Request}", joinGameRequest);
                 Message m = _communicator.Take();
+                Log.Information("Received message with id {MessageId}", m.MessageId);
                 if (m.MessageId != MessageType.JoinGameResponse)
                 {
                     Log.Error("No responce for join game request");
@@ -85,6 +86,7 @@ namespace Agent
                     return false;
                 }
                 m = _communicator.Take();
+                Log.Information("Received message with id {MessageId}", m.MessageId);
                 if (m.MessageId != MessageType.GameStarted)
                 {
                     Log.Error("No information about starting game");

@@ -63,6 +63,7 @@ namespace Agent.MessageHandling
 
         private void HandleReceived(Message received)
         {
+            Log.Information("Received message with id {MessageId}", received.MessageId);
             if (received.MessageId == MessageType.GameEnded)
             {
                 _gameOver = true;
