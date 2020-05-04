@@ -3,9 +3,9 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Project Game</h1>
+    <h1 class="display-4" >Project Game</h1>
     <h2 id="message"></h2>
-    <button id="startGame" class="btn-primary" onclick="StartGame()">Start game</button>
+    <button id="startGame" class="gameStartButton" onclick="StartGame()">Start game</button>
     <table align="center">
         <tbody id="gameBoard"></tbody>
     </table>
@@ -25,9 +25,9 @@
         function ConstructBoard() {
             $("#gameBoard tr").remove();
             var table = $("#gameBoard");
-            for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < columns; j++) {
                 var row = $('<tr>');
-                for (var j = 0; j < columns; j++) {
+                for (var i = 0; i < rows; i++) {
                     var column = $('<td>');
                     column.width(fieldSize);
                     column.height(fieldSize);
@@ -57,7 +57,7 @@
                 $('#startGame').prop('disabled', boardModel.startButtonDisabled);
                 let message = boardModel.message;
                 if (message) {
-                    if(!gameOverAlertShown)
+                    if (!gameOverAlertShown)
                         alert(message);
                     gameOverAlertShown = true;
                     $('#message').text(message);
@@ -102,9 +102,9 @@
             GOAL: { class: "goal", text: "" },
             DISCOVERED_NON_GOAL: { class: "discoveredNonGoal", text: "" },
             DISCOVERED_GOAL: { class: "discoveredGoal", text: "" },
-            SHAM: { class : "sham", text: "" },
-            RED_PLAYER_WITH_SHAM: { class : "redPlayerWithSham", text: "" },
-            BLUE_PLAYER_WITH_SHAM: { class : "bluePlayerWithSham", text: "" },
+            SHAM: { class: "sham", text: "" },
+            RED_PLAYER_WITH_SHAM: { class: "redPlayerWithSham", text: "" },
+            BLUE_PLAYER_WITH_SHAM: { class: "bluePlayerWithSham", text: "" },
         };
         const FieldTypesIndexed = [
             FieldTypes.EMPTY, FieldTypes.RED_PLAYER, FieldTypes.BLUE_PLAYER,
