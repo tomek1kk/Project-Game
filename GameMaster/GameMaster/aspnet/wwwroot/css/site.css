@@ -62,12 +62,6 @@ table {
     background-image: url("../assets/goal.jpg");
     background-size: 100% 100%;
 }
-#gameBoard .discoveredNonGoal {
-    /*background-image: url("../assets/discovered-non-goal.jpg");*/
-    
-    background-color: lightgray;
-    background-size: 100% 100%;
-}
 #gameBoard .discoveredGoal {
     background-image: url("../assets/discovered-goal.jpg");
     background-size: 100% 100%;
@@ -93,6 +87,11 @@ table {
     border-color: lightgray;
     border-width: 8px;
     background-color: cornflowerblue;
+}
+#gameBoard .discoveredNonGoal {
+    /*background-image: url("../assets/discovered-non-goal.jpg");*/
+    background-color: darkslategray;
+    background-size: 100% 100%;
 }
 
 .gameStartButton {
