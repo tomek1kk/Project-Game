@@ -16,6 +16,7 @@ namespace CommunicationServerNamespace
         public string CsIP { get; set; }
         public int GMPort { get; set; }
         public int AgentPort { get; set; }
+        public string LoggingMode { get; set; }
 
         public static Configuration ReadConfiguration(string[] programArguments)
         {

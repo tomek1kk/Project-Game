@@ -9,16 +9,31 @@ namespace Agent
     {
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
+
+            AgentConfiguration configuration = AgentConfiguration.ReadConfiguration(args);
+            CreateLogger(configuration.LoggingMode);
+            using (Agent agent = new Agent(configuration))
+                agent.StartListening();
+        }
+
+        static void CreateLogger(string mode)
+        {
+            if (mode == "debug")
+            {
+                Log.Logger = new LoggerConfiguration()
                .MinimumLevel.Debug()
                .WriteTo.Console()
                .WriteTo.File("Logs\\AgentLog-.txt", rollingInterval: RollingInterval.Day)
                .CreateLogger();
-
-            Log.Information("Agent started");
-            AgentConfiguration configuration = AgentConfiguration.ReadConfiguration(args);
-            using (Agent agent = new Agent(configuration))
-                agent.StartListening();
+            }
+            else
+            {
+                Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.Console()
+                .WriteTo.File("Logs\\AgentLog-.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+            }
         }
     }
 }

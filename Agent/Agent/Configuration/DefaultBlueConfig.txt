@@ -2,5 +2,6 @@
 "CsIP": "127.0.0.1",
 "CsPort": 8080,
 "teamID": "blue",
-"strategy": 1
+"strategy": 1,
+"LoggingMode":"information"
 }
