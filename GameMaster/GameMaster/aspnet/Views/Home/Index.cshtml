@@ -3,13 +3,12 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Project Game</h1>
-    <button class="btn-primary" onclick="StartGame()">Start game</button>
-    <div class="row d-flex">
-        <div class="col-sm-3"></div>
-        <table class="col-sm-6"><tbody id="gameBoard"></tbody></table>
-        <div class="col-sm-3"></div>
-    </div>
+    <h1 class="display-4" >Project Game</h1>
+    <h2 id="message"></h2>
+    <button id="startGame" class="gameStartButton" onclick="StartGame()">Start game</button>
+    <table align="center">
+        <tbody id="gameBoard"></tbody>
+    </table>
 </div>
 
 @section scripts {
@@ -18,14 +17,20 @@
         var rows;
         var goalAreaHeight;
         var boardFields;
-        var timeout = 500; //timeout in ms between refreshes
+        let fieldSize;
+        var timeout = 250; //timeout in ms between refreshes
+        let gameOverAlertShown = false;
+
+
         function ConstructBoard() {
             $("#gameBoard tr").remove();
             var table = $("#gameBoard");
-            for (var i = 0; i < rows; i++) {
+            for (var j = 0; j < columns; j++) {
                 var row = $('<tr>');
-                for (var j = 0; j < columns; j++) {
+                for (var i = 0; i < rows; i++) {
                     var column = $('<td>');
+                    column.width(fieldSize);
+                    column.height(fieldSize);
                     row.append(column);
                     boardFields[i][j].handle = column;
                 }
@@ -39,7 +44,7 @@
                     boardFields[i][j].handle.addClass(boardFields[i][j].type.class);
                     if (i < goalAreaHeight)
                         boardFields[i][j].handle.addClass("redGoalArea");
-                    else if(i >= rows - goalAreaHeight)
+                    else if (i >= rows - goalAreaHeight)
                         boardFields[i][j].handle.addClass("blueGoalArea");
                 }
             }
@@ -49,6 +54,14 @@
             $.ajax({
                 url: uri
             }).done(function (boardModel) {
+                $('#startGame').prop('disabled', boardModel.startButtonDisabled);
+                let message = boardModel.message;
+                if (message) {
+                    if (!gameOverAlertShown)
+                        alert(message);
+                    gameOverAlertShown = true;
+                    $('#message').text(message);
+                }
                 columns = boardModel.width;
                 rows = boardModel.height;
                 goalAreaHeight = boardModel.goalAreaHeight;
@@ -62,6 +75,8 @@
                             { type: FieldTypesIndexed[boardModel.fields[i][j]], handle: null };
                     }
                 }
+
+                fieldSize = $(".text-center").width() * 0.8 / columns;
                 ConstructBoard();
                 ColorBoard();
                 setTimeout(FetchBoard, timeout);
@@ -79,20 +94,24 @@
         }
         const FieldTypes = {
             EMPTY: { class: "empty", text: "" },
-            RED_PLAYER: { class: "redPlayer", text: "R" },
-            BLUE_PLAYER: { class: "bluePlayer", text: "B" },
-            RED_PLAYER_WITH_PIECE: { class: "redPlayerWithPiece", text: "RP" },
-            BLUE_PLAYER_WITH_PIECE: { class: "bluePlayerWithPiece", text: "BP" },
-            PIECE: { class: "piece", text: "P" },
-            GOAL: { class: "goal", text: "G" },
-            DISCOVERED_NON_GOAL: { class: "discoveredNonGoal", text: "N" },
-            DISCOVERED_GOAL: { class: "discoveredGoal", text: "YG" },
+            RED_PLAYER: { class: "redPlayer", text: "" },
+            BLUE_PLAYER: { class: "bluePlayer", text: "" },
+            RED_PLAYER_WITH_PIECE: { class: "redPlayerWithPiece", text: "" },
+            BLUE_PLAYER_WITH_PIECE: { class: "bluePlayerWithPiece", text: "" },
+            PIECE: { class: "piece", text: "" },
+            GOAL: { class: "goal", text: "" },
+            DISCOVERED_NON_GOAL: { class: "discoveredNonGoal", text: "" },
+            DISCOVERED_GOAL: { class: "discoveredGoal", text: "" },
+            SHAM: { class: "sham", text: "" },
+            RED_PLAYER_WITH_SHAM: { class: "redPlayerWithSham", text: "" },
+            BLUE_PLAYER_WITH_SHAM: { class: "bluePlayerWithSham", text: "" },
         };
         const FieldTypesIndexed = [
             FieldTypes.EMPTY, FieldTypes.RED_PLAYER, FieldTypes.BLUE_PLAYER,
             FieldTypes.RED_PLAYER_WITH_PIECE, FieldTypes.BLUE_PLAYER_WITH_PIECE,
             FieldTypes.PIECE, FieldTypes.GOAL,
-            FieldTypes.DISCOVERED_NON_GOAL, FieldTypes.DISCOVERED_GOAL
+            FieldTypes.DISCOVERED_NON_GOAL, FieldTypes.DISCOVERED_GOAL,
+            FieldTypes.SHAM, FieldTypes.RED_PLAYER_WITH_SHAM, FieldTypes.BLUE_PLAYER_WITH_SHAM
         ];
         FetchBoard();
     </script>

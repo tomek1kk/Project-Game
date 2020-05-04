@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Drawing;
-using Agent.AgentBoard;
+using Agent.Board;
 using CommunicationLibrary;
 using CommunicationLibrary.Request;
+using CommunicationLibrary.Response;
 
 namespace Agent.Strategies
 {

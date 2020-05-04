@@ -29,51 +29,85 @@ body {
 }
 table {
     table-layout: fixed;
-    width: 100%;
 }
 #gameBoard td, #gameBoard tr {
-    border: 1px solid black;
+    border: 5px solid lightgray;
     color: white;
-    height: 30px;
 }
 
 #gameBoard .empty {
     background-color: white;
 }
 #gameBoard .redPlayer {
-    background-color: red;
+    background-image: url("../assets/red-player.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .bluePlayer {
-    background-color: blue;
+    background-image: url("../assets/blue-player.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .redPlayerWithPiece {
-    background-color: red;
+    background-image: url("../assets/red-player-with-piece.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .bluePlayerWithPiece {
-    background-color: blue;
+    background-image: url("../assets/blue-player-with-piece.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .piece {
-    background-color: seagreen;
+    background-image: url("../assets/piece.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .goal {
-    background-color: bisque;
-    color: black;
-}
-#gameBoard .discoveredNonGoal {
-    background-color: white;
-    color: black;
+    background-image: url("../assets/goal.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .discoveredGoal {
-    background-color: bisque;
-    color: black;
+    background-image: url("../assets/discovered-goal.jpg");
+    background-size: 100% 100%;
+}
+#gameBoard .sham {
+    background-image: url("../assets/sham.jpg");
+    background-size: 100% 100%;
+}
+#gameBoard .redPlayerWithSham {
+    background-image: url("../assets/red-player-sham.jpg");
+    background-size: 100% 100%;
+}
+#gameBoard .bluePlayerWithSham {
+    background-image: url("../assets/blue-player-sham.jpg");
+    background-size: 100% 100%;
 }
 #gameBoard .redGoalArea {
-    border-color: crimson;
-    border-width: 3px;
+    border-color: lightgray;
+    border-width: 8px;
+    background-color: indianred;
 }
 #gameBoard .blueGoalArea {
-    border-color: darkblue;
-    border-width: 3px;
+    border-color: lightgray;
+    border-width: 8px;
+    background-color: cornflowerblue;
+}
+#gameBoard .discoveredNonGoal {
+    /*background-image: url("../assets/discovered-non-goal.jpg");*/
+    background-color: darkslategray;
+    background-size: 100% 100%;
+}
+
+.gameStartButton {
+    display: inline-block;
+    padding: 15px 25px;
+    font-size: 24px;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    outline: none;
+    color: #fff;
+    background-color: yellowgreen;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 9px #999;
+    margin-bottom: 30px;
 }
 
 /* Hide/rearrange for smaller screens */

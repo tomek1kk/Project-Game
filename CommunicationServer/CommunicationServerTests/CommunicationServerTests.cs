@@ -14,13 +14,20 @@ namespace CommunicationServerTests
     [TestClass]
     public class CommunicationServerTests
     {
+        private Configuration config = new Configuration()
+        {
+            GMPort = 8081,
+            AgentPort = 8080,
+            CsIP = "127.0.0.1"
+        };
         [TestMethod]
         public void TestGMConnection()
         {
             //given
-            CommunicationServer cs = new CommunicationServer();
+            CommunicationServer cs = new CommunicationServer(config);
             //when
-            Thread thread = new Thread(cs.ConnectGameMaster);
+            cs.StartConnectingGameMaster();
+            Thread thread = new Thread(cs.AcceptGameMaster);
             thread.Start();
             //then
             //doesnt throw exceptions
@@ -38,7 +45,7 @@ namespace CommunicationServerTests
         public void TestAgentConnection()
         {
             //given
-            CommunicationServer cs = new CommunicationServer();
+            CommunicationServer cs = new CommunicationServer(config);
             //when
             Thread thread = new Thread(cs.ConnectAgents);
             thread.Start();

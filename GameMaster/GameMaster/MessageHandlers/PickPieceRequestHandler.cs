@@ -3,18 +3,16 @@ using CommunicationLibrary.Response;
 using CommunicationLibrary.Error;
 using GameMaster.Configuration;
 using GameMaster.Game;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
     public class PickPieceRequestHandler : MessageHandler
     {
-        private bool _noPieceOnField = false;
-        private bool _fieldIsOnGoalArea = false;
-        private bool _playerAlreadyHasPiece = false;
+        private bool _noPieceOnField;
+        private bool _fieldIsOnGoalArea;
+        private bool _playerAlreadyHasPiece;
+
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -25,7 +23,7 @@ namespace GameMaster.MessageHandlers
             _playerAlreadyHasPiece = map.GetPlayerById(_agentId).Holding != null;
             if (_playerAlreadyHasPiece)
                 return false;
-            _fieldIsOnGoalArea = map.IsInsideBlueGoalArea(position.X, position.Y) || map.IsInsideRedGoalArea(position.X, position.Y);
+            _fieldIsOnGoalArea = map.IsInsideBlueGoalArea(position) || map.IsInsideRedGoalArea(position);
             if (_fieldIsOnGoalArea)
                 return false;
             _noPieceOnField = !position.ContainsPieces();
@@ -44,7 +42,6 @@ namespace GameMaster.MessageHandlers
             if (_playerAlreadyHasPiece || _fieldIsOnGoalArea)
                 return new Message<PickPieceError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PickPieceError()
                     {
                         ErrorSubtype = "Other"
@@ -53,7 +50,6 @@ namespace GameMaster.MessageHandlers
             else if (_noPieceOnField)
                 return new Message<PickPieceError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PickPieceError()
                     {
                         ErrorSubtype = "NothingThere"
@@ -62,7 +58,6 @@ namespace GameMaster.MessageHandlers
             else
                 return new Message<PickPieceResponse>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PickPieceResponse() { }
                 };
         }

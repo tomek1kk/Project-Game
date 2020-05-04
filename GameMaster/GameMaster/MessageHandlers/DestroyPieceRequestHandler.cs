@@ -4,9 +4,6 @@ using CommunicationLibrary.Error;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CommunicationLibrary.Response;
 
 namespace GameMaster.MessageHandlers
@@ -15,6 +12,7 @@ namespace GameMaster.MessageHandlers
     {
         private bool _hasPiece;
 
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -38,7 +36,6 @@ namespace GameMaster.MessageHandlers
             {
                 return new Message<NotDefinedError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
                         Position = (Position)map.GetPlayerById(_agentId).Position,
@@ -48,7 +45,6 @@ namespace GameMaster.MessageHandlers
             }
             return new Message<DestroyPieceResponse>()
             {
-                AgentId = _agentId,
                 MessagePayload = new DestroyPieceResponse() {}
             };
         }

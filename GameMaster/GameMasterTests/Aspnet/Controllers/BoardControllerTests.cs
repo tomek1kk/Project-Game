@@ -21,7 +21,9 @@ namespace GameMaster.Aspnet.Controllers.Tests
                 Width = 3,
                 Height = 3,
                 GoalAreaHeight = 1,
-                Fields = new FieldType[3, 3]
+                Fields = new FieldType[3, 3],
+                StartButtonDisabled = true,
+                Message = "Hello world"
             };
             providedBoardModel.Fields[1, 1] = FieldType.DiscoveredGoal;
             mock.Setup(guiDataProvider => guiDataProvider.GetCurrentBoardModel())
@@ -35,6 +37,8 @@ namespace GameMaster.Aspnet.Controllers.Tests
             Assert.AreEqual(providedBoardModel.Height, resultBoardModel.Height);
             Assert.AreEqual(providedBoardModel.Width, resultBoardModel.Width);
             Assert.AreEqual(providedBoardModel.GoalAreaHeight, resultBoardModel.GoalAreaHeight);
+            Assert.AreEqual(providedBoardModel.StartButtonDisabled, resultBoardModel.StartButtonDisabled);
+            Assert.AreEqual(providedBoardModel.Message, resultBoardModel.Message);
             CollectionAssert.AreEqual(providedBoardModel.Fields, resultBoardModel.Fields);
         }
         [TestMethod()]

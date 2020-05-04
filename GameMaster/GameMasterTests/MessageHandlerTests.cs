@@ -15,12 +15,16 @@ namespace GameMasterTests
     {
         MessageHandlerMock messageHandler = new MessageHandlerMock();
         Message message = new Message<NotDefinedError>();
-        Map map = new Map(new GMConfiguration() { BoardX = 10, BoardY = 10 });
+        Map map = new Map(new GMConfiguration() { BoardX = 10, BoardY = 10, NumberOfPlayers = 10 });
 
         class MessageHandlerMock : MessageHandler
         {
             public int AgentId => _agentId;
 
+            protected override void ClearHandler()
+            {
+                return;
+            }
             protected override void CheckAgentPenaltyIfNeeded(Map map)
             {
                 return;

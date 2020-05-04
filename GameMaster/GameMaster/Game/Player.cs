@@ -1,6 +1,7 @@
 ﻿using CommunicationLibrary;
 using CommunicationLibrary.Response;
 using System;
+using GameMaster.GUI;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,7 +12,6 @@ namespace GameMaster.Game
     public class Player
     {
         private int _agentId;
-        private int _messageCorellationId;
         private Team _team;
         private bool _isLeader;
         private AbstractPiece _holding;
@@ -27,28 +27,18 @@ namespace GameMaster.Game
         public AbstractPiece Holding { get => _holding; set => _holding = value; }
         public DateTime LockedTill => _lockedTill;
         public AbstractField Position { get => _position; set => _position = value; }
-        public Player(Team team, int agentId)
+        public Player(Team team, int agentId, bool leader)
         {
             _agentId = agentId;
             _team = team;
+            _isLeader = leader;
         }
-        public Player(DateTime lockedTill, int agentId = -1, int messageCorellationId = -1, Team team = Team.Blue, bool isLeader = false)
+        public Player(DateTime lockedTill, int agentId = -1, Team team = Team.Blue, bool isLeader = false)
         {
             _agentId = agentId;
-            _messageCorellationId = messageCorellationId;
             _team = team;
             _isLeader = isLeader;
             _lockedTill = lockedTill;
-        }
-        public Player(DateTime lockedTill, AbstractField field, AbstractPiece piece, int agentId = -1, int messageCorellationId = -1, Team team = Team.Blue, bool isLeader = false)
-        {
-            _agentId = agentId;
-            _messageCorellationId = messageCorellationId;
-            _team = team;
-            _isLeader = isLeader;
-            _lockedTill = lockedTill;
-            _holding = piece;
-            _position = field;
         }
 
         public bool TryLock(DateTime newLockTime)
@@ -61,6 +51,24 @@ namespace GameMaster.Game
             Console.WriteLine("Agent " + AgentId.ToString() + " cannot be locked before he is unlocked. Locked till: " +
                 _lockedTill.ToString() + ", new TryLock time: " + newLockTime.ToString());
             return false;
+        }
+        public FieldType GetGUIFieldFromPlayer()
+        {
+            if (IsHolding)
+            {
+                if (Holding.IsSham())
+                {
+                    return Team == Team.Red ? FieldType.RedPlayerWithSham : FieldType.BluePlayerWithSham;
+                }
+                else
+                {
+                    return Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
+                }
+            }
+            else
+            {
+                return Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
+            }
         }
     }
 }

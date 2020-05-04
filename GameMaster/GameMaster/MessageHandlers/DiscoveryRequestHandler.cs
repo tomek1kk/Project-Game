@@ -1,12 +1,8 @@
 ﻿using CommunicationLibrary;
-using CommunicationLibrary.Error;
 using CommunicationLibrary.Response;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
@@ -23,6 +19,7 @@ namespace GameMaster.MessageHandlers
         private int? _distanceW;
         private int? _distanceNW;
 
+        protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -36,21 +33,20 @@ namespace GameMaster.MessageHandlers
         {
             _position = map.GetPlayerById(_agentId).Position;
             _distanceFromCurrent = map.ClosestPieceForField(_position);
-            _distanceN = map.IsInsideMap(_position.X, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y - 1]) : null;
-            _distanceNE = map.IsInsideMap(_position.X + 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y - 1]) : null;
+            _distanceN = map.IsInsideMap(_position.X, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y + 1]) : null;
+            _distanceNE = map.IsInsideMap(_position.X + 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y + 1]) : null;
             _distanceE = map.IsInsideMap(_position.X + 1, _position.Y) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y]) : null;
-            _distanceSE = map.IsInsideMap(_position.X + 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y + 1]) : null;
-            _distanceS = map.IsInsideMap(_position.X, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y + 1]) : null;
-            _distanceSW = map.IsInsideMap(_position.X - 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y + 1]) : null;
+            _distanceSE = map.IsInsideMap(_position.X + 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y - 1]) : null;
+            _distanceS = map.IsInsideMap(_position.X, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y - 1]) : null;
+            _distanceSW = map.IsInsideMap(_position.X - 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y - 1]) : null;
             _distanceW = map.IsInsideMap(_position.X - 1, _position.Y) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y]) : null;
-            _distanceNW = map.IsInsideMap(_position.X - 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y - 1]) : null;
+            _distanceNW = map.IsInsideMap(_position.X - 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y + 1]) : null;
         }
 
         protected override Message GetResponse(Map map)
         {
             return new Message<DiscoveryResponse>()
             {
-                AgentId = _agentId,
                 MessagePayload = new DiscoveryResponse()
                 {
                     DistanceFromCurrent = _distanceFromCurrent,

@@ -14,6 +14,7 @@ namespace Agent
         public string CsIp { get; set; }
         public string TeamId { get; set; }
         public StrategyType Strategy { get; set; }
+        public string LoggingMode { get; set; }
 
         public static AgentConfiguration ReadConfiguration(string[] programArguments)
         {

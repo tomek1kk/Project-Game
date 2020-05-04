@@ -5,9 +5,6 @@ using CommunicationLibrary.Error;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
@@ -16,6 +13,7 @@ namespace GameMaster.MessageHandlers
         private bool _agentHasNoPiece = false;
         private PutResultEnum _returnedEnum;
 
+        protected override void ClearHandler() {}
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -38,18 +36,18 @@ namespace GameMaster.MessageHandlers
             if (map.IsInGoalArea(position))
             {
                 map.AddPiece();
-                PutPieceInGoalArea(piece, position);
+                PutPieceInGoalArea(piece, position, map);
             }
             else
                 PutPieceOutsideGoalArea(piece, position);
         }
 
-        private void PutPieceInGoalArea(AbstractPiece piece, AbstractField position)
+        private void PutPieceInGoalArea(AbstractPiece piece, AbstractField position, Map map)
         {
             if (piece.IsSham())
                 PutShamInGoalArea(piece, position);
             else
-                PutNonShamInGoalArea(piece, position);
+                PutNonShamInGoalArea(piece, position, map);
         }
 
         private void PutPieceOutsideGoalArea(AbstractPiece piece, AbstractField position)
@@ -61,30 +59,33 @@ namespace GameMaster.MessageHandlers
         private void PutShamInGoalArea(AbstractPiece piece, AbstractField position)
          => _returnedEnum = PutResultEnum.ShamOnGoalArea;
 
-        private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position)
+        private void PutNonShamInGoalArea(AbstractPiece piece, AbstractField position, Map map)
         {
             position.Discover();
             if (position.IsGoalField)
-                PutNonShamOnGoal(piece, position);
+                PutNonShamOnGoal(piece, position, map);
             else
                 PutNormalOnNonGoal(piece, position);
         }
 
-        private void PutNonShamOnGoal(AbstractPiece piece, AbstractField position)
+        private void PutNonShamOnGoal(AbstractPiece piece, AbstractField position, Map map)
         {
+            map.ScorePoint(position, _agentId);
             _returnedEnum = PutResultEnum.NormalOnGoalField;
             position.Put(piece);
         }
 
         private void PutNormalOnNonGoal(AbstractPiece piece, AbstractField position)
-          => _returnedEnum = PutResultEnum.NormalOnNonGoalField;
+        {
+            _returnedEnum = PutResultEnum.NormalOnNonGoalField;
+            position.Put(piece);
+        }
 
         protected override Message GetResponse(Map map)
         {
             if (_agentHasNoPiece)
                 return new Message<PutPieceError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PutPieceError()
                     {
                         ErrorSubtype = "AgentNotHolding"
@@ -93,7 +94,6 @@ namespace GameMaster.MessageHandlers
             else
                 return new Message<PutPieceResponse>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new PutPieceResponse()
                     {
                         PutResult = _returnedEnum

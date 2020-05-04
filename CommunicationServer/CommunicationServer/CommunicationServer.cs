@@ -12,44 +12,69 @@ using CommunicationLibrary.Error;
 using CommunicationLibrary.Request;
 using Serilog;
 using CommunicationServerNamespace.Helpers;
+using CommunicationLibrary.Exceptions;
+using System.Threading.Tasks;
+using CommunicationLibrary.Response;
 
 namespace CommunicationServerNamespace
 {
-    public class CommunicationServer
+    public class CommunicationServer : IDisposable
     {
         private List<AgentDescriptor> _agentsConnections = new List<AgentDescriptor>();
         private Descriptor _gameMasterConnection;
-        private bool isWaitingForMoreAgents = true; //to me, there will be info from game master when we stop listening for new agent clients.
-        public string IpAddress { get; private set; } = "127.0.0.1";
-        public int PortCSforGM { get; private set; } = 8081;
-        public int PortCSforAgents { get; private set; } = 8080;
+        public string IpAddress { get; private set; }
+        public int PortCSforGM { get; private set; }
+        public int PortCSforAgents { get; private set; }
+        private TcpListener _gmListener;
 
-        public void ConnectGameMaster()
+        private CancellationTokenSource _connectAgents = new CancellationTokenSource();
+        private TaskCompletionSource<bool> _gameOver = new TaskCompletionSource<bool>();
+
+        public CommunicationServer(Configuration config)
+        {
+            IpAddress = config.CsIP;
+            PortCSforAgents = config.AgentPort;
+            PortCSforGM = config.GMPort;
+        }
+
+        public void StartConnectingGameMaster()
         {
             Console.WriteLine("GM connect");
             IPAddress ipAddress = IPAddress.Parse(IpAddress);
-            TcpListener tcpListener = new TcpListener(ipAddress, PortCSforGM);
-            tcpListener.Start();
-            TcpClient client = tcpListener.AcceptTcpClient();
+            _gmListener = new TcpListener(ipAddress, PortCSforGM);
+            _gmListener.Start();
+        }
+        public void AcceptGameMaster()
+        {
+            TcpClient client = _gmListener.AcceptTcpClient();
             _gameMasterConnection = new Descriptor(client);
-            _gameMasterConnection.StartReceiving(GetGMMessage);
+            _gameMasterConnection.StartReceiving(GetGMMessage, HandleConnectionError);
+            _gmListener.Stop();
             Console.WriteLine("GM end");
         }
 
         private void GetGMMessage(Message message)
         {
-            if (message.IsGameStarted()) isWaitingForMoreAgents = false;
+            if(message.MessageId == MessageType.JoinGameResponse)
+            {
+                JoinGameResponse resp = (JoinGameResponse)message.GetPayload();
+                if(resp.Accepted == false)
+                {
+                    _agentsConnections.Remove(_agentsConnections.Find(a => a.Id == message.AgentId));
+                }
+            }
+            if (message.IsGameStarted()) _connectAgents.Cancel();
             if (message.IsEndGame())
             {
                 HandleEndGame(message);
-                _gameMasterConnection.Dispose();
+                //_gameMasterConnection.Dispose();
                 return;
             }
 
             Console.WriteLine("I've got such message: " + message.GetPayload());
             Log.Information("GetGMMessege: {@m}", message);
             AgentDescriptor agent = _agentsConnections.Find(x => x.Id == message.AgentId);
-            agent.SendMessage(message);
+            SendMessageWithErrorHandling(agent, message);
         }
 
         public void ConnectAgents()
@@ -59,16 +84,32 @@ namespace CommunicationServerNamespace
             TcpListener tcpListener = new TcpListener(ipAddress, PortCSforAgents);
             tcpListener.Start();
             int i = 0;
-            while (isWaitingForMoreAgents)
+            while (!_connectAgents.IsCancellationRequested)
             {
-                TcpClient agentClient = tcpListener.AcceptTcpClient();
+                TcpClient agentClient;
+                using (_connectAgents.Token.Register(() => tcpListener.Stop()))
+                {
+                    try
+                    {
+                        agentClient = tcpListener.AcceptTcpClient();
+                    }
+                    catch (SocketException)
+                    {
+                        break;
+                    }
+                }
                 AgentDescriptor agent = new AgentDescriptor(agentClient);
                 _agentsConnections.Add(agent);
-                agent.StartReceiving(GetAgentMessage);
+                agent.StartReceiving(GetAgentMessage, HandleConnectionError);
                 Console.WriteLine("Agent connected: " + ++i);
                 Log.Information("New agent connected.");
             }
             Console.WriteLine("Agent end");
+        }
+
+        public void WaitForGameOver()
+        {
+            _gameOver.Task.Wait();
         }
 
         private void GetAgentMessage(Message message)
@@ -77,16 +118,71 @@ namespace CommunicationServerNamespace
             {
                 Console.WriteLine("I've got such message: " + message.GetPayload());
                 Log.Information("GetAgentMessage: {@m}", message);
-                _gameMasterConnection.SendMessage(message);
+                SendMessageWithErrorHandling(_gameMasterConnection, message);
             }
         }
+
+        private void SendMessageWithErrorHandling(Descriptor descriptor, Message message)
+        {
+            try
+            {
+                descriptor.SendMessage(message);
+            }
+            catch (Exception e)
+            {
+                HandleConnectionError(e);
+            }
+        }
+
         private void HandleEndGame(Message message)
         {
             foreach (var agent in _agentsConnections)
             {
                 agent.SendMessage(message);
-                _agentsConnections.ForEach(x => x.Dispose());
             }
+            StopWorking();
+        }
+
+        private void HandleConnectionError(Exception connectionError)
+        {
+            lock (this.IpAddress)
+            {
+                if (_gameOver.Task.IsCompleted) return;
+                if (connectionError is DisconnectedException)
+                {
+                    if (connectionError.Data.Contains("agentId"))
+                        Log.Error("Agent {id} disconnected, closing server", (int)connectionError.Data["agentId"]);
+                    else
+                        Log.Error("Game Master disconnected, closing server");
+                    StopWorking();
+                }
+                else if (connectionError is ParsingException)
+                {
+                    if (connectionError.Data.Contains("agentId"))
+                        Log.Warning("Failed to parse message from agent {id} ", (int)connectionError.Data["agentId"]);
+                    else
+                        Log.Warning("Failed to parse message from GM");
+                    Log.Warning("Incorrect message: {message}", ((ParsingException)connectionError).IncorrectMessage);
+                }
+                else
+                {
+                    Log.Warning("Message handler threw an exception {exception} ", connectionError.ToString());
+                }
+            }
+        }
+
+        private void StopWorking()
+        {
+            _gameOver.TrySetResult(true);
+            _connectAgents.Cancel();
+        }
+
+        public void Dispose()
+        {
+            foreach (var connection in _agentsConnections)
+                connection.Dispose();
+            _gameMasterConnection.Dispose();
+            _gameOver.TrySetResult(true);
         }
     }
 }

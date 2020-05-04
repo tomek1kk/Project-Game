@@ -33,6 +33,8 @@ namespace GameMaster.Configuration
         public int NumberOfPieces { get; set; }
         public int CheckForShamPenalty { get; set; }
         public int ShamPieceProbability { get; set; }
+        public int NumberOfPlayers { get; set; }
+        public string LoggingMode { get; set; }
 
         public static GMConfiguration ReadConfiguration(string[] programArguments)
         {

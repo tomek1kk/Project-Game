@@ -6,20 +6,22 @@ using CommunicationLibrary.Response;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
     public class MoveRequestHandler : MessageHandler
     {
         private string _direction;
-        private bool _errorMessage = false;
-        private bool _moveError = false;
+        private bool _errorMessage;
+        private bool _moveError;
         private int _newX;
         private int _newY;
 
+        protected override void ClearHandler()
+        {
+            _errorMessage = false;
+            _moveError = false;
+        }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             CheckIfAgentHasPenalty(map);
@@ -31,15 +33,16 @@ namespace GameMaster.MessageHandlers
 
         protected override bool CheckRequest(Map map)
         {
+            _moveError = false;
             int x = map.GetPlayerById(_agentId).Position.X;
             int y = map.GetPlayerById(_agentId).Position.Y;
             switch (_direction)
             {
                 case "N":
-                    y--;
+                    y++;
                     break;
                 case "S":
-                    y++;
+                    y--;
                     break;
                 case "W":
                     x--;
@@ -51,15 +54,12 @@ namespace GameMaster.MessageHandlers
                     _errorMessage = true;
                     return false;
             }
-            _newX = x;
-            _newY = y;
-            _moveError = !map.IsInsideMap(x, y);
-            if (_moveError)
-                return false;
-            if (map.GetPlayerById(_agentId).Team == Team.Red)
-                _moveError = map.IsInsideBlueGoalArea(x, y);
-            else
-                _moveError = map.IsInsideRedGoalArea(x, y);
+            _newX = x; _newY = y;
+            if (!map.IsInsideMap(x, y) ||
+                (map.GetPlayerById(_agentId).Team == Team.Red && map.IsInsideBlueGoalArea(x, y)) ||
+                (map.GetPlayerById(_agentId).Team == Team.Blue && map.IsInsideRedGoalArea(x, y)) ||
+                map[x, y].IsOccupied)
+                _moveError = true;
             return !_moveError;
         }
 
@@ -77,7 +77,6 @@ namespace GameMaster.MessageHandlers
             if (_errorMessage)
                 return new Message<NotDefinedError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
                         Position = (Position)map.GetPlayerById(_agentId).Position,
@@ -87,7 +86,6 @@ namespace GameMaster.MessageHandlers
             else if (_moveError)
                 return new Message<MoveError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new MoveError()
                     {
                         Position = (Position)map.GetPlayerById(_agentId).Position

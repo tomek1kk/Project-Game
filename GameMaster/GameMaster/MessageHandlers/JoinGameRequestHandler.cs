@@ -5,9 +5,6 @@ using CommunicationLibrary.Request;
 using GameMaster.Configuration;
 using GameMaster.Game;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.MessageHandlers
 {
@@ -16,6 +13,9 @@ namespace GameMaster.MessageHandlers
         private bool _playerAlreadyOnMap = false;
         private bool _accepted = false;
         private Team _team;
+
+        protected override void ClearHandler() { }
+
         protected override void CheckAgentPenaltyIfNeeded(Map map)
         {
             return;
@@ -38,7 +38,6 @@ namespace GameMaster.MessageHandlers
             {
                 return new Message<NotDefinedError>()
                 {
-                    AgentId = _agentId,
                     MessagePayload = new NotDefinedError()
                     {
                     }
@@ -46,7 +45,6 @@ namespace GameMaster.MessageHandlers
             }
             return new Message<JoinGameResponse>()
             {
-                AgentId = _agentId,
                 MessagePayload = new JoinGameResponse()
                 {
                     AgentID = _agentId,

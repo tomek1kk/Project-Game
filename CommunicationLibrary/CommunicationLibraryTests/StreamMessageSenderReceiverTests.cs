@@ -11,9 +11,16 @@ using Moq;
 using System.Collections.Concurrent;
 using CommunicationLibraryTests.HelperClasses;
 using CommunicationLibrary.Request;
+using System.Threading;
 
 namespace CommunicationLibrary.Tests
 {
+    //EchoStream and StreamRWJoin used whereever possible to simulate tcp stream
+    //because tests with them take on average < 150ms
+    //and tests with tcp client and listener take on average 2s.
+
+    //However they don't work like tcp streams in disconnection scenarios,
+    //so tcp streams have to be used there
     [TestClass()]
     public class StreamMessageSenderReceiverTests
     {
@@ -31,6 +38,7 @@ namespace CommunicationLibrary.Tests
                     new JoinGameRequest { TeamId = messageString });
             }
         }
+
         [TestMethod()]
         public void TestStreamMessageSenderReceiverCanReceiveMessage()
         {
@@ -101,5 +109,114 @@ namespace CommunicationLibrary.Tests
             Assert.AreEqual(expected.MessagePayload.TeamId,
                 ((Message<JoinGameRequest>)received).MessagePayload.TeamId);
         }
+        [TestMethod()]
+        public void TestCallbackCalledOnDisconnect()
+        {
+            //given
+            (TcpClient clientSide, TcpClient serverSide) = HelperFunctions.TcpConnectClientAndServer();
+
+            Exception receivedException = null;
+            StreamMessageSenderReceiver streamMessageSenderReceiver
+                = new StreamMessageSenderReceiver(clientSide.GetStream(), new Parser());
+            Semaphore semaphore = new Semaphore(0, 100);
+            streamMessageSenderReceiver.StartReceiving(message => { }, e =>
+            { receivedException = e; semaphore.Release(); });
+
+            //when
+            serverSide.Close();
+            semaphore.WaitOne();
+
+            //then
+            Assert.IsNotNull(receivedException);
+            Assert.IsInstanceOfType(receivedException, typeof(CommunicationLibrary.Exceptions.DisconnectedException));
+
+            //after
+            streamMessageSenderReceiver.Dispose();
+            clientSide.Close();
+            semaphore.Dispose();
+        }
+
+
+        [TestMethod()]
+        public void TestCallbackCalledOnParseError()
+        {
+            Exception receivedException = null;
+            Stream agentToGmStream = new EchoStream();
+            Stream gmToAgentStream = new EchoStream();
+            Stream agentSideStream = new StreamRWJoin(gmToAgentStream, agentToGmStream);
+            Stream gmSideStream = new StreamRWJoin(agentToGmStream, gmToAgentStream);
+
+            StreamMessageSenderReceiver agentSenderReceiver
+                = new StreamMessageSenderReceiver(agentSideStream, new Parser());
+            Semaphore semaphore = new Semaphore(0, 100);
+            agentSenderReceiver.StartReceiving(message => { }, e =>
+            { receivedException = e; semaphore.Release(); });
+
+            string messageText = System.Text.Json.JsonSerializer.Serialize(new { a = "abc" });
+            byte[] messageBytes = Encoding.UTF8.GetBytes(messageText);
+            byte[] messageLengthBytes = BitConverter.GetBytes((ushort)messageBytes.Length);
+            if (!BitConverter.IsLittleEndian) Array.Reverse(messageLengthBytes);
+
+            //when
+            gmSideStream.Write(messageLengthBytes, 0, 2);
+            gmSideStream.Write(messageBytes, 0, messageBytes.Length);
+            semaphore.WaitOne();
+
+            //then
+            Assert.IsNotNull(receivedException);
+            Assert.IsInstanceOfType(receivedException, typeof(CommunicationLibrary.Exceptions.ParsingException));
+
+            //after
+            agentSenderReceiver.Dispose();
+            gmSideStream.Close();
+            semaphore.Dispose();
+        }
+
+
+
+        [TestMethod()]
+        public void TestCallbackCalledOnReceiveCallbackError()
+        {
+            //given
+            Exception receivedException = null;
+            string expected = "callback";
+            var (agentSide, gmSide) = HelperFunctions.GetGmAgentConnections();
+            Semaphore semaphore = new Semaphore(0, 100);
+            agentSide.StartReceiving(message => throw new Exception(expected), e =>
+            { receivedException = e; semaphore.Release(); });
+
+            //when
+            gmSide.Send(new Message<CheckHoldedPieceRequest>(new CheckHoldedPieceRequest()));
+            semaphore.WaitOne();
+
+            //then
+            Assert.IsNotNull(receivedException);
+            Assert.AreEqual(receivedException.InnerException.Message, expected);
+
+            //after
+            agentSide.Dispose();
+            gmSide.Dispose();
+            semaphore.Dispose();
+        }
+
+        [TestMethod()]
+        [ExpectedException(typeof(CommunicationLibrary.Exceptions.DisconnectedException))]
+        public void TestExceptionThrownOnSendToDisconnected()
+        {
+            //given
+            (TcpClient clientSide, TcpClient serverSide) = HelperFunctions.TcpConnectClientAndServer();
+            serverSide.Close();
+            var senderReceiver = new StreamMessageSenderReceiver(clientSide.GetStream(), new Parser());
+
+            //when
+            senderReceiver.Send(new Message<CheckHoldedPieceRequest>(new CheckHoldedPieceRequest()));
+
+            //then
+            //DisconnectedExceptionThrown
+
+            //after
+            senderReceiver.Dispose();
+        }
+
     }
 }

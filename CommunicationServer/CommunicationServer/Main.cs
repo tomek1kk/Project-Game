@@ -9,20 +9,43 @@ namespace CommunicationServerNamespace
     {
         static void Main(string[] args)
         {
-            Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Debug()
-            .WriteTo.File("logs\\logs.txt", rollingInterval: RollingInterval.Day)
-            .CreateLogger();
-
+            Configuration config = Configuration.ReadConfiguration(args);
+            CreateLogger(config.LoggingMode);
             Log.Information("Start communication server.");
-            CommunicationServer communicationServer = new CommunicationServer();
+            using (CommunicationServer communicationServer = new CommunicationServer(config))
+            {
+                Log.Information("Start connecting Game Master:");
+                communicationServer.StartConnectingGameMaster();
 
-            Log.Information("Connect Game Master:");
-            communicationServer.ConnectGameMaster();
+                Log.Information("Accepting Game Master:");
+                communicationServer.AcceptGameMaster();
 
-            Log.Information("Connect Agents:");
-            communicationServer.ConnectAgents();
-            Console.WriteLine("Koniec CS");
+                Log.Information("Connect Agents:");
+                communicationServer.ConnectAgents();
+
+                Log.Information("Wait for game over");
+                communicationServer.WaitForGameOver();
+
+                Console.WriteLine("Koniec CS");
+            }
+
+        }
+        static void CreateLogger(string mode)
+        {
+            if(mode == "debug")
+            {
+                Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.File("logs\\logs.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+            }
+            else
+            {
+                Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Information()
+                .WriteTo.File("logs\\logs.txt", rollingInterval: RollingInterval.Day)
+                .CreateLogger();
+            }
         }
     }
 }

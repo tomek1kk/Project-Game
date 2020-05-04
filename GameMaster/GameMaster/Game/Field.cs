@@ -1,8 +1,5 @@
 ﻿using GameMaster.GUI;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace GameMaster.Game
 {
@@ -14,20 +11,23 @@ namespace GameMaster.Game
 
         public override bool IsGoalField { get => false; }
 
-        public override FieldType GetFieldTypeForGUI()
+        protected override FieldType GetGUIFieldFromField()
         {
-            if (_whos_here.Count > 0)
+            if (ContainsPieces())
             {
-                if (_whos_here[0].IsHolding)
-                    return _whos_here[0].Team == Team.Red ? FieldType.RedPlayerWithPiece : FieldType.BluePlayerWithPiece;
-                return _whos_here[0].Team == Team.Red ? FieldType.RedPlayer : FieldType.BluePlayer;
+                if (_pieces[0].IsSham())
+                {
+                    return FieldType.Sham;
+                }
+                else
+                {
+                    return _discovered ? FieldType.DiscoveredNonGoal : FieldType.Piece;
+                }
             }
-            if (_discovered)
-                return FieldType.DiscoveredNonGoal;
-            else if (_pieces.Count > 0)
-                return FieldType.Piece;
             else
+            {
                 return FieldType.Empty;
+            }
         }
         public override AbstractPiece PickUp()
         {
