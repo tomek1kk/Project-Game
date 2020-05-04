@@ -15,5 +15,6 @@
 	"numberOfGoals": 5,
 	"numberOfPieces": 10,
 	"shamPieceProbability": 20,
-	"numberOfPlayers": 16
+	"numberOfPlayers": 16,
+	"loggingMode": "information"
 }
