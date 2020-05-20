@@ -1,6 +1,6 @@
 ﻿{
 "CsIP": "127.0.0.1",
-"CsPort": 8080,
+"CsPort": 8090,
 "teamID": "blue",
 "strategy": 1,
 "LoggingMode":"information"

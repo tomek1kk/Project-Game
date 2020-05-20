@@ -17,9 +17,13 @@ namespace CommunicationLibrary.RawMessageProcessing
             byte[] messageBytes = Encoding.UTF8.GetBytes(messageString);
             byte[] messageLengthBytes = BitConverter.GetBytes((ushort)messageBytes.Length);
             if (!BitConverter.IsLittleEndian) Array.Reverse(messageLengthBytes);
+            byte[] allBytes = new byte[messageBytes.Length + messageLengthBytes.Length];
+            for (int i = 0; i < messageLengthBytes.Length; i++)
+                allBytes[i] = messageLengthBytes[i];
+            for (int i = 0; i < messageBytes.Length; i++) 
+                allBytes[i+messageLengthBytes.Length] = messageBytes[i];
 
-            _byteStreamWriter(messageLengthBytes, messageLengthBytes.Length);
-            _byteStreamWriter(messageBytes, messageBytes.Length);
+            _byteStreamWriter(allBytes, allBytes.Length);
         }
     }
 }
