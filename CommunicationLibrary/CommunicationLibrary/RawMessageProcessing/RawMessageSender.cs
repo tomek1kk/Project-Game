@@ -22,8 +22,9 @@ namespace CommunicationLibrary.RawMessageProcessing
                 allBytes[i] = messageLengthBytes[i];
             for (int i = 0; i < messageBytes.Length; i++) 
                 allBytes[i+messageLengthBytes.Length] = messageBytes[i];
-
+            Console.WriteLine($"Before sending, len={messageBytes.Length}");
             _byteStreamWriter(allBytes, allBytes.Length);
+            Console.WriteLine($"After sending");
         }
     }
 }

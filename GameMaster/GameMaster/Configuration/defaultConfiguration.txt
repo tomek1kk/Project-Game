@@ -1,7 +1,7 @@
 ﻿{
 	"boardX": 13,
 	"boardY": 23,
-	"CsIP": "127.0.0.1",
+	"CsIP": "25.42.69.33",
 	"CsPort": 8080,
 	"teamID": 3,
 	"movePenalty": 500,

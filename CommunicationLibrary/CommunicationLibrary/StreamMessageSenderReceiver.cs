@@ -30,9 +30,9 @@ namespace CommunicationLibrary
             //providing raw message reader with limited access to tcp stream that cancels when
             //token is used
             RawMessageReader reader = new RawMessageReader(
-                (buffer, count) =>
+                (buffer, count, offset) =>
                 {
-                    var resTask = _tcpStream.ReadAsync(buffer, 0, count, cancellationToken);
+                    var resTask = _tcpStream.ReadAsync(buffer, offset, count, cancellationToken);
                     resTask.Wait();
                     return resTask.Result;
                 }
@@ -55,6 +55,7 @@ namespace CommunicationLibrary
                 }
                 catch(Exception e)
                 {
+                    Console.WriteLine(e.ToString() + "" + e.StackTrace);
                     if (_errorCallback != null)
                         _errorCallback.Invoke(e);
                 }
@@ -68,7 +69,6 @@ namespace CommunicationLibrary
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
                 throw new DisconnectedException(e);
             }
         }
@@ -124,6 +124,7 @@ namespace CommunicationLibrary
             }
             catch(Exception e)
             {
+                Console.WriteLine(e.ToString() + "" + e.StackTrace);
                 throw new DisconnectedException(e);
             }
         }
