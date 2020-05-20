@@ -19,11 +19,11 @@ namespace CommunicationLibrary.RawMessageProcessing
         }
         public string GetNextMessageAsString()
         {
-            int bytesRead = _byteStreamReader(_messageLengthBuffer, 2);
-            if (bytesRead != 2) throw new Exception("Failed to read bytes");
+            int bytesRead = _byteStreamReader(_messageLengthBuffer, 4);
+            if (bytesRead != 4) throw new Exception("Failed to read bytes");
             if (!BitConverter.IsLittleEndian)
                 Array.Reverse(_messageLengthBuffer);
-            int messageLength = BitConverter.ToUInt16(_messageLengthBuffer, 0);
+            int messageLength = BitConverter.ToInt32(_messageLengthBuffer, 0);
             if (messageLength == 0) return String.Empty;
             bytesRead = _byteStreamReader(_messageBuffer, messageLength);
             if (bytesRead == 0) throw new Exception("Failed to read bytes");
