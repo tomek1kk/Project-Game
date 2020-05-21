@@ -14,15 +14,15 @@ namespace CommunicationLibrary.RawMessageProcessing
         public RawMessageReader(Read byteStreamReader)
         {
             _byteStreamReader = byteStreamReader;
-            _messageBuffer = new byte[64 * 1024];
-            _messageLengthBuffer = new byte[4];
+            _messageBuffer = new byte[8 * 1024];
+            _messageLengthBuffer = new byte[2];
         }
         public string GetNextMessageAsString()
         {
             int allBytesRead = 0;
-            while (allBytesRead != 4)
+            while (allBytesRead != 2)
             {
-                int bytesRead = _byteStreamReader(_messageLengthBuffer, 4 - allBytesRead, allBytesRead);
+                int bytesRead = _byteStreamReader(_messageLengthBuffer, 2 - allBytesRead, allBytesRead);
                 if (bytesRead == 0)
                 {
                     throw new Exception($"Failed to read len bytes, allBytesRead={allBytesRead}");
@@ -31,9 +31,8 @@ namespace CommunicationLibrary.RawMessageProcessing
             }
             if (!BitConverter.IsLittleEndian)
                 Array.Reverse(_messageLengthBuffer);
-            int messageLength = BitConverter.ToInt32(_messageLengthBuffer, 0);
+            int messageLength = BitConverter.ToUInt16(_messageLengthBuffer, 0);
             if (messageLength == 0) return String.Empty;
-            Console.WriteLine($"Before reading, len={messageLength}");
             allBytesRead = 0;
             while(allBytesRead != messageLength)
             {
@@ -45,7 +44,6 @@ namespace CommunicationLibrary.RawMessageProcessing
                 }
                 allBytesRead += bytesRead;
             }
-            Console.WriteLine($"After reading, len={allBytesRead}");
             return Encoding.UTF8.GetString(_messageBuffer, 0, messageLength);
         }
     }

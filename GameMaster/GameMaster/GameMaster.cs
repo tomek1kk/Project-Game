@@ -32,7 +32,7 @@ namespace GameMaster
         }
         public void Start()
         {
-            _client = new TcpClient("127.0.0.1", 8081);
+            _client = new TcpClient("ec2-3-219-247-185.compute-1.amazonaws.com", 8081);
             _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
             Log.Information("StreamMessageSenderReceiver started");
 

@@ -27,7 +27,7 @@ namespace CommunicationServerNamespace
         public int PortCSforAgents { get; private set; }
         private TcpListener _gmListener;
 
-        private CancellationTokenSource _connectAgents = new CancellationTokenSource();
+        private bool _acceptingAgents = true;
         private TaskCompletionSource<bool> _gameOver = new TaskCompletionSource<bool>();
 
         public CommunicationServer(Configuration config)
@@ -63,7 +63,7 @@ namespace CommunicationServerNamespace
                     _agentsConnections.Remove(_agentsConnections.Find(a => a.Id == message.AgentId));
                 }
             }
-            if (message.IsGameStarted()) _connectAgents.Cancel();
+            if (message.IsGameStarted()) _acceptingAgents = false;
             if (message.IsEndGame())
             {
                 HandleEndGame(message);
@@ -84,26 +84,27 @@ namespace CommunicationServerNamespace
             TcpListener tcpListener = new TcpListener(ipAddress, PortCSforAgents);
             tcpListener.Start();
             int i = 0;
-            while (!_connectAgents.IsCancellationRequested)
+            while (_acceptingAgents)
             {
-                TcpClient agentClient;
-                using (_connectAgents.Token.Register(() => tcpListener.Stop()))
+                if(tcpListener.Pending() && _acceptingAgents)
                 {
-                    try
-                    {
-                        agentClient = tcpListener.AcceptTcpClient();
-                    }
-                    catch (SocketException)
-                    {
-                        break;
-                    }
+                TcpClient agentClient = tcpListener.AcceptTcpClient();
+                    AgentDescriptor agent = new AgentDescriptor(agentClient);
+                    _agentsConnections.Add(agent);
+                    agent.StartReceiving(GetAgentMessage, HandleConnectionError);
+                    Console.WriteLine("Agent connected: " + ++i);
+                    Log.Information("New agent connected.");
                 }
-                AgentDescriptor agent = new AgentDescriptor(agentClient);
-                _agentsConnections.Add(agent);
-                agent.StartReceiving(GetAgentMessage, HandleConnectionError);
-                Console.WriteLine("Agent connected: " + ++i);
-                Log.Information("New agent connected.");
+                else if(!_acceptingAgents)
+                {
+                    continue;
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                }
             }
+            tcpListener.Stop();
             Console.WriteLine("Agent end");
         }
 
@@ -174,7 +175,7 @@ namespace CommunicationServerNamespace
         private void StopWorking()
         {
             _gameOver.TrySetResult(true);
-            _connectAgents.Cancel();
+            _acceptingAgents = false;
         }
 
         public void Dispose()

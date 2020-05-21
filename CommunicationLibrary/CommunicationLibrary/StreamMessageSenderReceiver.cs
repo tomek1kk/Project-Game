@@ -55,7 +55,6 @@ namespace CommunicationLibrary
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine(e.ToString() + "" + e.StackTrace);
                     if (_errorCallback != null)
                         _errorCallback.Invoke(e);
                 }
@@ -124,7 +123,6 @@ namespace CommunicationLibrary
             }
             catch(Exception e)
             {
-                Console.WriteLine(e.ToString() + "" + e.StackTrace);
                 throw new DisconnectedException(e);
             }
         }

@@ -15,16 +15,14 @@ namespace CommunicationLibrary.RawMessageProcessing
         public void SendMessage(string messageString)
         {
             byte[] messageBytes = Encoding.UTF8.GetBytes(messageString);
-            byte[] messageLengthBytes = BitConverter.GetBytes(messageBytes.Length);
+            byte[] messageLengthBytes = BitConverter.GetBytes((UInt16)messageBytes.Length);
             if (!BitConverter.IsLittleEndian) Array.Reverse(messageLengthBytes);
             byte[] allBytes = new byte[messageBytes.Length + messageLengthBytes.Length];
             for (int i = 0; i < messageLengthBytes.Length; i++)
                 allBytes[i] = messageLengthBytes[i];
             for (int i = 0; i < messageBytes.Length; i++) 
                 allBytes[i+messageLengthBytes.Length] = messageBytes[i];
-            Console.WriteLine($"Before sending, len={messageBytes.Length}");
             _byteStreamWriter(allBytes, allBytes.Length);
-            Console.WriteLine($"After sending");
         }
     }
 }

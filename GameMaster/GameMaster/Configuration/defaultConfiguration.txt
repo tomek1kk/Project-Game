@@ -1,7 +1,7 @@
 ﻿{
 	"boardX": 13,
 	"boardY": 23,
-	"CsIP": "25.42.69.33",
+	"CsIP": "ec2-3-219-247-185.compute-1.amazonaws.com",
 	"CsPort": 8080,
 	"teamID": 3,
 	"movePenalty": 500,
