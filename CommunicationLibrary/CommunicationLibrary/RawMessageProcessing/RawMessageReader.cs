@@ -23,7 +23,10 @@ namespace CommunicationLibrary.RawMessageProcessing
             while (allBytesRead != 4)
             {
                 int bytesRead = _byteStreamReader(_messageLengthBuffer, 4 - allBytesRead, allBytesRead);
-                if (bytesRead == 0) throw new Exception("Failed to read len bytes");
+                if (bytesRead == 0)
+                {
+                    throw new Exception($"Failed to read len bytes, allBytesRead={allBytesRead}");
+                }
                 allBytesRead += bytesRead;
             }
             if (!BitConverter.IsLittleEndian)
@@ -35,7 +38,11 @@ namespace CommunicationLibrary.RawMessageProcessing
             while(allBytesRead != messageLength)
             {
                 int bytesRead = _byteStreamReader(_messageBuffer, messageLength-allBytesRead, allBytesRead);
-                if (bytesRead == 0) throw new Exception("Failed to read mes bytes");
+                if (bytesRead == 0)
+                {
+                    throw new Exception($"Failed to read mes bytes, allBytesRead={allBytesRead}," +
+                        $" messageLength={messageLength}");
+                }
                 allBytesRead += bytesRead;
             }
             Console.WriteLine($"After reading, len={allBytesRead}");
