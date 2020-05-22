@@ -31,12 +31,13 @@ namespace CommunicationLibraryTests.HelperClasses
 
         public static (TcpClient client, TcpClient server) TcpConnectClientAndServer()
         {
-            TcpListener serverSideListener = new TcpListener(IPAddress.Any, 8764);
+            TcpListener serverSideListener = new TcpListener(IPAddress.Any, 0);
             serverSideListener.Start();
+            int port = ((IPEndPoint)serverSideListener.LocalEndpoint).Port;
             TcpClient serverSide = null;
             var task = new Task(() => serverSide = serverSideListener.AcceptTcpClient());
             task.Start();
-            TcpClient clientSide = new TcpClient("localhost", 8764);
+            TcpClient clientSide = new TcpClient("localhost", port);
             task.Wait();
             serverSideListener.Stop();
             return (clientSide, serverSide);

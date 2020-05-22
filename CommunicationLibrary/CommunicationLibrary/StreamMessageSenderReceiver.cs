@@ -120,11 +120,21 @@ namespace CommunicationLibrary
             try
             {
                 rawMessageSender.SendMessage(messageString);
+                SendStreamCheckingMessage();
             }
             catch(Exception e)
             {
                 throw new DisconnectedException(e);
             }
+        }
+
+        private void SendStreamCheckingMessage()
+        {
+            //network stream checks connection error on send, but will throw exception on
+            //next send after one which lead to discovery of disconnection
+            //so we need to call send two times - first to make socket realize it is disconnected
+            //second to make it call an exception
+            _tcpStream.Write(new byte[0], 0, 0);
         }
 
         /// <summary>
