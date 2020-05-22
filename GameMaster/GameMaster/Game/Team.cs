@@ -20,6 +20,13 @@ namespace GameMaster.Game
             else
                 return Team.Blue;
         }
+        public static string AsString(this Team value)
+        {
+            if (value == Team.Red)
+                return "red";
+            else
+                return "blue";
+        }
     }
 
 }

@@ -2,7 +2,7 @@
 	"boardX": 13,
 	"boardY": 23,
 	"CsIP": "ec2-3-219-247-185.compute-1.amazonaws.com",
-	"CsPort": 8080,
+	"CsPort": 8081,
 	"teamID": 3,
 	"movePenalty": 500,
 	"askPenalty": 500,
@@ -16,5 +16,5 @@
 	"numberOfPieces": 10,
 	"shamPieceProbability": 20,
 	"numberOfPlayers": 16,
-	"loggingMode": "information"
+	"loggingMode": "debug"
 }

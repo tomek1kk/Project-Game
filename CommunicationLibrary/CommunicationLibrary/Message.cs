@@ -16,6 +16,7 @@ namespace CommunicationLibrary
             get;
         }
         public abstract MessagePayload GetPayload();
+        [System.Text.Json.Serialization.JsonPropertyName("agentID")]
         public int? AgentId { get; set; }
 
     }
@@ -28,7 +29,9 @@ namespace CommunicationLibrary
         }
         //for json parser
         public Message() { }
+        [System.Text.Json.Serialization.JsonPropertyName("payload")]
         public T MessagePayload { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("messageID")]
         public override MessageType MessageId => messageDictionary[typeof(T)];
 
         public override MessagePayload GetPayload()

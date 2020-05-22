@@ -13,6 +13,7 @@ namespace CommunicationLibrary.Request
             return true;
         }
 
+        [System.Text.Json.Serialization.JsonPropertyName("askedAgentID")]
         public int? AskedAgentId { get; set; }
     }
 }

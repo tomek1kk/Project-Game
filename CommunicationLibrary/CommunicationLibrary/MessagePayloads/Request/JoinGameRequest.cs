@@ -6,6 +6,7 @@ namespace CommunicationLibrary.Request
 {
     public class JoinGameRequest : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("teamID")]
         public string TeamId { get; set; }
 
         public override bool ValidateMessage()

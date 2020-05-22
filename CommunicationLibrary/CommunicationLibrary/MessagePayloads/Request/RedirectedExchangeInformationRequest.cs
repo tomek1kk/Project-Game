@@ -6,8 +6,11 @@ namespace CommunicationLibrary.Request
 {
     public class RedirectedExchangeInformationRequest : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("askingID")]
         public int? AskingId { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("leader")]
         public bool? Leader { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("teamID")]
         public string TeamId { get; set; }
 
         public override bool ValidateMessage()

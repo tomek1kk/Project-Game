@@ -6,6 +6,7 @@ namespace CommunicationLibrary.Information
 {
     public class GameEnded : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("winner")]
         public string Winner { get; set; }
 
         public override bool ValidateMessage()
