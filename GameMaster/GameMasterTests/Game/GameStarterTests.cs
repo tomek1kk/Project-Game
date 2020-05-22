@@ -86,7 +86,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Blue"
+                    TeamId = "blue"
                 }
             };
 
@@ -114,7 +114,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Blue"
+                    TeamId = "blue"
                 }
             };
 
@@ -142,7 +142,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Red"
+                    TeamId = "red"
                 }
             };
 
@@ -170,7 +170,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Red"
+                    TeamId = "red"
                 }
             };
 
@@ -227,7 +227,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Blue"
+                    TeamId = "blue"
                 }
             };
 
@@ -255,7 +255,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Blue"
+                    TeamId = "blue"
                 }
             };
           
@@ -305,7 +305,7 @@ namespace GameMasterTests.Game
                         PutPiece = "0"
                     },
                     Position = new Position() { X = 10, Y = 10 },
-                    TeamId = "Blue"
+                    TeamId = "blue"
                 }
             };
 

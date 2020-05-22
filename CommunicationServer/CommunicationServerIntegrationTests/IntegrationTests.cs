@@ -7,6 +7,7 @@ using CommunicationLibrary;
 using CommunicationLibrary.Exceptions;
 using CommunicationLibrary.Request;
 using CommunicationLibrary.Information;
+using System.Net;
 
 namespace CommunicationServerIntegrationTests
 {
@@ -15,53 +16,59 @@ namespace CommunicationServerIntegrationTests
     {
         private Configuration config = new Configuration()
         {
-            GMPort = 8081,
-            AgentPort = 8080,
-            CsIP = "127.0.0.1"
+            GMPort = 0,
+            AgentPort = 0,
+            CsIP = "0.0.0.0"
         };
         [TestMethod]
         public void ToAgentFromGM()
         {
             using (CommunicationServer communicationServer = new CommunicationServer(config))
             {
+                //connecting game master
                 communicationServer.StartConnectingGameMaster();
                 TcpClient gameMasterSide = new TcpClient();
-                gameMasterSide.Connect(config.CsIP, config.GMPort);
+                gameMasterSide.Connect(IPAddress.Loopback, communicationServer.PortCSforGM);
                 communicationServer.AcceptGameMaster();
+                IMessageSenderReceiver senderReceiverGameMaster = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
 
+                //connecting agent
                 var AgentConnectTask = new Task(() => communicationServer.ConnectAgents());
                 AgentConnectTask.Start();
+                while (communicationServer.PortCSforAgents == 0) Thread.Sleep(50);
+                TcpClient agentSide = new TcpClient("localhost", communicationServer.PortCSforAgents);
+                IMessageSenderReceiver senderReceiverAgent = new StreamMessageSenderReceiver(agentSide.GetStream(), new Parser());
 
-                TcpClient agentSide = new TcpClient(config.CsIP, config.AgentPort);
 
-                IMessageSenderReceiver senderReceiverGameMaster = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
-                var message = new Message<GameStarted>()
+                //ensuring agent is registered in communication server
+                senderReceiverAgent.Send(new Message<JoinGameRequest>(new JoinGameRequest { TeamId = "red" }));
+                gameMasterSide.GetStream().Read(new byte[1], 0, 1);
+
+                //sending message to agent
+                var sentMessage = new Message<GameStarted>()
                 {
                     AgentId = 1,
                     MessagePayload = new GameStarted()
                 };
+                senderReceiverGameMaster.Send(sentMessage);
 
+
+                //waiting for message in agent
                 var expectedMessageId = MessageType.GameStarted;
                 Message receivedMessage = null;
-                IMessageSenderReceiver senderReceiverAgent = new StreamMessageSenderReceiver(agentSide.GetStream(), new Parser());
                 Semaphore semaphore = new Semaphore(0, 100);
 
                 senderReceiverAgent.StartReceiving(m =>
                 {
                     semaphore.Release();
                     receivedMessage = m;
-                },
-                     (e) =>
-                     {
-                     });
-
-                senderReceiverGameMaster.Send(message);
-
-                AgentConnectTask.Wait();
-
+                },(e) =>{});
                 semaphore.WaitOne();
+
                 Assert.IsFalse(receivedMessage == null);
                 Assert.AreEqual(receivedMessage.MessageId, expectedMessageId);
+
+                //after
                 gameMasterSide.Close();
                 agentSide.Close();
                 senderReceiverGameMaster.Dispose();
@@ -73,24 +80,28 @@ namespace CommunicationServerIntegrationTests
         {
             using (CommunicationServer communicationServer = new CommunicationServer(config))
             {
+                //connecting game master
                 communicationServer.StartConnectingGameMaster();
                 TcpClient gameMasterSide = new TcpClient();
-                gameMasterSide.Connect(config.CsIP, config.GMPort);
-                IMessageSenderReceiver senderReceiverGameMaster = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
+                gameMasterSide.Connect("localhost", communicationServer.PortCSforGM);
                 communicationServer.AcceptGameMaster();
+                IMessageSenderReceiver senderReceiverGameMaster
+                    = new StreamMessageSenderReceiver(gameMasterSide.GetStream(), new Parser());
 
+                //connecting agent
                 var AgentConnectTask = new Task(() => communicationServer.ConnectAgents());
                 AgentConnectTask.Start();
-
-                TcpClient agentSide = new TcpClient(config.CsIP, config.AgentPort);
-
+                while (communicationServer.PortCSforAgents == 0) Thread.Sleep(50);
+                TcpClient agentSide = new TcpClient("localhost", communicationServer.PortCSforAgents);
                 IMessageSenderReceiver senderReceiverAgent = new StreamMessageSenderReceiver(agentSide.GetStream(), new Parser());
-                var message = new Message<DiscoveryRequest>()
-                {
-                    AgentId = 1,
-                    MessagePayload = new DiscoveryRequest()
-                };
-                senderReceiverAgent.Send(message);
+
+
+                //ensuring agent is registered in communication server
+                senderReceiverAgent.Send(new Message<JoinGameRequest>(new JoinGameRequest { TeamId = "red" }));
+                Semaphore s = new Semaphore(0, 1);
+                Message receivedMessage = null;
+                senderReceiverGameMaster.StartReceiving(m => {receivedMessage = m; s.Release(); });
+                s.WaitOne();
 
                 var gameStartMessage = new Message<GameStarted>()
                 {
@@ -98,18 +109,24 @@ namespace CommunicationServerIntegrationTests
                     MessagePayload = new GameStarted()
                 };
                 senderReceiverGameMaster.Send(gameStartMessage);
-                AgentConnectTask.Wait();
 
+                //sending message to game master
+                receivedMessage = null;
                 var expectedMessageId = MessageType.DiscoveryRequest;
-                Message receivedMessage = null;
 
-                senderReceiverGameMaster.StartReceiving(m => { receivedMessage = m; });
+                var message = new Message<DiscoveryRequest>()
+                {
+                    AgentId = 1,
+                    MessagePayload = new DiscoveryRequest()
+                };
+                senderReceiverAgent.Send(message);
 
-                for (int i = 0; receivedMessage == null && i < 10; i++)
-                    Thread.Sleep(100);
+                //waiting for message in game master
+                s.WaitOne();
                 Assert.IsFalse(receivedMessage == null);
                 Assert.AreEqual(receivedMessage.MessageId, expectedMessageId);
 
+                //after
                 gameMasterSide.Close();
                 agentSide.Close();
                 senderReceiverGameMaster.Dispose();

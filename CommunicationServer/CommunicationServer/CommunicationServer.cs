@@ -43,6 +43,7 @@ namespace CommunicationServerNamespace
             IPAddress ipAddress = IPAddress.Parse(IpAddress);
             _gmListener = new TcpListener(ipAddress, PortCSforGM);
             _gmListener.Start();
+            PortCSforGM = ((IPEndPoint)_gmListener.LocalEndpoint).Port;
         }
         public void AcceptGameMaster()
         {
@@ -83,6 +84,7 @@ namespace CommunicationServerNamespace
             IPAddress ipAddress = IPAddress.Parse(IpAddress);
             TcpListener tcpListener = new TcpListener(ipAddress, PortCSforAgents);
             tcpListener.Start();
+            PortCSforAgents = ((IPEndPoint)tcpListener.LocalEndpoint).Port;
             int i = 0;
             while (_acceptingAgents)
             {

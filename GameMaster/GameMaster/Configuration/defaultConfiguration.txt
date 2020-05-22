@@ -1,7 +1,8 @@
 ﻿{
 	"boardX": 13,
 	"boardY": 23,
-	"CsIP": "ec2-3-219-247-185.compute-1.amazonaws.com",
+	"CsIP": "localhost",
+	"CsIP2": "ec2-3-219-247-185.compute-1.amazonaws.com",
 	"CsPort": 8081,
 	"teamID": 3,
 	"movePenalty": 500,
