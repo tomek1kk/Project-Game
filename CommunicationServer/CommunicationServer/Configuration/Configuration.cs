@@ -11,7 +11,9 @@ namespace CommunicationServerNamespace
 {
     public class Configuration
     {
-        private static string pathToDefaultConfiguration = @".\Configuration\defaultConfiguration.json";
+
+        private static string pathToDefaultConfiguration 
+            = Path.Combine(".","Configuration","defaultConfiguration.json");
 
         public string CsIP { get; set; }
         public int GMPort { get; set; }

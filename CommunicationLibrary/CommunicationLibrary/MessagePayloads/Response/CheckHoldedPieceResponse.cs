@@ -6,6 +6,7 @@ namespace CommunicationLibrary.Response
 {
     public class CheckHoldedPieceResponse : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("sham")]
         public bool? Sham { get; set; }
 
         public override bool ValidateMessage()

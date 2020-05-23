@@ -6,6 +6,7 @@ namespace CommunicationLibrary.Request
 {
     public class MoveRequest : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("direction")]
         public string Direction { get; set; }
 
         public override bool ValidateMessage()

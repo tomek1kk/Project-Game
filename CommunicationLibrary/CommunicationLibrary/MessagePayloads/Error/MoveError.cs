@@ -7,6 +7,7 @@ namespace CommunicationLibrary.Error
 {
     public class MoveError : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("position")]
         public Position Position { get; set; }
 
         public override bool ValidateMessage()

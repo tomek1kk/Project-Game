@@ -32,7 +32,7 @@ namespace GameMaster
         }
         public void Start()
         {
-            _client = new TcpClient("127.0.0.1", 8081);
+            _client = new TcpClient(_gmConfiguration.CsIP, _gmConfiguration.CsPort);
             _communicator = new StreamMessageSenderReceiver(_client.GetStream(), new Parser());
             Log.Information("StreamMessageSenderReceiver started");
 
