@@ -22,7 +22,9 @@ namespace CommunicationLibrary.Response
                 return false;
             if (Distances == null)
                 return false;
-            if (RedTeamGoalAreaInformations == null && BlueTeamGoalAreaInformations == null)
+            if (RedTeamGoalAreaInformations == null)
+                return false;
+            if (BlueTeamGoalAreaInformations == null)
                 return false;
             return true;
         }

@@ -6,6 +6,8 @@ using CommunicationLibrary.Response;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 
@@ -69,15 +71,25 @@ namespace Agent.Strategies
         virtual protected void CheckHoldedPieceResponseHandler(CheckHoldedPieceResponse checkHoldedPieceResponse) { }
         virtual protected void DiscoveryResponseHandler(DiscoveryResponse discoveryResponse, Point position)
         {
-            if (discoveryResponse.DistanceNW.HasValue) Board.Board[position.X - 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNW.Value;
-            if (discoveryResponse.DistanceN.HasValue) Board.Board[position.X, position.Y + 1].DistToPiece = discoveryResponse.DistanceN.Value;
-            if (discoveryResponse.DistanceNE.HasValue) Board.Board[position.X + 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNE.Value;
-            if (discoveryResponse.DistanceW.HasValue) Board.Board[position.X - 1, position.Y].DistToPiece = discoveryResponse.DistanceW.Value;
-            if (discoveryResponse.DistanceFromCurrent.HasValue) Board.Board[position.X, position.Y].DistToPiece = discoveryResponse.DistanceFromCurrent.Value;
-            if (discoveryResponse.DistanceE.HasValue) Board.Board[position.X + 1, position.Y].DistToPiece = discoveryResponse.DistanceE.Value;
-            if (discoveryResponse.DistanceSW.HasValue) Board.Board[position.X - 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSW.Value;
-            if (discoveryResponse.DistanceS.HasValue) Board.Board[position.X, position.Y - 1].DistToPiece = discoveryResponse.DistanceS.Value;
-            if (discoveryResponse.DistanceSE.HasValue) Board.Board[position.X + 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSE.Value;
+            Func<int, int, bool> insideBoard =
+                (x, y) => x >= 0 && y >= 0 && x < Board.Board.GetLength(1) && y < Board.Board.GetLength(0);
+            Board.Board[position.X, position.Y].DistToPiece = discoveryResponse.DistanceFromCurrent;
+            if (insideBoard(position.X - 1, position.Y + 1))
+                Board.Board[position.X - 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNW;
+            if (insideBoard(position.X, position.Y + 1))
+                Board.Board[position.X, position.Y + 1].DistToPiece = discoveryResponse.DistanceN;
+            if (insideBoard(position.X + 1, position.Y + 1))
+                Board.Board[position.X + 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNE;
+            if (insideBoard(position.X - 1, position.Y))
+                Board.Board[position.X - 1, position.Y].DistToPiece = discoveryResponse.DistanceW;
+            if (insideBoard(position.X + 1, position.Y))
+                Board.Board[position.X + 1, position.Y].DistToPiece = discoveryResponse.DistanceE;
+            if (insideBoard(position.X - 1, position.Y - 1))
+                Board.Board[position.X - 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSW;
+            if (insideBoard(position.X, position.Y - 1))
+                Board.Board[position.X, position.Y - 1].DistToPiece = discoveryResponse.DistanceS;
+            if (insideBoard(position.X + 1, position.Y - 1))
+                Board.Board[position.X + 1, position.Y - 1].DistToPiece = discoveryResponse.DistanceSE;
         }
         virtual protected void DestroyPieceResponseHandler(DestroyPieceResponse moveError) { }
         virtual protected void ExchangeInformationResponseHandler(ExchangeInformationGMResponse exchangeInformationResponse)
