@@ -6,6 +6,7 @@ using CommunicationLibrary.Request;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -34,9 +35,31 @@ namespace Agent.Strategies.LongBoard
             (int myAreaStart, int myAreaSize)
                 = GetSubareaForAgent(gameInfo, subareaSize, biggerSubareasCount);
             board.MyBounds = (myAreaStart, myAreaStart + myAreaSize - 1);
+            var sortedAllies = new List<int>(gameInfo.AlliesIds);
+            sortedAllies.Sort();
+            board.neighborIds =
+                (
+                board.AmLeader
+                ? sortedAllies.Max()
+                : sortedAllies
+                    .Where(allyId => allyId != gameInfo.LeaderId)
+                    .Where(allyId => allyId < gameInfo.AgentId)
+                    .Cast<int?>()
+                    .LastOrDefault(),//null if agent is goalie
+                board.AmLeader
+                ? null
+                : sortedAllies
+                    .Where(allyId => allyId != gameInfo.LeaderId)
+                    .Where(allyId => allyId > gameInfo.AgentId)
+                    .Append(gameInfo.LeaderId)//moved leader to end
+                    .Cast<int?>()
+                    .FirstOrDefault()
+                );
             Log.Debug("I'm at {@position} and I should be between {@bounds}",
                 gameInfo.Position, board.MyBounds);
-            
+            Log.Debug("I'm {agentId} and my neighbors are {neighborNearGoal} and {neighborNearFront}",
+                gameInfo.AgentId, board.neighborIds.nearGoal, board.neighborIds.nearFront);
+
         }
 
         private (int myAreaStart, int myAreaSize) GetSubareaForAgent(
@@ -67,6 +90,7 @@ namespace Agent.Strategies.LongBoard
             int myAreaStart = gameInfo.TeamId == "blue"
                 ? gameInfo.BoardSize.Y.Value - gameInfo.GoalAreaSize - myAreaSize
                 : gameInfo.GoalAreaSize;
+            _board.AmLeader = true;
             return (myAreaStart, myAreaSize);
         }
 

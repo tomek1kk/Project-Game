@@ -10,6 +10,8 @@
         /// Goalie is an agent which operates only in goal area and puts pieces there to score points
         /// </summary>
         public bool AmGoalie { get; set; } = false;
+        public bool AmLeader { get; set; } = false;
         public bool MoveError { get; set; } = false;
+        public (int? nearGoal, int? nearFront) neighborIds;
     }
 }
