@@ -4,5 +4,5 @@
 "CsPort": 8090,
 "teamID": "red",
 "strategy": 2,
-"LoggingMode": "debug"
+"LoggingMode": "information"
 }

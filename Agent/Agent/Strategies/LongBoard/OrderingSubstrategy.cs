@@ -20,6 +20,76 @@ namespace Agent.Strategies.LongBoard
         public OrderingSubstrategy(GameStarted gameInfo, CommonBoard board)
         {
             _board = board;
+            var sortedTeam = new List<int>(gameInfo.AlliesIds);
+            sortedTeam.Add(gameInfo.AgentId);
+            sortedTeam.Remove(gameInfo.LeaderId);
+            sortedTeam.Sort();
+            sortedTeam.Add(gameInfo.LeaderId);
+            int myIndex = sortedTeam.IndexOf(gameInfo.AgentId);
+            if (myIndex != 0) board.neighborIds.nearGoal = sortedTeam[myIndex - 1];
+            if (myIndex != sortedTeam.Count - 1) board.neighborIds.nearFront = sortedTeam[myIndex + 1];
+            List<int> subareasLengths = GetSubareasLengths(gameInfo);
+            board.MyBounds = GetMyBounds(gameInfo, subareasLengths, myIndex);
+
+            board.MySubareaFields = new CommonBoard.PosField[gameInfo.BoardSize.X.Value, board.MyAreaSize];
+            for(int i = 0; i < gameInfo.BoardSize.X.Value; i++)
+            {
+                for(int j = 0; j < board.MyAreaSize; j++)
+                {
+                    board.MySubareaFields[i, j] = new CommonBoard.PosField(i, board.MyBounds.Min + j);
+                }
+            }
+            if(_board.Type != CommonBoard.AgentType.Goalie)
+            {
+                for (int i = 0; i < gameInfo.BoardSize.X.Value; i++)
+                {
+                    board.FieldsToPlaceOn[i] = new CommonBoard.PosField(i, 
+                        (board.Team == Team.Blue ? board.MyBounds.Min - 1 : board.MyBounds.Max + 1));
+                }
+            }
+            if (_board.Type != CommonBoard.AgentType.Leader)
+            {
+                for (int i = 0; i < gameInfo.BoardSize.X.Value; i++)
+                {
+                    board.FieldsToTakeFrom[i] = board.GetFieldAt(new Point(i,
+                        (board.Team == Team.Red ? board.MyBounds.Min : board.MyBounds.Max)));
+                }
+            }
+            Log.Debug("I'm at {@position} and I should be between {@bounds}",
+                gameInfo.Position, board.MyBounds);
+            Log.Debug("I'm {agentId} and my neighbors are {neighborNearGoal} and {neighborNearFront}",
+                gameInfo.AgentId, board.neighborIds.nearGoal, board.neighborIds.nearFront);
+
+        }
+
+        private (int Min, int Max) GetMyBounds(GameStarted gameInfo, List<int> subareasLengths, int myIndex)
+        {
+            int minBound, maxBound;
+            if(_board.Team == Team.Blue)
+            {
+                minBound = 0;
+                int i;
+                for (i = 0; i < myIndex; i++)
+                {
+                    minBound += subareasLengths[i];
+                }
+                maxBound = minBound + subareasLengths[i] - 1;
+            }
+            else
+            {
+                maxBound = gameInfo.BoardSize.Y.Value - 1;
+                int i;
+                for (i = 0; i < myIndex; i++)
+                {
+                    maxBound -= subareasLengths[i];
+                }
+                minBound = maxBound - subareasLengths[i] + 1;
+            }
+            return (minBound, maxBound);
+        }
+
+        private List<int> GetSubareasLengths(GameStarted gameInfo)
+        {
             int taskAreaSize = gameInfo.BoardSize.Y.Value - gameInfo.GoalAreaSize * 2;
             //fields on the edge of each agents subarea (the edge that's closer to the enemy)
             //will be where agent closer to the enemy will put his collected pieces
@@ -32,98 +102,17 @@ namespace Agent.Strategies.LongBoard
             //it usually isn't exactly equally divided
             //certain number (indicated by biggerSubareasCount) of agents in front will have +1 field
             int biggerSubareasCount = nonGoalieAreaSize - subareaSize * gameInfo.AlliesIds.Count();
-            (int myAreaStart, int myAreaSize)
-                = GetSubareaForAgent(gameInfo, subareaSize, biggerSubareasCount);
-            board.MyBounds = (myAreaStart, myAreaStart + myAreaSize - 1);
-            var sortedAllies = new List<int>(gameInfo.AlliesIds);
-            sortedAllies.Sort();
-            board.neighborIds =
-                (
-                board.AmLeader
-                ? sortedAllies.Max()
-                : sortedAllies
-                    .Where(allyId => allyId != gameInfo.LeaderId)
-                    .Where(allyId => allyId < gameInfo.AgentId)
-                    .Cast<int?>()
-                    .LastOrDefault(),//null if agent is goalie
-                board.AmLeader
-                ? null
-                : sortedAllies
-                    .Where(allyId => allyId != gameInfo.LeaderId)
-                    .Where(allyId => allyId > gameInfo.AgentId)
-                    .Append(gameInfo.LeaderId)//moved leader to end
-                    .Cast<int?>()
-                    .FirstOrDefault()
-                );
-            Log.Debug("I'm at {@position} and I should be between {@bounds}",
-                gameInfo.Position, board.MyBounds);
-            Log.Debug("I'm {agentId} and my neighbors are {neighborNearGoal} and {neighborNearFront}",
-                gameInfo.AgentId, board.neighborIds.nearGoal, board.neighborIds.nearFront);
-
-        }
-
-        private (int myAreaStart, int myAreaSize) GetSubareaForAgent(
-            GameStarted gameInfo, int subareaSize, int biggerSubareasCount)
-        {
-            //leader always in front so he will never ask for information exchange
-            if (gameInfo.LeaderId == gameInfo.AgentId)
-                return GetSubareaForLeader(gameInfo, subareaSize, biggerSubareasCount);
-            else
+            int smallerSubareasCount = gameInfo.AlliesIds.Count() - biggerSubareasCount;
+            List<int> res = new List<int>
             {
-                //count allies which will be closer to our goal area than me
-                int fartherFromFrontCount = gameInfo.AlliesIds
-                    .Where(allyId => allyId != gameInfo.LeaderId)
-                    .Where(allyId => allyId < gameInfo.AgentId)
-                    .Count();
-                //non-leader agent with lowest id will be goalie
-                if (fartherFromFrontCount == 0)
-                    return GetSubareaForGoalie(gameInfo);
-                else
-                    return GetSubareaForNormal(gameInfo, subareaSize, biggerSubareasCount, fartherFromFrontCount);
-            }
-        }
-
-        private (int myAreaStart, int myAreaSize) GetSubareaForLeader(
-            GameStarted gameInfo, int subareaSize, int biggerSubareasCount)
-        {
-            int myAreaSize = biggerSubareasCount > 0 ? subareaSize + 1 : subareaSize;
-            int myAreaStart = gameInfo.TeamId == "blue"
-                ? gameInfo.BoardSize.Y.Value - gameInfo.GoalAreaSize - myAreaSize
-                : gameInfo.GoalAreaSize;
-            _board.AmLeader = true;
-            return (myAreaStart, myAreaSize);
-        }
-
-        private (int myAreaStart, int myAreaSize) GetSubareaForGoalie(
-            GameStarted gameInfo)
-        {
-            //also include fields just in front of goal area
-            int myAreaSize = gameInfo.GoalAreaSize + 1;
-            int myAreaStart = gameInfo.TeamId == "red"
-                ? gameInfo.BoardSize.Y.Value - gameInfo.GoalAreaSize - 1
-                : 0;
-            _board.AmGoalie = true;
-            return (myAreaStart, myAreaSize);
-        }
-
-        private (int myAreaStart, int myAreaSize) GetSubareaForNormal(
-            GameStarted gameInfo, int subareaSize, int biggerSubareasCount, int fartherFromFrontCount)
-        {
-            int closerToFrontCount = gameInfo.AlliesIds.Count() - fartherFromFrontCount;
-            //there are more +1 subareas than agents in front of me, so I have bigger subarea too
-            int myAreaSize = biggerSubareasCount > closerToFrontCount
-                ? subareaSize + 1
-                : subareaSize;
-            int biggerSubareasInFrontOfMeCount = Math.Min(biggerSubareasCount, closerToFrontCount);
-            int normalSubareasInFrontOfMeCount = closerToFrontCount - biggerSubareasCount;
-            int tilesInFrontOfMe =
-                gameInfo.GoalAreaSize +
-                biggerSubareasInFrontOfMeCount * (subareaSize + 1) +
-                normalSubareasInFrontOfMeCount * subareaSize;
-            int myAreaStart = gameInfo.TeamId == "blue"
-                ? gameInfo.BoardSize.Y.Value - tilesInFrontOfMe - myAreaSize
-                : tilesInFrontOfMe;
-            return (myAreaStart, myAreaSize);
+                gameInfo.GoalAreaSize+1//goalie subarea
+            };
+            for (int i = 0; i < smallerSubareasCount; i++)
+                res.Add(subareaSize);
+            for (int i = 0; i < biggerSubareasCount; i++)
+                res.Add(subareaSize + 1);
+            Console.WriteLine("subareas count" + res.Count);
+            return res;
         }
 
         public bool IsDone(AgentInfo agentInfo)

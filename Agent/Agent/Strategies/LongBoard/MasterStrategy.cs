@@ -3,6 +3,7 @@ using CommunicationLibrary.Information;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -13,14 +14,36 @@ namespace Agent.Strategies.LongBoard
         private List<ISubStrategy> _substrategies = new List<ISubStrategy>();
         private int _currentSubstrategyId = 0;
         private CommonBoard _board;
-        private ISubStrategy currentSubstrategy => 
+        private ISubStrategy currentSubstrategy =>
             _currentSubstrategyId < _substrategies.Count
             ? _substrategies[_currentSubstrategyId]
             : null;
         public MasterStrategy(GameStarted gameInfo)
         {
-            _board = new CommonBoard();
+            CommonBoard.AgentType agentType = 
+                gameInfo.LeaderId == gameInfo.AgentId ? CommonBoard.AgentType.Leader
+                :
+                (
+                gameInfo.AlliesIds
+                .Where(allyId => allyId != gameInfo.LeaderId)
+                .Min() > gameInfo.AgentId
+                ? CommonBoard.AgentType.Goalie
+                : CommonBoard.AgentType.Standard
+                );
+            _board = new CommonBoard(gameInfo, agentType);
             _substrategies.Add(new OrderingSubstrategy(gameInfo, _board));
+            switch (_board.Type)
+            {
+                case CommonBoard.AgentType.Standard:
+                    _substrategies.Add(new NormalSubstrategy(_board));
+                    break;
+                case CommonBoard.AgentType.Goalie:
+                    _substrategies.Add(new GoalieSubstrategy(_board));
+                    break;
+                case CommonBoard.AgentType.Leader:
+                    _substrategies.Add(new LeaderSubstrategy(_board));
+                    break;
+            }
         }
         public Message MakeDecision(AgentInfo agent)
         {
