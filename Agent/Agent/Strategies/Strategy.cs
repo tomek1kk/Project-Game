@@ -72,7 +72,7 @@ namespace Agent.Strategies
         virtual protected void DiscoveryResponseHandler(DiscoveryResponse discoveryResponse, Point position)
         {
             Func<int, int, bool> insideBoard =
-                (x, y) => x >= 0 && y >= 0 && x < Board.Board.GetLength(1) && y < Board.Board.GetLength(0);
+                (x, y) => x >= 0 && y >= 0 && x < Board.Board.GetLength(0) && y < Board.Board.GetLength(1);
             Board.Board[position.X, position.Y].DistToPiece = discoveryResponse.DistanceFromCurrent;
             if (insideBoard(position.X - 1, position.Y + 1))
                 Board.Board[position.X - 1, position.Y + 1].DistToPiece = discoveryResponse.DistanceNW;
