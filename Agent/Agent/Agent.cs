@@ -106,7 +106,7 @@ namespace Agent
 
         public void SetAgentInfo(GameStarted gameInfo)
         {
-            var sh = new StrategyHandler(gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value, gameInfo.TeamId, gameInfo.GoalAreaSize);
+            var sh = new StrategyHandler(gameInfo);
             var strategy = sh.GetStrategy(Configuration.Strategy);
             this.AgentInfo = new AgentInfo(strategy, gameInfo);
         }
