@@ -3,6 +3,6 @@
 "CsIP2": "ec2-3-219-247-185.compute-1.amazonaws.com",
 "CsPort": 8090,
 "teamID": "blue",
-"strategy": 1,
+"strategy": 2,
 "LoggingMode":"information"
 }

@@ -15,8 +15,8 @@ namespace Agent.Strategies.LongBoard
         private CommonBoard _board;
         private ISubStrategy currentSubstrategy => 
             _currentSubstrategyId < _substrategies.Count
-            ? null
-            : _substrategies[_currentSubstrategyId];
+            ? _substrategies[_currentSubstrategyId]
+            : null;
         public MasterStrategy(GameStarted gameInfo)
         {
             _board = new CommonBoard();

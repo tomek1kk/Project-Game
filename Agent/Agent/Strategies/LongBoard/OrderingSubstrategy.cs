@@ -19,7 +19,7 @@ namespace Agent.Strategies.LongBoard
         public OrderingSubstrategy(GameStarted gameInfo, CommonBoard board)
         {
             _board = board;
-            int taskAreaSize = gameInfo.BoardSize.Y.Value - gameInfo.GoalAreaSize;
+            int taskAreaSize = gameInfo.BoardSize.Y.Value - gameInfo.GoalAreaSize * 2;
             //fields on the edge of each agents subarea (the edge that's closer to the enemy)
             //will be where agent closer to the enemy will put his collected pieces
             //same for closest to goal area non goalie agent
@@ -27,7 +27,7 @@ namespace Agent.Strategies.LongBoard
             //will belong to goalie and should not be included in dividing among non goalie agents
             int nonGoalieAreaSize = taskAreaSize - 1;
             //task area is divided near equally among agents
-            int subareaSize = gameInfo.AlliesIds.Count() / nonGoalieAreaSize;
+            int subareaSize = nonGoalieAreaSize / gameInfo.AlliesIds.Count();
             //it usually isn't exactly equally divided
             //certain number (indicated by biggerSubareasCount) of agents in front will have +1 field
             int biggerSubareasCount = nonGoalieAreaSize - subareaSize * gameInfo.AlliesIds.Count();
