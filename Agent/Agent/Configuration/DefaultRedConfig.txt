@@ -1,7 +1,7 @@
 ﻿{
 "CsIP2": "localhost",
 "CsIP": "ec2-3-219-247-185.compute-1.amazonaws.com",
-"CsPort": 8081,
+"CsPort": 8092,
 "teamID": "red",
 "strategy": 1,
 "LoggingMode": "information"
