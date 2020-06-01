@@ -20,16 +20,26 @@ namespace Agent.Strategies.LongBoard
             : null;
         public MasterStrategy(GameStarted gameInfo)
         {
-            CommonBoard.AgentType agentType = 
+            CommonBoard.AgentType agentType;
+            if (gameInfo.AlliesIds.Count() == 1)
+            {
+                agentType =
                 gameInfo.LeaderId == gameInfo.AgentId ? CommonBoard.AgentType.Leader
-                :
-                (
-                gameInfo.AlliesIds
-                .Where(allyId => allyId != gameInfo.LeaderId)
-                .Min() > gameInfo.AgentId
-                ? CommonBoard.AgentType.Goalie
-                : CommonBoard.AgentType.Standard
-                );
+                : CommonBoard.AgentType.Goalie;
+            }
+            else
+            {
+                agentType =
+                    gameInfo.LeaderId == gameInfo.AgentId ? CommonBoard.AgentType.Leader
+                    :
+                    (
+                    gameInfo.AlliesIds
+                    .Where(allyId => allyId != gameInfo.LeaderId)
+                    .Min() > gameInfo.AgentId
+                    ? CommonBoard.AgentType.Goalie
+                    : CommonBoard.AgentType.Standard
+                    );
+            }
             _board = new CommonBoard(gameInfo, agentType);
             _substrategies.Add(new OrderingSubstrategy(gameInfo, _board));
             switch (_board.Type)
