@@ -84,6 +84,7 @@ namespace Agent.Strategies
         private Message GiveInfo(int AgentId)
         {
             var resp = new ExchangeInformationResponse();
+            resp.BlueTeamGoalAreaInformations = resp.RedTeamGoalAreaInformations = new string[0];
             try
             {
                 if (Board.GoalDirection == "N")

@@ -35,7 +35,7 @@ namespace Agent.Board
                 for (int i = GoalArea.start; i <= GoalArea.end; ++i)
                     for (int j = 0; j < Board.GetLength(0); j++)
                         if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
-                            yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "NG";
+                            yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "N";
                         else
                             yield return "IDK";
             }
@@ -44,7 +44,7 @@ namespace Agent.Board
                 for (int i = GoalArea.end; i >= 0; --i)
                     for (int j = 0; j < Board.GetLength(0); j++)
                         if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
-                            yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "NG";
+                            yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "N";
                         else
                             yield return "IDK";
             }
@@ -57,7 +57,7 @@ namespace Agent.Board
             {
                 for (int i = GoalArea.start; i <= GoalArea.end; ++i)
                     for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
-                        if (iterator.Current == "G" || iterator.Current == "NG")
+                        if (iterator.Current == "G" || iterator.Current == "N")
                             Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
 
             }
@@ -65,7 +65,7 @@ namespace Agent.Board
             {
                 for (int i = GoalArea.end; i >= 0; --i)
                     for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
-                        if (iterator.Current == "G" || iterator.Current == "NG")
+                        if (iterator.Current == "G" || iterator.Current == "N")
                             Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
             }
         }
