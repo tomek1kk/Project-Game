@@ -9,15 +9,15 @@ namespace GameMaster.MessageHandlers
     public class DiscoveryRequestHandler : MessageHandler
     {
         private AbstractField _position;
-        private int? _distanceFromCurrent;
-        private int? _distanceN;
-        private int? _distanceNE;
-        private int? _distanceE;
-        private int? _distanceSE;
-        private int? _distanceS;
-        private int? _distanceSW;
-        private int? _distanceW;
-        private int? _distanceNW;
+        private int _distanceFromCurrent;
+        private int _distanceN;
+        private int _distanceNE;
+        private int _distanceE;
+        private int _distanceSE;
+        private int _distanceS;
+        private int _distanceSW;
+        private int _distanceW;
+        private int _distanceNW;
 
         protected override void ClearHandler() { }
         protected override void CheckAgentPenaltyIfNeeded(Map map)
@@ -33,14 +33,14 @@ namespace GameMaster.MessageHandlers
         {
             _position = map.GetPlayerById(_agentId).Position;
             _distanceFromCurrent = map.ClosestPieceForField(_position);
-            _distanceN = map.IsInsideMap(_position.X, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y + 1]) : null;
-            _distanceNE = map.IsInsideMap(_position.X + 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y + 1]) : null;
-            _distanceE = map.IsInsideMap(_position.X + 1, _position.Y) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y]) : null;
-            _distanceSE = map.IsInsideMap(_position.X + 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X + 1, _position.Y - 1]) : null;
-            _distanceS = map.IsInsideMap(_position.X, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X, _position.Y - 1]) : null;
-            _distanceSW = map.IsInsideMap(_position.X - 1, _position.Y - 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y - 1]) : null;
-            _distanceW = map.IsInsideMap(_position.X - 1, _position.Y) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y]) : null;
-            _distanceNW = map.IsInsideMap(_position.X - 1, _position.Y + 1) ? (int?)map.ClosestPieceForField(map[_position.X - 1, _position.Y + 1]) : null;
+            _distanceN = map.IsInsideMap(_position.X, _position.Y + 1) ? map.ClosestPieceForField(map[_position.X, _position.Y + 1]) : int.MaxValue;
+            _distanceNE = map.IsInsideMap(_position.X + 1, _position.Y + 1) ? map.ClosestPieceForField(map[_position.X + 1, _position.Y + 1]) : int.MaxValue;
+            _distanceE = map.IsInsideMap(_position.X + 1, _position.Y) ? map.ClosestPieceForField(map[_position.X + 1, _position.Y]) : int.MaxValue;
+            _distanceSE = map.IsInsideMap(_position.X + 1, _position.Y - 1) ? map.ClosestPieceForField(map[_position.X + 1, _position.Y - 1]) : int.MaxValue;
+            _distanceS = map.IsInsideMap(_position.X, _position.Y - 1) ? map.ClosestPieceForField(map[_position.X, _position.Y - 1]) : int.MaxValue;
+            _distanceSW = map.IsInsideMap(_position.X - 1, _position.Y - 1) ? map.ClosestPieceForField(map[_position.X - 1, _position.Y - 1]) : int.MaxValue;
+            _distanceW = map.IsInsideMap(_position.X - 1, _position.Y) ? map.ClosestPieceForField(map[_position.X - 1, _position.Y]) : int.MaxValue;
+            _distanceNW = map.IsInsideMap(_position.X - 1, _position.Y + 1) ? map.ClosestPieceForField(map[_position.X - 1, _position.Y + 1]) : int.MaxValue;
         }
 
         protected override Message GetResponse(Map map)

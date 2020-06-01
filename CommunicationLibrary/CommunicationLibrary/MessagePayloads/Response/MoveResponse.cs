@@ -7,8 +7,11 @@ namespace CommunicationLibrary.Response
 {
     public class MoveResponse : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("madeMove")]
         public bool? MadeMove { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("currentPosition")]
         public Position CurrentPosition { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("closestPiece")]
         public int? ClosestPiece { get; set; }
 
         public override bool ValidateMessage()

@@ -45,16 +45,19 @@ namespace AgentIntegrationTests
                 TeamId = "red"
             };
 
+            //gets random free port
+            TcpListener serverSideListener = new TcpListener(IPAddress.Any, 0);
+            serverSideListener.Start();
+            int port = ((IPEndPoint)serverSideListener.LocalEndpoint).Port;
+
             File.WriteAllText("TMPpath.txt",
                "{\"CsIP\": \"127.0.0.1\"," +
-               "\"CsPort\": 8080," +
+               $"\"CsPort\": {port}," +
                "\"teamID\": \"red\"," +
                "\"strategy\": 1}");
             string[] args = new string[1] { "./TMPpath.txt" };
             AgentConfiguration configuration = AgentConfiguration.ReadConfiguration(args);
 
-            TcpListener serverSideListener = new TcpListener(IPAddress.Any, configuration.CsPort);
-            serverSideListener.Start();
             TcpClient serverSide = null;
             var task = new Task(() => serverSide = serverSideListener.AcceptTcpClient());
             task.Start();

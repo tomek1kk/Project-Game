@@ -6,7 +6,7 @@ namespace CommunicationLibrary.RawMessageProcessing
 {
     public class RawMessageReader
     {
-        public delegate int Read(byte[] buffer, int count);
+        public delegate int Read(byte[] buffer, int count, int startIndex);
         private readonly Read _byteStreamReader;
         private readonly byte[] _messageBuffer;
         private readonly byte[] _messageLengthBuffer;
@@ -19,15 +19,32 @@ namespace CommunicationLibrary.RawMessageProcessing
         }
         public string GetNextMessageAsString()
         {
-            int bytesRead = _byteStreamReader(_messageLengthBuffer, 2);
-            if (bytesRead != 2) throw new Exception("Failed to read bytes");
+            int allBytesRead = 0;
+            while (allBytesRead != 2)
+            {
+                int bytesRead = _byteStreamReader(_messageLengthBuffer, 2 - allBytesRead, allBytesRead);
+                if (bytesRead == 0)
+                {
+                    throw new Exception($"Failed to read len bytes, allBytesRead={allBytesRead}");
+                }
+                allBytesRead += bytesRead;
+            }
             if (!BitConverter.IsLittleEndian)
                 Array.Reverse(_messageLengthBuffer);
             int messageLength = BitConverter.ToUInt16(_messageLengthBuffer, 0);
             if (messageLength == 0) return String.Empty;
-            bytesRead = _byteStreamReader(_messageBuffer, messageLength);
-            if (bytesRead == 0) throw new Exception("Failed to read bytes");
-            return Encoding.UTF8.GetString(_messageBuffer, 0, bytesRead);
+            allBytesRead = 0;
+            while(allBytesRead != messageLength)
+            {
+                int bytesRead = _byteStreamReader(_messageBuffer, messageLength-allBytesRead, allBytesRead);
+                if (bytesRead == 0)
+                {
+                    throw new Exception($"Failed to read mes bytes, allBytesRead={allBytesRead}," +
+                        $" messageLength={messageLength}");
+                }
+                allBytesRead += bytesRead;
+            }
+            return Encoding.UTF8.GetString(_messageBuffer, 0, messageLength);
         }
     }
 }

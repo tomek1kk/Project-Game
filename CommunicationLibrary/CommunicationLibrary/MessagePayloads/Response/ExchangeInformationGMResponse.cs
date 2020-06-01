@@ -7,9 +7,13 @@ namespace CommunicationLibrary.Response
 {
     public class ExchangeInformationGMResponse : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("respondToID")]
         public int? RespondToID { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("distances")]
         public IEnumerable<int> Distances { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("redTeamGoalAreaInformations")]
         public IEnumerable<string> RedTeamGoalAreaInformations { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("blueTeamGoalAreaInformations")]
         public IEnumerable<string> BlueTeamGoalAreaInformations { get; set; }
 
         public override bool ValidateMessage()

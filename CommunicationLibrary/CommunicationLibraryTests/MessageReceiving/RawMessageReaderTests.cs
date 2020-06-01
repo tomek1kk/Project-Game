@@ -26,7 +26,7 @@ namespace CommunicationLibrary.RawMessageProcessing.Tests
             Stream stream = new MemoryStream(inputBuffer);
 
             RawMessageReader reader = new RawMessageReader(
-                (buffer, count) => stream.Read(buffer, 0, count));
+                (buffer, count, offset) => stream.Read(buffer, offset, count));
 
             //when
             String actual = reader.GetNextMessageAsString();
@@ -53,7 +53,7 @@ namespace CommunicationLibrary.RawMessageProcessing.Tests
             Stream stream = new MemoryStream(inputBuffer);
 
             RawMessageReader reader = new RawMessageReader(
-                (buffer, count) => stream.Read(buffer, 0, count));
+                (buffer, count, offset) => stream.Read(buffer, offset, count));
 
             //when
             String actual = reader.GetNextMessageAsString();
@@ -82,7 +82,7 @@ namespace CommunicationLibrary.RawMessageProcessing.Tests
             Stream stream = new MemoryStream(inputBuffer);
 
             RawMessageReader reader = new RawMessageReader(
-                (buffer, count) => stream.Read(buffer, 0, count));
+                (buffer, count, offset) => stream.Read(buffer, offset, count));
 
             //when
             String actual = reader.GetNextMessageAsString();
@@ -100,7 +100,7 @@ namespace CommunicationLibrary.RawMessageProcessing.Tests
 
             var stream = new MemoryStream(new byte[]{ 1 });
             RawMessageReader reader = new RawMessageReader(
-                (buffer, count) => stream.Read(buffer, 0, count));
+                (buffer, count, offset) => stream.Read(buffer, offset, count));
 
             //when
             String result = reader.GetNextMessageAsString();

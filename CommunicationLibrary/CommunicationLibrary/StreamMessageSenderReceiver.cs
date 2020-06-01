@@ -30,9 +30,9 @@ namespace CommunicationLibrary
             //providing raw message reader with limited access to tcp stream that cancels when
             //token is used
             RawMessageReader reader = new RawMessageReader(
-                (buffer, count) =>
+                (buffer, count, offset) =>
                 {
-                    var resTask = _tcpStream.ReadAsync(buffer, 0, count, cancellationToken);
+                    var resTask = _tcpStream.ReadAsync(buffer, offset, count, cancellationToken);
                     resTask.Wait();
                     return resTask.Result;
                 }
@@ -120,11 +120,21 @@ namespace CommunicationLibrary
             try
             {
                 rawMessageSender.SendMessage(messageString);
+                SendStreamCheckingMessage();
             }
             catch(Exception e)
             {
                 throw new DisconnectedException(e);
             }
+        }
+
+        private void SendStreamCheckingMessage()
+        {
+            //network stream checks connection error on send, but will throw exception on
+            //next send after one which lead to discovery of disconnection
+            //so we need to call send two times - first to make socket realize it is disconnected
+            //second to make it call an exception
+            _tcpStream.Write(new byte[0], 0, 0);
         }
 
         /// <summary>

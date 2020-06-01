@@ -6,6 +6,7 @@ namespace CommunicationLibrary.Error
 {
     public class PutPieceError : MessagePayload
     {
+        [System.Text.Json.Serialization.JsonPropertyName("errorSubtype")]
         public string ErrorSubtype { get; set; }
 
         public override bool ValidateMessage()

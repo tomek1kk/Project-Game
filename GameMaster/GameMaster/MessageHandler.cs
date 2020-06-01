@@ -24,8 +24,10 @@ namespace GameMaster.Game
             if (_hasTimePenalty)
                 return GetPenaltyError(map);
             if (CheckRequest(map))
+            {
                 Execute(map);
-            SetTimeout(configuration, map);
+                SetTimeout(configuration, map);
+            }
             var response = GetResponse(map);
             if (response.AgentId == null)
                 response.AgentId = _agentId;

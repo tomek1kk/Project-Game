@@ -91,12 +91,12 @@ namespace GameMasterTests.MessageHandlers.Tests
                     DistanceFromCurrent = 0,
                     DistanceE = 1,
                     DistanceN = 1,
-                    DistanceW = null,
+                    DistanceW = int.MaxValue,
                     DistanceS = 1,
                     DistanceNE = 2,
-                    DistanceNW = null,
+                    DistanceNW = int.MaxValue,
                     DistanceSE = 2,
-                    DistanceSW = null
+                    DistanceSW = int.MaxValue
                 }
             };
             //when

@@ -57,7 +57,7 @@ namespace GameMaster
                             Y = player.Value.Y
                         },
                         ShamPieceProbability = _configuration.ShamPieceProbability,
-                        TeamId = player.Value.Team.ToString()
+                        TeamId = player.Value.Team.AsString()
                     }
                 };
                 messages.Add(message);

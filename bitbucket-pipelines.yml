@@ -23,16 +23,22 @@ pipelines:
           - cd Agent
           - export PROJECT_NAME=Agent
           - export TEST_NAME=AgentTests
+          - export TEST_INTEGRATION=AgentIntegrationTests
           - dotnet restore
           - dotnet build $PROJECT_NAME
           - dotnet test $TEST_NAME
+          - dotnet test $TEST_INTEGRATION
 
           - cd ..
 
           - cd CommunicationServer
           - export PROJECT_NAME=CommunicationServer
+          - export TEST_NAME=CommunicationServerTests
+          - export TEST_INTEGRATION=CommunicationServerIntegrationTests
           - dotnet restore
           - dotnet build $PROJECT_NAME
+          - dotnet test $TEST_NAME
+          - dotnet test $TEST_INTEGRATION
 
           - cd ..
 
