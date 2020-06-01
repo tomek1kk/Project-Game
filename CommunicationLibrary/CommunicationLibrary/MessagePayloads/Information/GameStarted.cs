@@ -15,6 +15,10 @@ namespace CommunicationLibrary.Information
         public int LeaderId { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("enemiesIDs")]
         public IEnumerable<int> EnemiesIds { get; set; }
+        /// <summary>
+        /// Can have value red or blue, red is north, blue is south
+        /// 
+        /// </summary>
         [System.Text.Json.Serialization.JsonPropertyName("teamID")]
         public string TeamId { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("boardSize")]
