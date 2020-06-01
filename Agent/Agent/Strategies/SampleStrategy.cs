@@ -27,25 +27,28 @@ namespace Agent.Strategies
         public override Message MakeDecision(AgentInfo agent)
         {
             var last = History.Count == 0 ? MessageType.MoveRequest : History.Peek();
-            if (agent.ExchangeInfoRequests.Count() != 0)/* && agent.ExchangeInfoRequests[0].Leader.Value)*/
+            if(agent.AlliesIds.Count != 0)
             {
-                var tmp = agent.ExchangeInfoRequests[0];
-                agent.ExchangeInfoRequests.RemoveAt(0);
-                return GiveInfo(tmp.AskingId.Value);
+                if (agent.ExchangeInfoRequests.Count() != 0)/* && agent.ExchangeInfoRequests[0].Leader.Value)*/
+                {
+                    var tmp = agent.ExchangeInfoRequests[0];
+                    agent.ExchangeInfoRequests.RemoveAt(0);
+                    return GiveInfo(tmp.AskingId.Value);
+                }
+                //if we depend only on History.Count for chosing when to exchange info then
+                //until asked agent sends response to previous exchange request
+                //asking agent will keep sending ExchangeInformationRequests
+                if (!_justRequestedExchange && History.Count % 10 == 0)
+                {
+                    _justRequestedExchange = true;
+                    var eq = new ExchangeInformationRequest();
+                    Random rnd = new Random();
+                    var allies = agent.AlliesIds.Where(x => x != agent.LeaderId);
+                    eq.AskedAgentId = agent.IsLeader ? allies.ElementAt(rnd.Next() % allies.Count()) : agent.LeaderId;
+                    return new Message<ExchangeInformationRequest>(eq);
+                }
+                else if (History.Count % 10 != 0) { _justRequestedExchange = false; }
             }
-            //if we depend only on History.Count for chosing when to exchange info then
-            //until asked agent sends response to previous exchange request
-            //asking agent will keep sending ExchangeInformationRequests
-            if (!_justRequestedExchange && History.Count % 10 == 0)
-            {
-                _justRequestedExchange = true;
-                var eq = new ExchangeInformationRequest();
-                Random rnd = new Random();
-                var allies = agent.AlliesIds.Where(x => x != agent.LeaderId);
-                eq.AskedAgentId = agent.IsLeader ? allies.ElementAt(rnd.Next() % allies.Count()) : agent.LeaderId;
-                return new Message<ExchangeInformationRequest>(eq);
-            }
-            else if (History.Count % 10 != 0) { _justRequestedExchange = false; }
 
             if (last == MessageType.MoveError)
             {
