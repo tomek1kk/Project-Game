@@ -15,25 +15,23 @@ namespace GameMaster.Configuration
     /// </summary>
     public class GMConfiguration
     {
-        private static  string pathToDefaultConfiguration = @".\Configuration\defaultConfiguration.txt";
+        private static string pathToDefaultConfiguration = @".\Configuration\defaultConfiguration.txt";
 
         public int BoardX { get; set; }
         public int BoardY { get; set; }
         public int MovePenalty { get; set; }
-        public int AskPenalty { get; set; }
         public int DiscoveryPenalty { get; set; }
         public int PutPenalty { get; set; }
-        public int DestroyPiecePenalty { get; set; }        //documentation is changing now
-        public int ResponsePenalty { get; set; }
+        public int DestroyPiecePenalty { get; set; }
+        public int InformationExchangePenalty {get; set;}
+        public int CheckForShamPenalty { get; set; }
         public int NumberOfGoals { get; set; }
         public string CsIP { get; set; }
         public int CsPort { get; set; }
-        public int TeamID { get; set; }
-        public int GoalAreaHight { get; set; }
+        public int GoalAreaHeight { get; set; }
         public int NumberOfPieces { get; set; }
-        public int CheckForShamPenalty { get; set; }
-        public int ShamPieceProbability { get; set; }
-        public int NumberOfPlayers { get; set; }
+        public double ShamPieceProbability { get; set; }
+        public int TeamSize { get; set; }
         public string LoggingMode { get; set; }
 
         public static GMConfiguration ReadConfiguration(string[] programArguments)

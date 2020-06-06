@@ -17,7 +17,7 @@ namespace GameMaster.Game
         private int _numberOfGoals;
         private int _numberOfPieces;
         private int _numberOfPlayers;
-        private int _shamPieceProbability;
+        private double _shamPieceProbability;
         private int _redPoints;
         private int _bluePoints;
         public Dictionary<int, Player> Players => _players;
@@ -71,10 +71,10 @@ namespace GameMaster.Game
         {
             _heigth = config.BoardY;
             _width = config.BoardX;
-            _goalAreaHeight = config.GoalAreaHight;
+            _goalAreaHeight = config.GoalAreaHeight;
             _numberOfGoals = config.NumberOfGoals;
             _numberOfPieces = config.NumberOfPieces;
-            _numberOfPlayers = config.NumberOfPlayers; // TODO: should be from config (not included in documentation)
+            _numberOfPlayers = config.TeamSize * 2;
             _shamPieceProbability = config.ShamPieceProbability;
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
@@ -144,7 +144,7 @@ namespace GameMaster.Game
         {
             var rand = new Random();
             AbstractPiece piece;
-            if (rand.Next(101) < _shamPieceProbability)
+            if (rand.NextDouble() < _shamPieceProbability)
                 piece = new ShamPiece();
             else
                 piece = new Piece();
@@ -154,7 +154,7 @@ namespace GameMaster.Game
         public void AddPiece(Random rand)
         {
             AbstractPiece piece;
-            if (rand.Next(101) < _shamPieceProbability)
+            if (rand.NextDouble() < _shamPieceProbability)
                 piece = new ShamPiece();
             else
                 piece = new Piece();
