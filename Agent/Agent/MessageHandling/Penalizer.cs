@@ -50,8 +50,9 @@ namespace Agent.MessageHandling
             }
             else if (receivedMessage.MessageId == MessageType.PenaltyNotWaitedError)
             {
-                newBlockedUntil = ((PenaltyNotWaitedError)receivedMessage.GetPayload()).WaitUntill;
-                Log.Debug("Penalty not waited, waiting until {unblock_time}", newBlockedUntil);
+                var penaltyNotWaited = (PenaltyNotWaitedError)receivedMessage.GetPayload();
+                newBlockedUntil = DateTime.Now.AddMilliseconds(penaltyNotWaited.WaitFor);
+                Log.Debug("Penalty not waited, waiting {remaining_time}", penaltyNotWaited.WaitFor);
             }
 
             if(DateTime.Compare(_blockedUntil, newBlockedUntil) < 0)
