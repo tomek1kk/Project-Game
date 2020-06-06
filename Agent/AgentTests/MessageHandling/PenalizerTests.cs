@@ -198,9 +198,8 @@ namespace Agent.MessageHandling.Tests
             //given
             var penalizer = new Penalizer(_samplePenalties);
             var receivedMessage = new Message<PenaltyNotWaitedError>(
-                new PenaltyNotWaitedError { WaitUntill = DateTime.Now.AddMilliseconds(30) });
-            int waitTime = (int)(receivedMessage.MessagePayload.WaitUntill - DateTime.Now)
-                .TotalMilliseconds + 10;//precision (from documentation)
+                new PenaltyNotWaitedError { WaitFor = 30 });
+            int waitTime = receivedMessage.MessagePayload.WaitFor + 10;//precision (from documentation)
 
             //when
             penalizer.PenalizeOnReceive(receivedMessage);
@@ -216,9 +215,8 @@ namespace Agent.MessageHandling.Tests
             //given
             var penalizer = new Penalizer(_samplePenalties);
             var receivedMessage = new Message<PenaltyNotWaitedError>(
-                new PenaltyNotWaitedError { WaitUntill = DateTime.Now.AddMilliseconds(100) });
-            int waitTime = (int)(receivedMessage.MessagePayload.WaitUntill - DateTime.Now)
-                .TotalMilliseconds;
+                new PenaltyNotWaitedError { WaitFor = 100 });
+            int waitTime = receivedMessage.MessagePayload.WaitFor;
 
             //when
             penalizer.PenalizeOnReceive(receivedMessage);
@@ -234,9 +232,8 @@ namespace Agent.MessageHandling.Tests
             //given
             var penalizer = new Penalizer(_samplePenalties);
             var penaltyNotWaitedMessage = new Message<PenaltyNotWaitedError>(
-                new PenaltyNotWaitedError { WaitUntill = DateTime.Now.AddMilliseconds(30) });
-            int penaltyNotWaitedWaitTime = (int)(penaltyNotWaitedMessage.MessagePayload.WaitUntill - DateTime.Now)
-                .TotalMilliseconds;
+                new PenaltyNotWaitedError { WaitFor = 30});
+            int penaltyNotWaitedWaitTime = penaltyNotWaitedMessage.MessagePayload.WaitFor;
             var moveMessage = new Message<MoveResponse>(
                 new MoveResponse());
             int moveWaitTime = Int32.Parse(_samplePenalties.Move);
@@ -258,9 +255,8 @@ namespace Agent.MessageHandling.Tests
             //given
             var penalizer = new Penalizer(_samplePenalties);
             var penaltyNotWaitedMessage = new Message<PenaltyNotWaitedError>(
-                new PenaltyNotWaitedError { WaitUntill = DateTime.Now.AddMilliseconds(30) });
-            int penaltyNotWaitedWaitTime = (int)(penaltyNotWaitedMessage.MessagePayload.WaitUntill - DateTime.Now)
-                .TotalMilliseconds;
+                new PenaltyNotWaitedError { WaitFor = 30 });
+            int penaltyNotWaitedWaitTime = penaltyNotWaitedMessage.MessagePayload.WaitFor;
             var moveMessage = new Message<MoveResponse>(
                 new MoveResponse());
             int moveWaitTime = Int32.Parse(_samplePenalties.Move);
