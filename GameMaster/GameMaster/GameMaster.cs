@@ -60,7 +60,7 @@ namespace GameMaster
                 }
                 Thread.Sleep(100);
             }
-            Thread.Sleep(20000);
+            Thread.Sleep(5000);
             _guiMantainer.StopGui();
             Log.Information("GUI stopped");
         }

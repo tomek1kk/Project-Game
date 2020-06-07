@@ -43,12 +43,14 @@ namespace GameMaster.Game
         protected abstract void ClearHandler();
         private Message GetPenaltyError(Map map)
         {
+            int waitTime = (int)(map.GetPlayerById(_agentId).LockedTill - System.DateTime.Now).TotalMilliseconds;
+            if (waitTime < 0) waitTime = 0;
             return new Message<PenaltyNotWaitedError>()
             {
                 AgentId = _agentId,
                 MessagePayload = new PenaltyNotWaitedError()
                 {
-                    WaitUntill = map.GetPlayerById(_agentId).LockedTill
+                    WaitFor = waitTime
                 }
             };
         }

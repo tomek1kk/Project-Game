@@ -1,6 +1,6 @@
 {
   "CSIp": "0.0.0.0",
   "AgentPort": 8090,
-  "GMPort": 8081,
+  "GMPort": 8089,
   "LoggingMode": "debug"
 }

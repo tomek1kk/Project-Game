@@ -133,7 +133,14 @@ namespace Agent.Strategies
         public override void UpdateMap(Message message, Point position)
         {
             if (message.MessageId != MessageType.PenaltyNotWaitedError)
-                History.Push(message.MessageId);
+                if (message.MessageId == MessageType.MoveResponse)
+                {
+                    var moveResponse = message.GetPayload() as MoveResponse;
+                    if (moveResponse.MadeMove == false) History.Push(MessageType.MoveError);
+                    else History.Push(message.MessageId);
+                }
+                else
+                    History.Push(message.MessageId);
             switch (message.MessageId)
             {
                 case MessageType.CheckHoldedPieceResponse:

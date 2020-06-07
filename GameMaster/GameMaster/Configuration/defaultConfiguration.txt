@@ -1,6 +1,6 @@
 ﻿{
 	"CsIP": "127.0.0.1",
-	"CsPort": 8081,
+	"CsPort": 8089,
 	"movePenalty": 1500,
 	"informationExchangePenalty": 1000,
 	"discoveryPenalty": 700,

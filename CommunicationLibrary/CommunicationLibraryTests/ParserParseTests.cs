@@ -460,12 +460,12 @@ namespace CommunicationLibrary.Tests
         public void TestParsePenaltyNotWaitedError()
         {
             // Arrange
-            string jsonString = "{\"payload\":{\"waitUntil\":\"2020-03-19T11:50:55.5\"},\"messageID\":904,\"agentID\":null}";
+            string jsonString = "{\"payload\":{\"waitFor\":200},\"messageID\":904}";
             var expected = new Message<PenaltyNotWaitedError>()
             {
                 MessagePayload = new PenaltyNotWaitedError()
                 {
-                    WaitUntill = new DateTime(2020, 3, 19, 11, 50, 55, 500)
+                    WaitFor = 200
                 }
             };
 

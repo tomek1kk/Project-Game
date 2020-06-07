@@ -21,6 +21,7 @@ namespace Agent.Strategies.LongBoard
         public MasterStrategy(GameStarted gameInfo)
         {
             CommonBoard.AgentType agentType;
+            if (gameInfo.AlliesIds.Count() == 0) return;
             if (gameInfo.AlliesIds.Count() == 1)
             {
                 agentType =

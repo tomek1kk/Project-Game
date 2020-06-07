@@ -505,12 +505,12 @@ namespace CommunicationLibrary.Tests
         public void TestAsStringPenaltyNotWaitedError()
         {
             // Arrange
-            string expected = "{\"payload\":{\"waitUntil\":\"2020-03-19T11:50:55.5\"},\"messageID\":904}";
+            string expected = "{\"payload\":{\"waitFor\":200},\"messageID\":904}";
             Message<PenaltyNotWaitedError> message = new Message<PenaltyNotWaitedError>()
             {
                 MessagePayload = new PenaltyNotWaitedError()
                 {
-                    WaitUntill = new DateTime(2020, 3, 19, 11, 50, 55, 500)
+                    WaitFor = 200
                 }
             };
 

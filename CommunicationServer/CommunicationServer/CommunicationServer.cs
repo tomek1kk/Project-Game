@@ -15,6 +15,7 @@ using CommunicationServerNamespace.Helpers;
 using CommunicationLibrary.Exceptions;
 using System.Threading.Tasks;
 using CommunicationLibrary.Response;
+using System.Linq;
 
 namespace CommunicationServerNamespace
 {
@@ -56,14 +57,6 @@ namespace CommunicationServerNamespace
 
         private void GetGMMessage(Message message)
         {
-            if(message.MessageId == MessageType.JoinGameResponse)
-            {
-                JoinGameResponse resp = (JoinGameResponse)message.GetPayload();
-                if(resp.Accepted == false)
-                {
-                    _agentsConnections.Remove(_agentsConnections.Find(a => a.Id == message.AgentId));
-                }
-            }
             if (message.IsGameStarted()) _acceptingAgents = false;
             if (message.IsEndGame())
             {
@@ -75,6 +68,18 @@ namespace CommunicationServerNamespace
             Console.WriteLine("I've got such message: " + message.GetPayload());
             Log.Information("GetGMMessege: {@m}", message);
             AgentDescriptor agent = _agentsConnections.Find(x => x.Id == message.AgentId);
+            if (message.MessageId == MessageType.JoinGameResponse)
+            {
+                JoinGameResponse resp = (JoinGameResponse)message.GetPayload();
+                if (resp.Accepted == false)
+                {
+                    var removedConnection = _agentsConnections.Find(a => a.Id == message.AgentId);
+                    _agentsConnections.Remove(removedConnection);
+                    SendMessageWithErrorHandling(agent, message);
+                    removedConnection.Dispose();
+                    return;
+                }
+            }
             SendMessageWithErrorHandling(agent, message);
         }
 
@@ -119,6 +124,7 @@ namespace CommunicationServerNamespace
         {
             lock (this)
             {
+                if (!_agentsConnections.Any(con => con.Id == message.AgentId)) return;
                 Console.WriteLine("I've got such message: " + message.GetPayload());
                 Log.Information("GetAgentMessage: {@m}", message);
                 SendMessageWithErrorHandling(_gameMasterConnection, message);
@@ -150,6 +156,8 @@ namespace CommunicationServerNamespace
         {
             lock (this.IpAddress)
             {
+                if (connectionError.Data.Contains("agentId") 
+                    && !_agentsConnections.Any(con => con.Id == (int)connectionError.Data["agentId"])) return;
                 if (_gameOver.Task.IsCompleted) return;
                 if (connectionError is DisconnectedException)
                 {
