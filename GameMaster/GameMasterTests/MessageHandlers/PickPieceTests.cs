@@ -22,7 +22,7 @@ namespace GameMasterTests.MessageHandlers
         {
             BoardX = 40,
             BoardY = 40,
-            NumberOfPlayers = 10
+            TeamSize = 5
         };
 
         [TestMethod]
@@ -130,7 +130,7 @@ namespace GameMasterTests.MessageHandlers
             var agentId = 2;
             var positionX = 5;
             var positionY = 5 ;
-            config.GoalAreaHight = 10;
+            config.GoalAreaHeight = 10;
             var map = new Map(config);
             map.AddPlayer(Team.Blue, agentId);
             map.Players[agentId].Holding = null;
