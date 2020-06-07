@@ -9,6 +9,7 @@ namespace Agent.Strategies
     {
         SampleStrategy = 1,
         LongBoardStrategy = 2,
+        CommunicateStrategy = 3
     }
 
     public class StrategyHandler
@@ -20,7 +21,9 @@ namespace Agent.Strategies
             {
                 { StrategyType.SampleStrategy, new SampleStrategy(
                     gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value, gameInfo.TeamId, gameInfo.GoalAreaSize)},
-                {StrategyType.LongBoardStrategy, new LongBoard.MasterStrategy(gameInfo) }
+                {StrategyType.LongBoardStrategy, new LongBoard.MasterStrategy(gameInfo) },
+                {StrategyType.CommunicateStrategy,  new CommunicateStrategy(
+                    gameInfo.BoardSize.X.Value, gameInfo.BoardSize.Y.Value, gameInfo.TeamId, gameInfo.GoalAreaSize)},
             };
         }
         public IStrategy GetStrategy(StrategyType t) => handlers[t];
