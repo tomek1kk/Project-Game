@@ -43,6 +43,11 @@ namespace GameMaster.MessageHandlers
                     }
                 };
             }
+            if (_sham)
+            {
+                map.GetPlayerById(_agentId).Holding = null;
+                map.AddPiece();
+            }
             return new Message<CheckHoldedPieceResponse>()
             {
                 MessagePayload = new CheckHoldedPieceResponse()
