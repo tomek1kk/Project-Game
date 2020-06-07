@@ -14,9 +14,6 @@ using CommunicationLibrary.Information;
 namespace CommunicationLibrary.Tests
 {
     [TestClass]
-    [Ignore]
-    //TODO remake tests to work with field names from documentation
-    //(and null fields not included - like in documentation)
     public class ParserParseTests
     {
         IParser parser = new Parser();
@@ -25,7 +22,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseCheckHoldedPieceRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":1,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":1,\"agentID\":null}";
             var expected = new Message<CheckHoldedPieceRequest>()
             {
                 MessagePayload = new CheckHoldedPieceRequest()
@@ -40,7 +37,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseDestroyPieceRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":2,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":2,\"agentID\":null}";
             var expected = new Message<DestroyPieceRequest>()
             {
                 MessagePayload = new DestroyPieceRequest()
@@ -55,7 +52,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseDiscoveryRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":3,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":3,\"agentID\":null}";
             var expected = new Message<DiscoveryRequest>()
             {
                 MessagePayload = new DiscoveryRequest()
@@ -70,7 +67,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseExachangeInformationRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"AskedAgentId\":1},\"MessageId\":5,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"askedAgentID\":1},\"messageID\":5,\"agentID\":null}";
             var expected = new Message<ExchangeInformationRequest>()
             {
                 MessagePayload = new ExchangeInformationRequest()
@@ -88,7 +85,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseJoinGameRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"TeamId\":\"blue\"},\"MessageId\":6,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"teamID\":\"blue\"},\"messageID\":6,\"agentID\":null}";
             var expected = new Message<JoinGameRequest>()
             {
                 MessagePayload = new JoinGameRequest()
@@ -106,7 +103,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseMoveRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"Direction\":\"N\"},\"MessageId\":7,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"direction\":\"N\"},\"messageID\":7,\"agentID\":null}";
             var expected = new Message<MoveRequest>()
             {
                 MessagePayload = new MoveRequest()
@@ -125,7 +122,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePickPieceRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":8,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":8,\"agentID\":null}";
             var expected = new Message<PickPieceRequest>()
             {
                 MessagePayload = new PickPieceRequest()
@@ -141,7 +138,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePutPieceRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":9,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":9,\"agentID\":null}";
             var expected = new Message<PutPieceRequest>()
             {
                 MessagePayload = new PutPieceRequest()
@@ -157,7 +154,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseCheckHoldedPieceResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"Sham\":true},\"MessageId\":101,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"sham\":true},\"messageID\":101,\"agentID\":null}";
             var expected = new Message<CheckHoldedPieceResponse>()
             {
                 MessagePayload = new CheckHoldedPieceResponse()
@@ -176,7 +173,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseDestroyPieceResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":102,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":102,\"agentID\":null}";
             var expected = new Message<DestroyPieceResponse>()
             {
                 MessagePayload = new DestroyPieceResponse()
@@ -192,7 +189,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseDiscoveryResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"DistanceFromCurrent\":3,\"DistanceN\":1,\"DistanceNE\":2,\"DistanceE\":3,\"DistanceSE\":4,\"DistanceS\":5,\"DistanceSW\":6,\"DistanceW\":7,\"DistanceNW\":8},\"MessageId\":103,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"distanceFromCurrent\":3,\"distanceN\":1,\"distanceNE\":2,\"distanceE\":3,\"distanceSE\":4,\"distanceS\":5,\"distanceSW\":6,\"distanceW\":7,\"distanceNW\":8},\"messageID\":103,\"agentID\":null}";
             var expected = new Message<DiscoveryResponse>()
             {
                 MessagePayload = new DiscoveryResponse()
@@ -219,7 +216,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseExchangeInformationResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"RespondToID\":10,\"Distances\":[10,20,30,50],\"RedTeamGoalAreaInformations\":[\"r1\",\"r2 \"],\"BlueTeamGoalAreaInformations\":[\"i1\",\"i2\"]},\"MessageId\":4,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"respondToID\":10,\"distances\":[10,20,30,50],\"redTeamGoalAreaInformations\":[\"r1\",\"r2 \"],\"blueTeamGoalAreaInformations\":[\"i1\",\"i2\"]},\"messageID\":4,\"agentID\":null}";
             var expected = new Message<ExchangeInformationResponse>()
             {
                 MessagePayload = new ExchangeInformationResponse()
@@ -242,7 +239,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseExchangeInformationGMResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"RespondToID\":10,\"Distances\":[10,20,30,50],\"RedTeamGoalAreaInformations\":[\"r1\",\"r2 \"],\"BlueTeamGoalAreaInformations\":[\"i1\",\"i2\"]},\"MessageId\":111,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"respondToID\":10,\"distances\":[10,20,30,50],\"redTeamGoalAreaInformations\":[\"r1\",\"r2 \"],\"blueTeamGoalAreaInformations\":[\"i1\",\"i2\"]},\"messageID\":111,\"agentID\":null}";
             var expected = new Message<ExchangeInformationGMResponse>()
             {
                 MessagePayload = new ExchangeInformationGMResponse()
@@ -265,7 +262,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseJoinGameResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"Accepted\":true,\"AgentID\":10},\"MessageId\":107,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"accepted\":true,\"agentID\":10},\"messageID\":107,\"agentID\":null}";
             var expected = new Message<JoinGameResponse>()
             {
                 MessagePayload = new JoinGameResponse()
@@ -286,7 +283,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseMoveResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"MadeMove\":true,\"CurrentPosition\":{\"X\":3,\"Y\":2},\"ClosestPiece\":5},\"MessageId\":108,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"madeMove\":true,\"currentPosition\":{\"x\":3,\"y\":2},\"closestPiece\":5},\"messageID\":108,\"agentID\":null}";
 
             var expected = new Message<MoveResponse>()
             {
@@ -313,7 +310,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePickPieceResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":109,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":109,\"agentID\":null}";
             var expected = new Message<PickPieceResponse>()
             {
                 MessagePayload = new PickPieceResponse()
@@ -329,7 +326,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePutPieceResponse()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{},\"MessageId\":110,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{},\"messageID\":110,\"agentID\":null}";
             var expected = new Message<PutPieceResponse>()
             {
                 MessagePayload = new PutPieceResponse()
@@ -345,7 +342,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseMoveError()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"Position\":{\"X\":10,\"Y\":20}},\"MessageId\":901,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"position\":{\"x\":10,\"y\":20}},\"messageID\":901,\"agentID\":null}";
             var expected = new Message<MoveError>()
             {
                 MessagePayload = new MoveError()
@@ -369,7 +366,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePickPieceError()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"ErrorSubtype\":\"cannot pick here\"},\"MessageId\":902,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"errorSubtype\":\"cannot pick here\"},\"messageID\":902,\"agentID\":null}";
             var expected = new Message<PickPieceError>()
             {
                 MessagePayload = new PickPieceError()
@@ -388,7 +385,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePutPieceError()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"ErrorSubtype\":\"cannot put here\"},\"MessageId\":903,\"AgentId\":5}";
+            string jsonString = "{\"payload\":{\"errorSubtype\":\"cannot put here\"},\"messageID\":903,\"agentID\":5}";
             var expected = new Message<PutPieceError>()
             {
                 AgentId = 5,
@@ -408,7 +405,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseNotDefinedError()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"Position\":{\"X\":2,\"Y\":10},\"HoldingPiece\":true},\"MessageId\":905,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"position\":{\"x\":2,\"y\":10},\"holdingPiece\":true},\"messageID\":905,\"agentID\":null}";
             var expected = new Message<NotDefinedError>()
             {
                 MessagePayload = new NotDefinedError()
@@ -433,7 +430,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseGameStarted()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"AgentId\":0,\"AlliesIds\":[3,5,7],\"LeaderId\":0,\"EnemiesIds\":null,\"TeamId\":null,\"BoardSize\":null,\"GoalAreaSize\":0,\"NumberOfPlayers\":null,\"NumberOfPieces\":0,\"NumberOfGoals\":0,\"Penalties\":{\"Move\":null,\"CheckForSham\":\"check\",\"Discovery\":null,\"DestroyPiece\":\"xd\",\"PutPiece\":null,\"InformationExchange\":null},\"ShamPieceProbability\":0,\"Position\":{\"X\":10,\"Y\":20}},\"MessageId\":105,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"agentID\":0,\"alliesIDs\":[3,5,7],\"leaderID\":0,\"enemiesIDs\":null,\"TeamID\":null,\"boardSize\":null,\"goalAreaSize\":0,\"numberOfPlayers\":null,\"numberOfPieces\":0,\"numberOfGoals\":0,\"penalties\":{\"move\":null,\"checkForSham\":\"check\",\"discovery\":null,\"destroyPiece\":\"xd\",\"putPiece\":null,\"informationExchange\":null},\"shamPieceProbability\":0,\"position\":{\"x\":10,\"y\":20}},\"messageID\":105,\"agentID\":null}";
             var expected = new Message<GameStarted>()
             {
                 MessagePayload = new GameStarted()
@@ -463,7 +460,7 @@ namespace CommunicationLibrary.Tests
         public void TestParsePenaltyNotWaitedError()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"WaitFor\":\"200\"},\"MessageId\":904,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"waitFor\":200},\"messageID\":904}";
             var expected = new Message<PenaltyNotWaitedError>()
             {
                 MessagePayload = new PenaltyNotWaitedError()
@@ -483,7 +480,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseGameEnded()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"Winner\":\"blue\"},\"MessageId\":104,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"winner\":\"blue\"},\"messageID\":104,\"agentID\":null}";
             var expected = new Message<GameEnded>()
             {
                 MessagePayload = new GameEnded()
@@ -503,7 +500,7 @@ namespace CommunicationLibrary.Tests
         public void TestParseRedirectedExchangeInformationRequest()
         {
             // Arrange
-            string jsonString = "{\"MessagePayload\":{\"TeamId\":\"blue\",\"AskingId\":1,\"Leader\":true},\"MessageId\":106,\"AgentId\":null}";
+            string jsonString = "{\"payload\":{\"teamID\":\"blue\",\"askingID\":1,\"leader\":true},\"messageID\":106,\"agentID\":null}";
             var expected = new Message<RedirectedExchangeInformationRequest>()
             {
                 MessagePayload = new RedirectedExchangeInformationRequest()
