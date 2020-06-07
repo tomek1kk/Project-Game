@@ -179,13 +179,14 @@ namespace GameMasterTests.Game.Tests
         public void TestAddingMaxPlayers()
         {
             //given
-            int playersCount = 40;
+            int playersInTeamCount = 20;
+            int playersCount = playersInTeamCount * 2;
             bool[] results = new bool[playersCount];
             bool[,] virtualPlayersMap = new bool[10, 10];
-            var map = new Map(numberOfPlayers: playersCount);
+            var map = new Map(teamSize: playersInTeamCount);
             //when
             for (int i = 0; i < playersCount; i++)
-                results[i] = map.AddPlayer(Team.Blue, i);
+                results[i] = map.AddPlayer(i % 2 == 0 ? Team.Red : Team.Blue, i);
             //then
             for (int i = 0; i < playersCount; i++)
             {
@@ -200,10 +201,11 @@ namespace GameMasterTests.Game.Tests
         public void TestAddingTooManyPlayers()
         {
             //given
-            int playersCount = 41;
+            int playersInTeamCount = 21;
+            int playersCount = playersInTeamCount*2;
             List<bool> results = new List<bool>();
             bool[,] virtualPlayersMap = new bool[10, 10];
-            var map = new Map(numberOfPlayers: playersCount);
+            var map = new Map(teamSize: playersInTeamCount);
             //when
             for (int i = 0; i < playersCount; i++)
                 results.Add(map.AddPlayer(Team.Blue, i));

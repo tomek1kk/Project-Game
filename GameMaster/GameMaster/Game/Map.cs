@@ -39,7 +39,7 @@ namespace GameMaster.Game
             int heigth = 10,
             int width = 10,
             int goalAreaHeight = 3,
-            int numberOfPlayers = 10)
+            int teamSize = 5)
         {
             _heigth = heigth;
             _width = width;
@@ -47,7 +47,7 @@ namespace GameMaster.Game
             _numberOfGoals = goalFields == null ? 0 : goalFields.Count;
             _numberOfPieces = realPieces == null ? 0 : realPieces.Count;
             _numberOfPieces += shamPieces == null ? 0 : shamPieces.Count;
-            _teamSize = numberOfPlayers/2;
+            _teamSize = teamSize;
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
