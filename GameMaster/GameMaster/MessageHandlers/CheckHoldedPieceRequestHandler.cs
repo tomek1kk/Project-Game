@@ -43,7 +43,7 @@ namespace GameMaster.MessageHandlers
                     }
                 };
             }
-            if(_sham)
+            if (_sham)
             {
                 map.GetPlayerById(_agentId).Holding = null;
                 map.AddPiece();
