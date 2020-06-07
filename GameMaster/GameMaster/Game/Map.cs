@@ -16,7 +16,7 @@ namespace GameMaster.Game
         private int _width;
         private int _numberOfGoals;
         private int _numberOfPieces;
-        private int _numberOfPlayers;
+        private int _teamSize;
         private double _shamPieceProbability;
         private int _redPoints;
         private int _bluePoints;
@@ -47,7 +47,7 @@ namespace GameMaster.Game
             _numberOfGoals = goalFields == null ? 0 : goalFields.Count;
             _numberOfPieces = realPieces == null ? 0 : realPieces.Count;
             _numberOfPieces += shamPieces == null ? 0 : shamPieces.Count;
-            _numberOfPlayers = numberOfPlayers;
+            _teamSize = numberOfPlayers/2;
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
             for (int i = 0; i < _width; i++)
@@ -74,7 +74,7 @@ namespace GameMaster.Game
             _goalAreaHeight = config.GoalAreaHeight;
             _numberOfGoals = config.NumberOfGoals;
             _numberOfPieces = config.NumberOfPieces;
-            _numberOfPlayers = config.TeamSize * 2;
+            _teamSize = config.TeamSize;
             _shamPieceProbability = config.ShamPieceProbability;
             _players = new Dictionary<int, Player>();
             _fieldsArray = new AbstractField[_width, _heigth];
@@ -166,7 +166,7 @@ namespace GameMaster.Game
             var freeFields = Enumerable.Range(_goalAreaHeight * _width, _width * (_heigth - 2 * _goalAreaHeight)).ToList();
             foreach (Player p in _players.Values)
                 freeFields.Remove(p.X + p.Y * _width);
-            if (freeFields.Count == 0 || _players.Count == _numberOfPlayers)
+            if (freeFields.Count == 0 || _players.Values.Where(p=>p.Team == team).Count() == _teamSize)
                 return false;
             var rand = new Random();
             int idx = freeFields[rand.Next(freeFields.Count)];
