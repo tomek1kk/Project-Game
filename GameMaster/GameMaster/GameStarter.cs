@@ -33,7 +33,7 @@ namespace GameMaster
                         AlliesIds = players.Values.Where(p => p.Team == player.Value.Team && p != player.Value).Select(p => p.AgentId).ToList(),
                         BoardSize = new BoardSize() { X = _configuration.BoardX, Y = _configuration.BoardY },
                         EnemiesIds = players.Values.Where(p => p.Team != player.Value.Team).Select(p => p.AgentId).ToList(),
-                        GoalAreaSize = _configuration.GoalAreaHight,
+                        GoalAreaSize = _configuration.GoalAreaHeight,
                         LeaderId = players.Values.Where(p => p.Team == player.Value.Team && p.IsLeader).Select(p => p.AgentId).FirstOrDefault(),
                         NumberOfGoals = _configuration.NumberOfGoals,
                         NumberOfPieces = _configuration.NumberOfPieces,
@@ -47,7 +47,7 @@ namespace GameMaster
                             CheckForSham = _configuration.CheckForShamPenalty.ToString(),
                             DestroyPiece = _configuration.DestroyPiecePenalty.ToString(),
                             Discovery = _configuration.DiscoveryPenalty.ToString(),
-                            InformationExchange = _configuration.AskPenalty.ToString(),
+                            InformationExchange = _configuration.InformationExchangePenalty.ToString(),
                             Move = _configuration.MovePenalty.ToString(),
                             PutPiece = _configuration.PutPenalty.ToString()
                         },
