@@ -63,13 +63,13 @@ namespace Agent.MessageHandling
 
         private void HandleReceived(Message received)
         {
-            _agentInfo.UpdateFromMessage(received);
             Log.Information("Received message with id {MessageId}", received.MessageId);
             if (received.MessageId == MessageType.GameEnded)
             {
                 _gameOver = true;
                 return;
             }
+            _agentInfo.UpdateFromMessage(received);
             _penalizer.PenalizeOnReceive(received);
             if (received.MessageId.IsError() && received.MessageId != MessageType.PenaltyNotWaitedError)
                 _penalizer.ClearPenalty();
