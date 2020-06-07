@@ -31,7 +31,7 @@ namespace Agent.MessageHandling
             while (!_gameOver)
             {
                 Message actionRequest = _agentInfo.Strategy.MakeDecision(_agentInfo);
-                Log.Debug("Made decision {@Decision}", actionRequest);
+                Log.Debug("At {@Position} made decision {@Decision}", _agentInfo.Position, actionRequest);
                 SendToGM(actionRequest);
                 _penalizer.PenalizeOnSend(actionRequest);
                 while (!_gameOver && _penalizer.UnderPenalty)
@@ -63,6 +63,7 @@ namespace Agent.MessageHandling
 
         private void HandleReceived(Message received)
         {
+            _agentInfo.UpdateFromMessage(received);
             Log.Information("Received message with id {MessageId}", received.MessageId);
             if (received.MessageId == MessageType.GameEnded)
             {
@@ -72,7 +73,6 @@ namespace Agent.MessageHandling
             _penalizer.PenalizeOnReceive(received);
             if (received.MessageId.IsError() && received.MessageId != MessageType.PenaltyNotWaitedError)
                 _penalizer.ClearPenalty();
-            _agentInfo.UpdateFromMessage(received);
         }
 
 
