@@ -86,7 +86,7 @@ namespace Agent
                     return false;
                 }
                 m = _communicator.Take();
-                Log.Information("Received message with id {MessageId}", m.MessageId);
+                Log.Information("Received message with id {MessageId}" + Configuration.TeamId, m.MessageId);
                 if (m.MessageId != MessageType.GameStarted)
                 {
                     Log.Error("No information about starting game");
