@@ -36,7 +36,7 @@ namespace Agent.Strategies
             //if we depend only on History.Count for chosing when to exchange info then
             //until asked agent sends response to previous exchange request
             //asking agent will keep sending ExchangeInformationRequests
-            if (!_justRequestedExchange && History.Count % 10 == 0)
+            if (!_justRequestedExchange && History.Count % 10 == 0 && agent.AlliesIds.Count() >=1)
             {
                 _justRequestedExchange = true;
                 var eq = new ExchangeInformationRequest();

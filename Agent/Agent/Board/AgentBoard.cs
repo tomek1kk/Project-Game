@@ -27,122 +27,165 @@ namespace Agent.Board
         {
             return Position.Y >= GoalArea.start && Position.Y <= GoalArea.end;
         }
-        public IEnumerable<string> GetGoalInfo()
+        public int NumberOfFilledRows()
         {
-
+            bool endLoop = false;
+            int counter = 0;
             if (GoalDirection == "N")
             {
                 for (int i = GoalArea.start; i <= GoalArea.end; ++i)
-                    for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
-                            yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "N";
-                        else
-                            yield return "IDK";
+                {
+                    if (!endLoop)
+                    {
+                        for (int j = 0; j < Board.GetLength(0); j++)
+                            if (Board[j, i].goalInfo == GoalInfo.IDK)
+                            {
+                                endLoop = true;
+                                break;
+                            }
+                        counter++;
+                    }
+                }
+                ;
             }
             else
             {
                 for (int i = GoalArea.end; i >= 0; --i)
-                    for (int j = 0; j < Board.GetLength(0); j++)
-                        if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
-                            yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "N";
-                        else
-                            yield return "IDK";
+                    if (!endLoop)
+                    {
+                        for (int j = 0; j < Board.GetLength(0); j++)
+                            if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
+                                if (Board[j, i].goalInfo == GoalInfo.IDK)
+                                {
+                                    endLoop = true;
+                                    break;
+                                }
+                    }
+                counter++;
             }
+            return counter;
+        }
+    public IEnumerable<string> GetGoalInfo()
+    {
 
-        }
-        public void UpdateGoalInfo(IEnumerable<string> info)
+        if (GoalDirection == "N")
         {
-            IEnumerator<string> iterator = info.GetEnumerator();
-            if (GoalDirection == "N")
-            {
-                for (int i = GoalArea.start; i <= GoalArea.end; ++i)
-                    for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
-                        if (iterator.Current == "G" || iterator.Current == "N")
-                            Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
+            for (int i = GoalArea.start; i <= GoalArea.end; ++i)
+                for (int j = 0; j < Board.GetLength(0); j++)
+                    if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
+                        yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "N";
+                    else
+                        yield return "IDK";
+        }
+        else
+        {
+            for (int i = GoalArea.end; i >= 0; --i)
+                for (int j = 0; j < Board.GetLength(0); j++)
+                    if (Board[j, i].goalInfo == GoalInfo.DiscoveredGoal || Board[j, i].goalInfo == GoalInfo.DiscoveredNotGoal)
+                        yield return Board[j, i].goalInfo == GoalInfo.DiscoveredGoal ? "G" : "N";
+                    else
+                        yield return "IDK";
+        }
 
-            }
-            else
-            {
-                for (int i = GoalArea.end; i >= 0; --i)
-                    for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
-                        if (iterator.Current == "G" || iterator.Current == "N")
-                            Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
-            }
-        }
-        public IEnumerable<int> GetDistances()
+    }
+    public void UpdateGoalInfo(IEnumerable<string> info)
+    {
+        IEnumerator<string> iterator = info.GetEnumerator();
+        if (GoalDirection == "N")
         {
-            for (int i = 0; i < Board.GetLength(0); i++)
-                for (int j = 0; j < Board.GetLength(1); j++)
-                {
-                    yield return Board[i, j].DistToPiece;
-                    yield return Board[i, j].LastUpdateDistToPiece.Minute * 60 + Board[i, j].LastUpdateDistToPiece.Second;
-                }
+            for (int i = GoalArea.start; i <= GoalArea.end; ++i)
+                for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
+                    if (iterator.Current == "G" || iterator.Current == "N")
+                    {
+                     //   Console.WriteLine($"Update map on {i} {j} " + (iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal));
+                        Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
+                    }
         }
-        public void UpdateDistances(IEnumerable<int> distances, Func<int, int, int, int, int> update)
+        else
         {
-            IEnumerator<int> iterator = distances.GetEnumerator();
-            for (int i = 0; i < Board.GetLength(0); i++)
-                for (int j = 0; j < Board.GetLength(1) && iterator.MoveNext(); j++)
-                {
-                    int dist = iterator.Current;
-                    iterator.MoveNext();
-                    int last_update = Board[i, j].LastUpdateDistToPiece.Minute * 60 + Board[i, j].LastUpdateDistToPiece.Second;
-
-                    if (last_update > iterator.Current)
-                        Board[i, j].DistToPiece = update(dist, iterator.Current, Board[i, j].DistToPiece, last_update);
-                }
-        }
-        public (int, int) FindUndiscoveredGoalCoordinates(Point position)
-        {
-            if (GoalDirection == "N")
-            {
-                (int x, int y) currentPosition = (position.X, GoalArea.start);
-                return SearchNearestGoalOnRed(currentPosition);
-            }
-            else
-            {
-                (int x, int y) currentPosition = (position.X, GoalArea.end);
-                return SearchNearestGoalOnBlue(currentPosition);
-            }
-            throw new Exception("All goals should be realized.");
-        }
-        private (int x, int y) SearchNearestGoalOnRed((int x, int y) nearestGoalArea)
-        {
-            Queue<(int x, int y)> queue = new Queue<(int x, int y)>();
-            queue.Enqueue(nearestGoalArea);
-            while (queue.Count != 0)
-            {
-                var current = queue.Dequeue();
-                if (current.x < 0 || current.x >= Board.GetLength(0) || current.y > GoalArea.end )
-                    continue;
-                if (Board[current.x, current.y].goalInfo == GoalInfo.IDK)
-                    return current;
-                queue.Enqueue((current.x, current.y + 1));
-                queue.Enqueue((current.x - 1, current.y));
-                queue.Enqueue((current.x + 1, current.y));
-                queue.Enqueue((current.x - 1, current.y + 1));
-                queue.Enqueue((current.x + 1, current.y + 1));
-            }
-            throw new Exception("All goals are discovered");
-        }
-        private (int x, int y) SearchNearestGoalOnBlue((int x, int y) nearestGoalArea)
-        {
-            Queue<(int x, int y)> queue = new Queue<(int x, int y)>();
-            queue.Enqueue(nearestGoalArea);
-            while (queue.Count != 0)
-            {
-                var current = queue.Dequeue();
-                if (current.x < 0 || current.x >= Board.GetLength(0)  || current.y < 0)
-                    continue;
-                if (Board[current.x, current.y].goalInfo == GoalInfo.IDK)
-                    return current;
-                queue.Enqueue((current.x, current.y - 1));
-                queue.Enqueue((current.x - 1, current.y));
-                queue.Enqueue((current.x + 1, current.y));
-                queue.Enqueue((current.x - 1, current.y - 1));
-                queue.Enqueue((current.x + 1, current.y - 1));
-            }
-            throw new Exception("All goals are discovered");
+            for (int i = GoalArea.end; i >= 0; --i)
+                for (int j = 0; j < Board.GetLength(0) && iterator.MoveNext(); j++)
+                    if (iterator.Current == "G" || iterator.Current == "N")
+                    {
+                       // Console.WriteLine($"Update map on {i} {j} " + (iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal));
+                        Board[j, i].goalInfo = iterator.Current == "G" ? GoalInfo.DiscoveredGoal : GoalInfo.DiscoveredNotGoal;
+                    }
         }
     }
+    public IEnumerable<int> GetDistances()
+    {
+        for (int i = 0; i < Board.GetLength(0); i++)
+            for (int j = 0; j < Board.GetLength(1); j++)
+            {
+                yield return Board[i, j].DistToPiece;
+                yield return Board[i, j].LastUpdateDistToPiece.Minute * 60 + Board[i, j].LastUpdateDistToPiece.Second;
+            }
+    }
+    public void UpdateDistances(IEnumerable<int> distances, Func<int, int, int, int, int> update)
+    {
+        IEnumerator<int> iterator = distances.GetEnumerator();
+        for (int i = 0; i < Board.GetLength(0); i++)
+            for (int j = 0; j < Board.GetLength(1) && iterator.MoveNext(); j++)
+            {
+                int dist = iterator.Current;
+                iterator.MoveNext();
+                int last_update = Board[i, j].LastUpdateDistToPiece.Minute * 60 + Board[i, j].LastUpdateDistToPiece.Second;
+
+                if (last_update > iterator.Current)
+                    Board[i, j].DistToPiece = update(dist, iterator.Current, Board[i, j].DistToPiece, last_update);
+            }
+    }
+    public (int, int) FindUndiscoveredGoalCoordinates(Point position)
+    {
+        if (GoalDirection == "N")
+        {
+            (int x, int y) currentPosition = (position.X, GoalArea.start);
+            return SearchNearestGoalOnRed(currentPosition);
+        }
+        else
+        {
+            (int x, int y) currentPosition = (position.X, GoalArea.end);
+            return SearchNearestGoalOnBlue(currentPosition);
+        }
+        throw new Exception("All goals should be realized.");
+    }
+    private (int x, int y) SearchNearestGoalOnRed((int x, int y) nearestGoalArea)
+    {
+        Queue<(int x, int y)> queue = new Queue<(int x, int y)>();
+        queue.Enqueue(nearestGoalArea);
+        while (queue.Count != 0)
+        {
+            var current = queue.Dequeue();
+            if (current.x < 0 || current.x >= Board.GetLength(0) || current.y > GoalArea.end)
+                continue;
+            if (Board[current.x, current.y].goalInfo == GoalInfo.IDK)
+                return current;
+            queue.Enqueue((current.x, current.y + 1));
+            queue.Enqueue((current.x - 1, current.y));
+            queue.Enqueue((current.x + 1, current.y));
+            queue.Enqueue((current.x - 1, current.y + 1));
+            queue.Enqueue((current.x + 1, current.y + 1));
+        }
+        throw new Exception("All goals are discovered");
+    }
+    private (int x, int y) SearchNearestGoalOnBlue((int x, int y) nearestGoalArea)
+    {
+        Queue<(int x, int y)> queue = new Queue<(int x, int y)>();
+        queue.Enqueue(nearestGoalArea);
+        while (queue.Count != 0)
+        {
+            var current = queue.Dequeue();
+            if (current.x < 0 || current.x >= Board.GetLength(0) || current.y < 0)
+                continue;
+            if (Board[current.x, current.y].goalInfo == GoalInfo.IDK)
+                return current;
+            queue.Enqueue((current.x, current.y - 1));
+            queue.Enqueue((current.x - 1, current.y));
+            queue.Enqueue((current.x + 1, current.y));
+            queue.Enqueue((current.x - 1, current.y - 1));
+            queue.Enqueue((current.x + 1, current.y - 1));
+        }
+        throw new Exception("All goals are discovered");
+    }
+}
 }

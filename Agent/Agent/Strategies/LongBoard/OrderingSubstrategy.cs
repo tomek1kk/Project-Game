@@ -55,10 +55,10 @@ namespace Agent.Strategies.LongBoard
                         (board.Team == Team.Red ? board.MyBounds.Min : board.MyBounds.Max)));
                 }
             }
-            Log.Debug("I'm at {@position} and I should be between {@bounds}",
-                gameInfo.Position, board.MyBounds);
-            Log.Debug("I'm {agentId} and my neighbors are {neighborNearGoal} and {neighborNearFront}",
-                gameInfo.AgentId, board.neighborIds.nearGoal, board.neighborIds.nearFront);
+            //Log.Debug("I'm at {@position} and I should be between {@bounds}",
+            //    gameInfo.Position, board.MyBounds);
+            //Log.Debug("I'm {agentId} and my neighbors are {neighborNearGoal} and {neighborNearFront}",
+            //    gameInfo.AgentId, board.neighborIds.nearGoal, board.neighborIds.nearFront);
 
         }
 
@@ -98,7 +98,7 @@ namespace Agent.Strategies.LongBoard
             //will belong to goalie and should not be included in dividing among non goalie agents
             int nonGoalieAreaSize = taskAreaSize - 1;
             //task area is divided near equally among agents
-            int subareaSize = nonGoalieAreaSize / gameInfo.AlliesIds.Count();
+            int subareaSize = gameInfo.AlliesIds.Count() ==0 ? 1 : nonGoalieAreaSize / gameInfo.AlliesIds.Count();
             //it usually isn't exactly equally divided
             //certain number (indicated by biggerSubareasCount) of agents in front will have +1 field
             int biggerSubareasCount = nonGoalieAreaSize - subareaSize * gameInfo.AlliesIds.Count();
