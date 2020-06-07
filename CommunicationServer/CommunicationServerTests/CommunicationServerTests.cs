@@ -16,8 +16,8 @@ namespace CommunicationServerTests
     {
         private Configuration config = new Configuration()
         {
-            GMPort = 8081,
-            AgentPort = 8080,
+            GMPort = 0,//server chooses free port by himself
+            AgentPort = 0,//server chooses free port by himself
             CsIP = "127.0.0.1"
         };
         [TestMethod]

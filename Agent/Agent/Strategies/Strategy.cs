@@ -94,12 +94,9 @@ namespace Agent.Strategies
         virtual protected void DestroyPieceResponseHandler(DestroyPieceResponse moveError) { }
         virtual protected void ExchangeInformationResponseHandler(ExchangeInformationGMResponse exchangeInformationResponse)
         {
-            if (Board.GoalDirection == "N")
-                Board.UpdateGoalInfo(exchangeInformationResponse.RedTeamGoalAreaInformations);
-            else
-                Board.UpdateGoalInfo(exchangeInformationResponse.BlueTeamGoalAreaInformations);
-
-            Board.UpdateDistances(exchangeInformationResponse.Distances, updateDistanse);
+            List<string> red = new List<string>(exchangeInformationResponse.RedTeamGoalAreaInformations);
+            List<string> blue = new List<string>(exchangeInformationResponse.BlueTeamGoalAreaInformations);
+            Board.UpdateGoalInfo(red.Count >blue.Count ? red : blue);
         }
         virtual protected void MoveResponseHandler(MoveResponse moveResponse)
         {
