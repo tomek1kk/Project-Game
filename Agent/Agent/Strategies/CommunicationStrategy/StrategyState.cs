@@ -8,7 +8,6 @@ namespace Agent.Strategies.CommunicationStrategy
     {
         FindPiece,
         CheckSham,
-        DestroyPiece,
         BringToGoalArea,
         ExchangeInfo,
     }

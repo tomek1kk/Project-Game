@@ -104,8 +104,6 @@ namespace Agent.Strategies
                         return LogMessage(MoveToGoals(agent));
                     else
                         return LogMessage(new Message<PutPieceRequest>(new PutPieceRequest()));
-                case StrategyState.DestroyPiece:
-                    return LogMessage(new Message<DestroyPieceRequest>(new DestroyPieceRequest()));
             }
             return msg;//never
         }
@@ -140,7 +138,7 @@ namespace Agent.Strategies
             {
                 case MessageType.CheckHoldedPieceResponse:
                     if (((CheckHoldedPieceResponse)message.GetPayload()).Sham == true)
-                        strategyState = StrategyState.DestroyPiece;
+                        strategyState = StrategyState.FindPiece;
                     else
                         strategyState = StrategyState.BringToGoalArea;
                     break;
