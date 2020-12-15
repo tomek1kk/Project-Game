@@ -5,8 +5,6 @@ author:
 - Karol Klimaszewski
 - Piotr Kowalik
 - Krzysztof Kicun
-date: October 2019
-title: The Project Game
 ---
 
 # Introduction
