@@ -249,7 +249,7 @@ reference="fig:useCasesDiagram"} is an UML Use Case diagram visualy
 depicting decisions that each of the identified actors can make.
 
 ![UML Use Case diagram depicting decision actors can
-make](Use_Case_Diagram.png){#fig:useCasesDiagram
+make](readme_images/Use_Case_Diagram.png){#fig:useCasesDiagram
 height="\\dimexpr \\textheight - 4\\baselineskip\\relax"
 width="\\textwidth"}
 
@@ -257,7 +257,7 @@ width="\\textwidth"}
 
 ## GM states
 
-![State diagram for game ](state_uml_game.png){#fig:Game State Diagram
+![State diagram for game ](readme_images/state_uml_game.png){#fig:Game State Diagram
 height="\\textheight"}
 
 During his activity Game Master goes through 3 complex states:
@@ -290,7 +290,7 @@ transitions between them.
 ## Agent in GM states
 
 ![State diagram for agent in GM
-](state_uml_agent.png){#fig:Agent State Diagram width="\\textwidth"}
+](readme_images/state_uml_agent.png){#fig:Agent State Diagram width="\\textwidth"}
 
 When agent connects to Game Master it's state in Game Master is set to
 **agent connected**. When the game starts all connected agents enter a
@@ -367,7 +367,7 @@ transitions between them.
 ## Demands and delays
 
 ![Action demand sequential
-](seq_uml_action_demand.png){width="\\textwidth"}
+](readme_images/seq_uml_action_demand.png){width="\\textwidth"}
 
 To perform action agent must sent message to Game Master via
 Communication Server. Game Master, knowing type of agent's demand, waits
@@ -431,7 +431,7 @@ that he can move again. At the same time Game Master waits until asked
 agent can move again and send message to him when he can.
 
 ![Communication activity
-](activity_uml_communication.png){#fig:Communication Activity Diagram
+](readme_images/activity_uml_communication.png){#fig:Communication Activity Diagram
 width="\\textwidth"}
 
 Figure [5](#fig:Communication Activity Diagram){reference-type="ref"
@@ -588,7 +588,7 @@ between the Agents and Game Master without processing their content.
 
     -   lastUpdate - information when the field wad updated
 
-![Agent UML Diagram ](class_agent.png){#fig:Agent UML Diagram
+![Agent UML Diagram ](readme_images/class_agent.png){#fig:Agent UML Diagram
 width="\\textwidth"}
 
 ### GM Module
@@ -722,7 +722,7 @@ All messages are forwarded by Communication Server, but it doesn't do
 any logic, so CM is unmentioned on some diagrams. Messages are in JSON
 format and they are sent over TCP protocol. Below sample diagram
 illustrating starting and connecting agent. ![Connecting agent
-](seq_uml_connect_agent.png "fig:"){width="\\textwidth"}
+](readme_images/seq_uml_connect_agent.png "fig:"){width="\\textwidth"}
 
 During start of the game, user runs agents with parameters, so that
 every agent is able to communicate with Game Master. First thing agent
