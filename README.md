@@ -158,11 +158,11 @@ Agent actions have following ramifications and constrains:
 -   Performing actions take appropriate time. This time is set before
     start of game and depends on action type.
 
-![Sample board](board.jpg)
+![Sample board](readme_images/board.jpg)
 
-![State diagram for goal](state_uml_goal.png)
+![State diagram for goal](readme_images/state_uml_goal.png)
 
-![State diagram for piece ](state_diagram_piece_io.jpg)
+![State diagram for piece ](readme_images/state_diagram_piece_io.jpg)
 
 # Use cases
 
@@ -376,7 +376,7 @@ made and Game Master changes state of game. Finally, Game Master sends
 message back to agent, with information if action was successful.
 
 ![Action demand activity
-](action_demands_activity_uml.jpg){width="\\textwidth"}
+](readme_images/action_demands_activity_uml.jpg){width="\\textwidth"}
 
 This diagram shows in detail how Game Master handle demands from many
 agents. In infinitive loop Game Master collect new demands, if there are
@@ -388,7 +388,7 @@ loop works during whole game.
 ## Agent-agent information exchange
 
 ![Communication sequential
-](seq_uml_communication.jpg){#fig:Communication Sequence Diagram
+](readme_images/seq_uml_communication.jpg){#fig:Communication Sequence Diagram
 width="\\textwidth"}
 
 Figure [4](#fig:Communication Sequence Diagram){reference-type="ref"
@@ -464,7 +464,7 @@ Agent 1 save this knowledge and communication is complete.
 
 # User use cases
 
-![User use-case diagram ](usecase_user.jpg)
+![User use-case diagram ](readme_images/usecase_user.jpg)
 
 # Rules of booting up the game
 
@@ -713,7 +713,7 @@ width="\\textwidth"}
     -   discovered: bool - information if the goal has been put here
 
 ![Game Master UML Diagram
-](GameMaster_ClassDiagram.JPG){#fig:Game Master UML Diagram
+](readme_images/GameMaster_ClassDiagram.JPG){#fig:Game Master UML Diagram
 width="\\textwidth"}
 
 # Communication
@@ -832,7 +832,7 @@ disconnection and game resumes.
 
 ## CM
 
-![image](UML_CM_class_diagram.jpg){width="\\textwidth"}
+![image](readme_images/UML_CM_class_diagram.jpg){width="\\textwidth"}
 
 Connection serwer ma tylko dwie klasy: Main i ConnectionServer, Main
 tworzy jedną instancje ConnectionServer i uruchamia metodę
